@@ -1,59 +1,114 @@
-# Created by https://www.toptal.com/developers/gitignore/api/alteraquartusii
-# Edit at https://www.toptal.com/developers/gitignore?templates=alteraquartusii
+# A gitignore for Altera Quartus II that tries to ignore almost all of the
+# automatically Quartus-generated files. This primarily leaves the project,
+# settings, source, and constraint files to be added. The files ignored do not
+# include the bulk of the MegaFunction Wizard generated files which enables
+# a cloned repository to be used (usually) immediately without regenerating
+# Altera IP blocks.
 
-### AlteraQuartusII ###
-##list taken from http://www.alterawiki.com/wiki/Version_Control (01.10.2015)
+# From https://github.com/thomasrussellmurphy/quartus-DE1_SOC-project/blob/master/.gitignore
 
-######### Quartus II source files
+# Need to keep all HDL files and timing constraint files
+# *.vhd
+# *.v
+# *.sdc
 
-# project files:
-### project_name.qpf Quartus II project file
-### project_name.qsf Quartus constraint file (lists the hardware constraints defined for a project, from the used chip and pinout to timing constraints)
-### project_name.qws Quartus Window Settings ? (the configuration of the Quartus gui for the project, may be omitted)
+# ignore Quartus II generated folders
+*_sim
+db
+greybox_tmp
+incremental_db
+simulation
+testbench
+timing
 
-# top level source files:
-### project_name.bdf Block diagram / Schematic file (top level schematic file, there may be many nested files)
-### project_name.vhd VHDL file (top level VHDL file)
-### project_name.v Verilog file (top level Verilog file)
+# ignore Quartus II generated files
+*_generation_script*
+*_inst.vhd
+*.bak
+*.cmp
+*.done
+*.eqn
+*.hex
+*.html
+*.jdi
+*.jpg
+*.mif
+*.pin
+*.pof
+*.ptf.*
+*.qar
+*.qarlog
+*.qws
+*.rpt
+*.smsg
+*.sof
+*.sopc_builder
+*.summary
+*.tcl
+*.txt # Explicitly add any text files used
+*~
+*example*
+*sopc_*
+PLLJ_PLLSPE_INFO.txt # The generated PLL specification file
 
-# component source files:
-### component_name.bsf Block Symbol file (component symbol file)
-### component_name.vhd VHDL file (top level VHDL file)
-### component_name.v Verilog file (top level Verilog file)
+# --- RE-ENABLE THE BELOW WHEN REQUIRED ---
 
-# SOPC builder project source files (SOPC builder creates many VHDL or Verilog files, that you do not need to store)
-### sopc_project_name.ptf the list and configuration of components selected in the SOPC gui
-### sopc_project_name.bsf Block Symbol file (SOPC component symbol file, especially if you modified it)
-
-# Board Description (if you created your own board, the list is incomplete!)
-### board_name/class.ptf
-
-# software source files:
+## Created by https://www.toptal.com/developers/gitignore/api/alteraquartusii
+## Edit at https://www.toptal.com/developers/gitignore?templates=alteraquartusii
+#
+#### AlteraQuartusII ###
+###list taken from http://www.alterawiki.com/wiki/Version_Control (01.10.2015)
+#
+########## Quartus II source files
+#
+## project files:
+#### project_name.qpf Quartus II project file
+#### project_name.qsf Quartus constraint file (lists the hardware constraints defined for a project, from the used chip and pinout to timing constraints)
+#### project_name.qws Quartus Window Settings ? (the configuration of the Quartus gui for the project, may be omitted)
+#
+## top level source files:
+#### project_name.bdf Block diagram / Schematic file (top level schematic file, there may be many nested files)
+#### project_name.vhd VHDL file (top level VHDL file)
+#### project_name.v Verilog file (top level Verilog file)
+#
+## component source files:
+#### component_name.bsf Block Symbol file (component symbol file)
+#### component_name.vhd VHDL file (top level VHDL file)
+#### component_name.v Verilog file (top level Verilog file)
+#
+## SOPC builder project source files (SOPC builder creates many VHDL or Verilog files, that you do not need to store)
+#### sopc_project_name.ptf the list and configuration of components selected in the SOPC gui
+#### sopc_project_name.bsf Block Symbol file (SOPC component symbol file, especially if you modified it)
+#
+## Board Description (if you created your own board, the list is incomplete!)
+#### board_name/class.ptf
+#
+## software source files:
+#### tbd
+#
+######### Quartus II binary files
+#
+## hardware binary files
+#### project_name.sof SRAM Object File
+#
+## software binary files
+#
+#/*
+#!/*.gitignore
+###
+#!*.qpf
+#!*.qsf
+#!*.qws
+#!*.bdf
+#!*.vhd
+#!*.v
+#!*.ptf
+#!*.bsf
+#!**/class.ptf
+#!*.tbd
+#!*.sof
 ### tbd
-
-######## Quartus II binary files
-
-# hardware binary files
-### project_name.sof SRAM Object File
-
-# software binary files
-
-/*
-!/*.gitignore
-##
-!*.qpf
-!*.qsf
-!*.qws
-!*.bdf
-!*.vhd
-!*.v
-!*.ptf
-!*.bsf
-!**/class.ptf
-!*.tbd
-!*.sof
-## tbd
-
-!*.tcl
-
-# End of https://www.toptal.com/developers/gitignore/api/alteraquartusii
+#
+#!*.tcl
+#
+## End of https://www.toptal.com/developers/gitignore/api/alteraquartusii
