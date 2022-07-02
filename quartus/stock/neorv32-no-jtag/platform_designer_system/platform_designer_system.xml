@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy
+ date="2022.04.22.22:36:29"
+ outputDirectory="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/">
+ <perimeter>
+  <parameter
+     name="AUTO_GENERATION_ID"
+     type="Integer"
+     defaultValue="0"
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_UNIQUE_ID"
+     type="String"
+     defaultValue=""
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_DEVICE_FAMILY"
+     type="String"
+     defaultValue="Cyclone V"
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_DEVICE"
+     type="String"
+     defaultValue="5CSEMA5F31C6"
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_DEVICE_SPEEDGRADE"
+     type="String"
+     defaultValue="6"
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_CLK_CLOCK_RATE"
+     type="Long"
+     defaultValue="-1"
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_CLK_CLOCK_DOMAIN"
+     type="Integer"
+     defaultValue="-1"
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_CLK_RESET_DOMAIN"
+     type="Integer"
+     defaultValue="-1"
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_GPIO_O_ADDRESS_MAP"
+     type="AddressMap"
+     defaultValue=""
+     onHdl="0"
+     affectsHdl="1" />
+  <parameter
+     name="AUTO_GPIO_O_ADDRESS_WIDTH"
+     type="AddressWidthType"
+     defaultValue=""
+     onHdl="0"
+     affectsHdl="1" />
+  <interface name="clk" kind="clock" start="0">
+   <property name="clockRate" value="50000000" />
+   <property name="externallyDriven" value="false" />
+   <property name="ptfSchematicName" value="" />
+   <port name="clk_clk" direction="input" role="clk" width="1" />
+  </interface>
+  <interface name="gpio_o" kind="avalon" start="1">
+   <property name="adaptsTo" value="" />
+   <property name="addressGroup" value="0" />
+   <property name="addressUnits" value="SYMBOLS" />
+   <property name="alwaysBurstMaxBurst" value="false" />
+   <property name="associatedClock" value="clk" />
+   <property name="associatedReset" value="reset" />
+   <property name="bitsPerSymbol" value="8" />
+   <property name="burstOnBurstBoundariesOnly" value="false" />
+   <property name="burstcountUnits" value="WORDS" />
+   <property name="constantBurstBehavior" value="false" />
+   <property name="dBSBigEndian" value="false" />
+   <property name="doStreamReads" value="false" />
+   <property name="doStreamWrites" value="false" />
+   <property name="holdTime" value="0" />
+   <property name="interleaveBursts" value="false" />
+   <property name="isAsynchronous" value="false" />
+   <property name="isBigEndian" value="false" />
+   <property name="isReadable" value="false" />
+   <property name="isWriteable" value="false" />
+   <property name="linewrapBursts" value="false" />
+   <property name="maxAddressWidth" value="32" />
+   <property name="maximumPendingReadTransactions" value="0" />
+   <property name="maximumPendingWriteTransactions" value="0" />
+   <property name="readLatency" value="0" />
+   <property name="readWaitTime" value="1" />
+   <property name="registerIncomingSignals" value="false" />
+   <property name="registerOutgoingSignals" value="false" />
+   <property name="setupTime" value="0" />
+   <property name="timingUnits" value="Cycles" />
+   <property name="writeWaitTime" value="0" />
+   <port name="gpio_o_writedata" direction="output" role="writedata" width="8" />
+   <port name="gpio_o_write" direction="output" role="write" width="1" />
+  </interface>
+  <interface name="reset" kind="reset" start="0">
+   <property name="associatedClock" value="" />
+   <property name="synchronousEdges" value="NONE" />
+   <port name="reset_reset_n" direction="input" role="reset_n" width="1" />
+  </interface>
+ </perimeter>
+ <entity
+   path=""
+   parameterizationKey="platform_designer_system:1.0:AUTO_CLK_CLOCK_DOMAIN=-1,AUTO_CLK_CLOCK_RATE=-1,AUTO_CLK_RESET_DOMAIN=-1,AUTO_DEVICE=5CSEMA5F31C6,AUTO_DEVICE_FAMILY=Cyclone V,AUTO_DEVICE_SPEEDGRADE=6,AUTO_GENERATION_ID=1650623789,AUTO_GPIO_O_ADDRESS_MAP=,AUTO_GPIO_O_ADDRESS_WIDTH=AddressWidth = -1,AUTO_UNIQUE_ID=(clock_source:18.1:clockFrequency=50000000,clockFrequencyKnown=true,inputClockFrequency=0,resetSynchronousEdges=NONE)(neorv32_soc_component:1.0:CLOCK_FREQUENCY=50000000,MEM_INT_DMEM_SIZE=8192,MEM_INT_IMEM_SIZE=16384)(clock:18.1:)(reset:18.1:)"
+   instancePathKey="platform_designer_system"
+   kind="platform_designer_system"
+   version="1.0"
+   name="platform_designer_system">
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="-1" />
+  <parameter name="AUTO_GENERATION_ID" value="1650623789" />
+  <parameter name="AUTO_DEVICE" value="5CSEMA5F31C6" />
+  <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
+  <parameter name="AUTO_GPIO_O_ADDRESS_WIDTH" value="AddressWidth = -1" />
+  <parameter name="AUTO_CLK_RESET_DOMAIN" value="-1" />
+  <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="-1" />
+  <parameter name="AUTO_UNIQUE_ID" value="" />
+  <parameter name="AUTO_GPIO_O_ADDRESS_MAP" value="" />
+  <parameter name="AUTO_DEVICE_SPEEDGRADE" value="6" />
+  <generatedFiles>
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/platform_designer_system.v"
+       type="VERILOG" />
+  </generatedFiles>
+  <childGeneratedFiles>
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_test_setup_approm.vhd"
+       type="VHDL"
+       attributes="TOP_LEVEL_FILE" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_application_image.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_boot_rom.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_bootloader_image.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_bus_keeper.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_busswitch.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cfs.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_alu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_bus.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_control.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_bitmanip.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_cfu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_fpu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_muldiv.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_shifter.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_decompressor.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_regfile.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_debug_dm.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_debug_dtm.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_dmem.entity.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_fifo.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_gpio.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_gptmr.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_icache.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_imem.entity.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_mtime.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_neoled.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_package.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_pwm.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_slink.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_spi.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_sysinfo.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_top.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_trng.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_twi.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_uart.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_wdt.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_wishbone.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_xip.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_xirq.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_dmem.default.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_imem.default.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/altera_reset_controller.v"
+       type="VERILOG"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/altera_reset_synchronizer.v"
+       type="VERILOG"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/altera_reset_controller.sdc"
+       type="SDC"
+       attributes="" />
+  </childGeneratedFiles>
+  <sourceFiles>
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system.qsys" />
+  </sourceFiles>
+  <childSourceFiles>
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/neorv32_soc_component_hw.tcl" />
+   <file
+       path="C:/intelfpga_lite/18.1/ip/altera/merlin/altera_reset_controller/altera_reset_controller_hw.tcl" />
+  </childSourceFiles>
+  <messages>
+   <message level="Debug" culprit="platform_designer_system">queue size: 0 starting:platform_designer_system "platform_designer_system"</message>
+   <message level="Progress" culprit="min"></message>
+   <message level="Progress" culprit="max"></message>
+   <message level="Progress" culprit="current"></message>
+   <message level="Debug">Transform: CustomInstructionTransform</message>
+   <message level="Debug">No custom instruction connections, skipping transform </message>
+   <message level="Debug" culprit="merlin_custom_instruction_transform"><![CDATA[After transform: <b>2</b> modules, <b>2</b> connections]]></message>
+   <message level="Debug">Transform: MMTransform</message>
+   <message level="Debug">Transform: InterruptMapperTransform</message>
+   <message level="Debug">Transform: InterruptSyncTransform</message>
+   <message level="Debug">Transform: InterruptFanoutTransform</message>
+   <message level="Debug">Transform: AvalonStreamingTransform</message>
+   <message level="Debug">Transform: ResetAdaptation</message>
+   <message level="Progress" culprit="min"></message>
+   <message level="Progress" culprit="max"></message>
+   <message level="Progress" culprit="current"></message>
+   <message level="Debug" culprit="reset_adaptation_transform"><![CDATA[After transform: <b>3</b> modules, <b>4</b> connections]]></message>
+   <message level="Debug" culprit="platform_designer_system"><![CDATA["<b>platform_designer_system</b>" reuses <b>neorv32_soc_component</b> "<b>submodules/neorv32_test_setup_approm</b>"]]></message>
+   <message level="Debug" culprit="platform_designer_system"><![CDATA["<b>platform_designer_system</b>" reuses <b>altera_reset_controller</b> "<b>submodules/altera_reset_controller</b>"]]></message>
+   <message level="Debug" culprit="platform_designer_system">queue size: 1 starting:neorv32_soc_component "submodules/neorv32_test_setup_approm"</message>
+   <message level="Info" culprit="neorv32_soc_component_0"><![CDATA["<b>platform_designer_system</b>" instantiated <b>neorv32_soc_component</b> "<b>neorv32_soc_component_0</b>"]]></message>
+   <message level="Debug" culprit="platform_designer_system">queue size: 0 starting:altera_reset_controller "submodules/altera_reset_controller"</message>
+   <message level="Info" culprit="rst_controller"><![CDATA["<b>platform_designer_system</b>" instantiated <b>altera_reset_controller</b> "<b>rst_controller</b>"]]></message>
+  </messages>
+ </entity>
+ <entity
+   path="submodules/"
+   parameterizationKey="neorv32_soc_component:1.0:CLOCK_FREQUENCY=50000000,MEM_INT_DMEM_SIZE=8192,MEM_INT_IMEM_SIZE=16384"
+   instancePathKey="platform_designer_system:.:neorv32_soc_component_0"
+   kind="neorv32_soc_component"
+   version="1.0"
+   name="neorv32_test_setup_approm">
+  <parameter name="CLOCK_FREQUENCY" value="50000000" />
+  <parameter name="MEM_INT_IMEM_SIZE" value="16384" />
+  <parameter name="MEM_INT_DMEM_SIZE" value="8192" />
+  <generatedFiles>
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_test_setup_approm.vhd"
+       type="VHDL"
+       attributes="TOP_LEVEL_FILE" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_application_image.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_boot_rom.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_bootloader_image.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_bus_keeper.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_busswitch.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cfs.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_alu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_bus.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_control.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_bitmanip.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_cfu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_fpu.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_muldiv.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_cp_shifter.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_decompressor.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_cpu_regfile.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_debug_dm.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_debug_dtm.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_dmem.entity.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_fifo.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_gpio.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_gptmr.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_icache.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_imem.entity.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_mtime.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_neoled.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_package.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_pwm.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_slink.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_spi.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_sysinfo.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_top.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_trng.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_twi.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_uart.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_wdt.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_wishbone.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_xip.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_xirq.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_dmem.default.vhd"
+       type="VHDL"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/neorv32_imem.default.vhd"
+       type="VHDL"
+       attributes="" />
+  </generatedFiles>
+  <childGeneratedFiles/>
+  <sourceFiles>
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/neorv32_soc_component_hw.tcl" />
+  </sourceFiles>
+  <childSourceFiles/>
+  <instantiator instantiator="platform_designer_system" as="neorv32_soc_component_0" />
+  <messages>
+   <message level="Debug" culprit="platform_designer_system">queue size: 1 starting:neorv32_soc_component "submodules/neorv32_test_setup_approm"</message>
+   <message level="Info" culprit="neorv32_soc_component_0"><![CDATA["<b>platform_designer_system</b>" instantiated <b>neorv32_soc_component</b> "<b>neorv32_soc_component_0</b>"]]></message>
+  </messages>
+ </entity>
+ <entity
+   path="submodules/"
+   parameterizationKey="altera_reset_controller:18.1:ADAPT_RESET_REQUEST=0,MIN_RST_ASSERTION_TIME=3,NUM_RESET_INPUTS=1,OUTPUT_RESET_SYNC_EDGES=deassert,RESET_REQUEST_PRESENT=0,RESET_REQ_EARLY_DSRT_TIME=1,RESET_REQ_WAIT_TIME=1,SYNC_DEPTH=2,USE_RESET_REQUEST_IN0=0,USE_RESET_REQUEST_IN1=0,USE_RESET_REQUEST_IN10=0,USE_RESET_REQUEST_IN11=0,USE_RESET_REQUEST_IN12=0,USE_RESET_REQUEST_IN13=0,USE_RESET_REQUEST_IN14=0,USE_RESET_REQUEST_IN15=0,USE_RESET_REQUEST_IN2=0,USE_RESET_REQUEST_IN3=0,USE_RESET_REQUEST_IN4=0,USE_RESET_REQUEST_IN5=0,USE_RESET_REQUEST_IN6=0,USE_RESET_REQUEST_IN7=0,USE_RESET_REQUEST_IN8=0,USE_RESET_REQUEST_IN9=0,USE_RESET_REQUEST_INPUT=0"
+   instancePathKey="platform_designer_system:.:rst_controller"
+   kind="altera_reset_controller"
+   version="18.1"
+   name="altera_reset_controller">
+  <generatedFiles>
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/altera_reset_controller.v"
+       type="VERILOG"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/altera_reset_synchronizer.v"
+       type="VERILOG"
+       attributes="" />
+   <file
+       path="C:/Users/CM/Documents/Git/P4P-41/quartus/stock/neorv32/platform_designer_system/synthesis/submodules/altera_reset_controller.sdc"
+       type="SDC"
+       attributes="" />
+  </generatedFiles>
+  <childGeneratedFiles/>
+  <sourceFiles>
+   <file
+       path="C:/intelfpga_lite/18.1/ip/altera/merlin/altera_reset_controller/altera_reset_controller_hw.tcl" />
+  </sourceFiles>
+  <childSourceFiles/>
+  <instantiator instantiator="platform_designer_system" as="rst_controller" />
+  <messages>
+   <message level="Debug" culprit="platform_designer_system">queue size: 0 starting:altera_reset_controller "submodules/altera_reset_controller"</message>
+   <message level="Info" culprit="rst_controller"><![CDATA["<b>platform_designer_system</b>" instantiated <b>altera_reset_controller</b> "<b>rst_controller</b>"]]></message>
+  </messages>
+ </entity>
+</deploy>
