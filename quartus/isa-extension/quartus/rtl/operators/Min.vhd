@@ -1,7 +1,7 @@
 -- P4P 41 - CNN ISA Extension
 -- 07/22 - cmcd407@auckland.ac.nz
 
-entity ReturnLesser is
+entity Min is
     generic (
         type data_type
     );
@@ -11,9 +11,9 @@ entity ReturnLesser is
         -- outputs
         output          : out data_type
     );
-end entity ReturnLesser;
+end entity Min;
 
-architecture rtl of ReturnLesser is
+architecture rtl of Min is
     
 begin
     

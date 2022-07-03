@@ -1,7 +1,7 @@
 -- P4P 41 - CNN ISA Extension
 -- 07/22 - cmcd407@auckland.ac.nz
 
-entity ReturnGreater is
+entity Max is
     generic (
         type data_type
     );
@@ -11,9 +11,9 @@ entity ReturnGreater is
         -- outputs
         output          : out data_type
     );
-end entity ReturnGreater;
+end entity Max;
 
-architecture rtl of ReturnGreater is
+architecture rtl of Max is
     
 begin
     

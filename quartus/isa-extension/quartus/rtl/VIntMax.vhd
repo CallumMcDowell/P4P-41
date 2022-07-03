@@ -6,7 +6,7 @@ use ieee.math_real.all;
 library work;
 use work.CNNISATypes.all;
 
-entity VIntReturnGreater is
+entity VIntMax is
     port (
         -- inputs
         operands        : in vreg;
@@ -14,16 +14,16 @@ entity VIntReturnGreater is
         -- outputs
         outputs         : out vreg
     );
-end entity VIntReturnGreater;
+end entity VIntMax;
 
-architecture rtl of VIntReturnGreater is
+architecture rtl of VIntMax is
     
 begin
 
     GEN_LOGIC: for w in 0 to operands'length-1 generate
 
     begin
-        UNIT: entity work.IntReturnGreater
+        UNIT: entity work.IntMax
             generic map (
                 size => word'length
             )

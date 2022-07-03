@@ -9,14 +9,14 @@ use ieee.math_real.all;
 library work;
 use work.CNNISATypes.all;
 
-entity VIntReturnGreater_TestBench is
+entity VIntMax_TestBench is
     port (
         placeholder     : out std_logic
     );
-end entity VIntReturnGreater_TestBench;
+end entity VIntMax_TestBench;
 
 
-architecture test of VIntReturnGreater_TestBench is
+architecture test of VIntMax_TestBench is
     constant WORD_MAX_SIGNED_INT    : integer := to_integer(WORD_MAX_SIGNED);
 
     signal vreg_in, vreg_out    : vreg  := (others => (others => '0'));
@@ -24,7 +24,7 @@ architecture test of VIntReturnGreater_TestBench is
     
 begin
     
-    UNIT    : entity work.VIntReturnGreater
+    UNIT: entity work.VIntMax
         port map (
             -- inputs
             operands => vreg_in,
@@ -36,7 +36,7 @@ begin
     UNITTEST: process
         variable a              : vreg;
     begin
-        report "VIntReturnGreater: Test START";
+        report "VIntMax: Test START";
 
         for i in 0 to a'length-1 loop
             a(i) := REAL_TO_WORD(real(i) - 0.5 * real(a'length));
@@ -49,7 +49,7 @@ begin
 
         for i in 0 to vreg_out'length-1 loop
             if vreg_out(i) > lo then
-                report "VIntReturnGreater: Failed (asserted " & integer'image(to_integer(vreg_out(i)))
+                report "VIntMax: Failed (asserted " & integer'image(to_integer(vreg_out(i)))
                     & " > " & integer'image(to_integer(lo)) & ")"
                 severity error;
             end if;

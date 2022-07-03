@@ -6,7 +6,7 @@ use ieee.math_real.all;
 library work;
 use work.CNNISATypes.all;
 
-entity IntReturnGreater is
+entity IntMax is
     generic (
         size        : positive  := 8
     );
@@ -17,9 +17,9 @@ entity IntReturnGreater is
         -- outputs
         output      : out signed(size-1 downto 0)
     );
-end entity IntReturnGreater;
+end entity IntMax;
 
-architecture rtl of IntReturnGreater is
+architecture rtl of IntMax is
     
 begin
     
