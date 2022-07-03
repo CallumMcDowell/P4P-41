@@ -6,7 +6,7 @@ use ieee.math_real.all;
 library work;
 use work.CNNISATypes.all;
 
-entity VClip is
+entity VIntReturnGreater is
     port (
         -- inputs
         operands        : in vreg;
@@ -14,16 +14,16 @@ entity VClip is
         -- outputs
         outputs         : out vreg
     );
-end entity VClip;
+end entity VIntReturnGreater;
 
-architecture rtl of VClip is
+architecture rtl of VIntReturnGreater is
     
 begin
 
     GEN_LOGIC: for w in 0 to operands'length-1 generate
 
     begin
-        clip: entity work.Clip
+        clip: entity work.IntReturnGreater
             generic map (
                 size => word'length
             )

@@ -6,7 +6,7 @@ use ieee.math_real.all;
 library work;
 use work.CNNISATypes.all;
 
-entity Clip is
+entity IntReturnGreater is
     generic (
         size        : positive  := 8
     );
@@ -17,9 +17,9 @@ entity Clip is
         -- outputs
         output      : out signed(size-1 downto 0)
     );
-end entity Clip;
+end entity IntReturnGreater;
 
-architecture rtl of clip is
+architecture rtl of IntReturnGreater is
     
 begin
     
