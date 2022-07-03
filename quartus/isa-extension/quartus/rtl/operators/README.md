@@ -1,0 +1,1 @@
+Generic type-agnostic basic operators used to construct more complex functionality. Requires VHDL 2008, so can only be compiled with Quartus Pro (and perhaps Quartus Standard) Edition ([link](https://www.intel.com/content/dam/www/central-libraries/us/en/documents/quartus-prime-compare-editions-guide.pdf)).
