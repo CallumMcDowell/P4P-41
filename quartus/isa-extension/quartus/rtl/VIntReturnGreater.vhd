@@ -23,14 +23,14 @@ begin
     GEN_LOGIC: for w in 0 to operands'length-1 generate
 
     begin
-        clip: entity work.IntReturnGreater
+        UNIT: entity work.IntReturnGreater
             generic map (
                 size => word'length
             )
             port map (
                 -- inputs
-                operand => operands(w),
-                lo => lo,
+                a => operands(w),
+                b => lo,
                 -- outputs
                 output => outputs(w)
             );

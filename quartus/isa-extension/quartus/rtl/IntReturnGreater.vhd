@@ -12,8 +12,8 @@ entity IntReturnGreater is
     );
     port (
         -- inputs
-        operand     : in signed(size-1 downto 0);
-        lo          : in signed(size-1 downto 0);
+        a           : in signed(size-1 downto 0);
+        b           : in signed(size-1 downto 0);
         -- outputs
         output      : out signed(size-1 downto 0)
     );
@@ -23,6 +23,6 @@ architecture rtl of IntReturnGreater is
     
 begin
     
-    output <= operand when (operand > lo) else lo;
+    output <= a when (a > b) else b;
     
 end architecture rtl;
