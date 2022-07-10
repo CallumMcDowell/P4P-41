@@ -14,19 +14,36 @@ package CNNISATestbenchTypes is
     type elements is array (VLEN/ELEN -1 downto 0) of signed(ELEN-1 downto 0);
 
     -- Functions
+    function REAL_TO_INT(x : real) return integer;
     function REAL_TO_WORD(x : real) return signed;
+    function INT_TO_WORD(x : integer) return signed;
 
     function VREG_TO_ELEMENTS(x : vreg) return elements;
+
+    -- Procedures
+    procedure REPORT_TEST_START(entity_name : string);
+    procedure REPORT_TEST_END(entity_name : string; errors : integer);
     
 end package CNNISATestbenchTypes;
 
 package body CNNISATestbenchTypes is
+
+    -- Functions
+    function REAL_TO_INT(x : real) return integer is
+    begin
+        return integer(round(x));
+    end REAL_TO_INT;
 
     function REAL_TO_WORD(x : real) return signed is
     begin
         return to_signed(integer(round(x)), ELEN);
         -- WARNING: ASSUMES WORD IS SIGNED! Add precompiler case statement?
     end REAL_TO_WORD;
+
+    function INT_TO_WORD(x : integer) return signed is
+    begin
+        return to_signed(x, ELEN);
+    end INT_TO_WORD;
 
     function VREG_TO_ELEMENTS(x : vreg) return elements is
         variable elements_array : elements;
@@ -41,5 +58,21 @@ package body CNNISATestbenchTypes is
 
         return elements_array;
     end VREG_TO_ELEMENTS;
+
+
+    -- Procedures
+    procedure REPORT_TEST_START(entity_name : string) is
+    begin
+        report entity_name & ": Test START";
+    end REPORT_TEST_START;
+
+    procedure REPORT_TEST_END(entity_name : string; errors : integer) is
+    begin
+        if errors > 0 then
+            report entity_name & ": Test FAILED (" & integer'image(errors) & " errors)";
+        else
+            report entity_name & ": Test COMPLETE";
+        end if;
+    end REPORT_TEST_END;
         
 end package body CNNISATestbenchTypes;
