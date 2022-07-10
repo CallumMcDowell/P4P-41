@@ -4,15 +4,24 @@ use ieee.std_logic_1164.all;
 use ieee.math_real.all;
 
 package CNNISATypes is
-    constant    BITS        : positive      := 8;
-        -- placeholder, use bytes if supporting variable types (int8-32, fxp, fp)
-    constant    WORDS       : positive      := 8;
-        -- placeholder, use vector width if supporting variable types
 
-    subtype     word is     signed(BITS-1 downto 0);
-    type        vreg is     array (WORDS-1 downto 0) of word;
- 
+    constant    ELEN                : positive      := 8;
+        -- Number of bits in an element.
+        -- Must be a power of 2 or multiple of 8. VLEN must be a multiple of ELEN.
+        -- To deprecate when support for dynamic word length is added.
+    constant    VLEN                : positive      := ELEN * 8;
+        -- Number of bits in a vector register.
+        -- Must be a power of 2 or multiple of 8.
+
+    subtype        vreg             is std_logic_vector(VLEN-1 downto 0);
+        -- Vector register.
+
+
+
+    type        element_width is    (EIGHT, SIXTEEN, THIRTY_TWO);
+
 end package CNNISATypes;
+
 
 package body CNNISATypes is
         

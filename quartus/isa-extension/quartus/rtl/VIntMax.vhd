@@ -7,10 +7,13 @@ library work;
 use work.CNNISATypes.all;
 
 entity VIntMax is
+    generic (
+        element_length : positive  := ELEN
+    );
     port (
         -- inputs
         operands        : in vreg;
-        lo              : in word;
+        lo              : in signed(element_length-1 downto 0);
         -- outputs
         outputs         : out vreg
     );
@@ -20,19 +23,20 @@ architecture rtl of VIntMax is
     
 begin
 
-    GEN_LOGIC: for w in 0 to operands'length-1 generate
-
+    GEN_LOGIC: for i in vreg'length/element_length downto 1 generate
+        constant upper : integer := i * element_length;
+        constant lower : integer := upper - element_length;
     begin
         UNIT: entity work.IntMax
             generic map (
-                size => word'length
+                size => element_length
             )
             port map (
                 -- inputs
-                a => operands(w),
+                a => signed(operands(upper-1 downto lower)),
                 b => lo,
                 -- outputs
-                output => outputs(w)
+                std_logic_vector(output) => outputs(upper-1 downto lower)
             );
     end generate GEN_LOGIC;
     

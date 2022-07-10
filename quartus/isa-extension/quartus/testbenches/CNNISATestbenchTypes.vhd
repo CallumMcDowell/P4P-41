@@ -8,20 +8,38 @@ use work.CNNISATypes.all;
 
 package CNNISATestbenchTypes is
     -- Constants
-    constant WORD_MAX_SIGNED    : word := (word'LEFT => '0', others => '1');
-    constant WORD_MAX_UNSIGNED  : word := (others => '1');
+    constant ELEMENT_MAX_SIGNED     : signed(ELEN-1 downto 0)   := (signed(ELEN-1 downto 0)'LEFT => '0', others => '1');
+    constant ELEMENT_MAX_UNSIGNED   : signed(ELEN-1 downto 0)   := (others => '1');
+
+    type elements is array (VLEN/ELEN -1 downto 0) of signed(ELEN-1 downto 0);
 
     -- Functions
-    function REAL_TO_WORD(x : real) return word;
+    function REAL_TO_WORD(x : real) return signed;
+
+    function VREG_TO_ELEMENTS(x : vreg) return elements;
     
 end package CNNISATestbenchTypes;
 
 package body CNNISATestbenchTypes is
 
-    function REAL_TO_WORD(x : real) return word is
+    function REAL_TO_WORD(x : real) return signed is
     begin
-        return to_signed(integer(round(x)), word'length);
+        return to_signed(integer(round(x)), ELEN);
         -- WARNING: ASSUMES WORD IS SIGNED! Add precompiler case statement?
     end REAL_TO_WORD;
+
+    function VREG_TO_ELEMENTS(x : vreg) return elements is
+        variable elements_array : elements;
+        variable upper, lower : integer;
+    begin
+        for i in vreg'length/ELEN downto 1 loop
+            upper := i * ELEN;
+            lower := upper - ELEN;
+
+            elements_array(i-1) := signed(x(upper-1 downto lower));
+        end loop;
+
+        return elements_array;
+    end VREG_TO_ELEMENTS;
         
 end package body CNNISATestbenchTypes;

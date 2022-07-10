@@ -18,13 +18,14 @@ end entity VIntMax_TestBench;
 
 
 architecture test of VIntMax_TestBench is
-    constant WORD_MAX_SIGNED_INT    : integer := to_integer(WORD_MAX_SIGNED);
+    constant ELEMENT_MAX_SIGNED_INT    : integer := to_integer(ELEMENT_MAX_SIGNED);
 
-    signal vreg_in, vreg_out    : vreg  := (others => (others => '0'));
-    signal lo                   : word  := (others => '0');
+    signal vreg_in, vreg_out    : vreg  := (others => '0');
+    signal vreg_out_disp        : elements := (others => (others => '0'));
+    signal lo                   : signed(ELEN-1 downto 0)  := (others => '0');
     
 begin
-    
+
     UNIT: entity work.VIntMax
         port map (
             -- inputs
@@ -35,13 +36,18 @@ begin
         );
 
     UNITTEST: process
+        variable upper, lower : integer;
+
         variable a              : vreg;
         variable errors         : integer := 0;
     begin
         report "VIntMax: Test START";
 
-        for i in 0 to a'length-1 loop
-            a(i) := REAL_TO_WORD(real(i) - 0.5 * real(a'length));
+        for i in vreg'length/ELEN downto 1 loop
+            upper := i * ELEN;
+            lower := upper - ELEN;
+        
+            a(upper-1 downto lower) := std_logic_vector(REAL_TO_WORD(real(i) - 0.5 * real(VLEN/ELEN)));
         end loop;
         
         vreg_in <= a;
@@ -49,9 +55,12 @@ begin
 
         wait for 10 ns; -- propagation delay
 
-        for i in 0 to vreg_out'length-1 loop
-            if vreg_out(i) < lo then
-                report "VIntMax: Failed (asserted " & integer'image(to_integer(vreg_out(i)))
+        for i in vreg_out'length/ELEN downto 1 loop
+            upper := i * ELEN;
+            lower := upper - ELEN;
+
+            if signed(vreg_out(upper-1 downto lower)) < lo then
+                report "VIntMax: Failed (asserted " & integer'image(to_integer(signed(vreg_out(upper-1 downto lower))))
                     & " > " & integer'image(to_integer(lo)) & ")"
                 severity error;
 
@@ -61,16 +70,21 @@ begin
 
         wait for 10 ns; -- propagation delay
 
-        vreg_in <= (others => to_signed(-1, word'length));
-        lo <= to_signed(5, word'length), to_signed(6, word'length) after 10 ns;
+
+        vreg_in <= (others => '0');
+        lo <= to_signed(5, lo'length), to_signed(6, lo'length) after 10 ns;
+
+        -- TODO: add error checking for above, and add edgecases
+
 
         if errors > 0 then
             report "VIntMax: Test FAILED (" & integer'image(errors) & " errors)";
         else
             report "VIntMax: Test COMPLETE";
         end if;
-        
         wait;
     end process UNITTEST;
+
+    vreg_out_disp <= VREG_TO_ELEMENTS(vreg_out);
     
 end architecture test;
