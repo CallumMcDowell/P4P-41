@@ -8,6 +8,7 @@ use ieee.math_real.all;
 
 library work;
 use work.CNNISATypes.all;
+use work.CNNISATestbenchTypes.all;
 
 entity VIntMax_TestBench is
     port (
@@ -35,6 +36,7 @@ begin
 
     UNITTEST: process
         variable a              : vreg;
+        variable errors         : integer := 0;
     begin
         report "VIntMax: Test START";
 
@@ -48,10 +50,12 @@ begin
         wait for 10 ns; -- propagation delay
 
         for i in 0 to vreg_out'length-1 loop
-            if vreg_out(i) > lo then
+            if vreg_out(i) < lo then
                 report "VIntMax: Failed (asserted " & integer'image(to_integer(vreg_out(i)))
                     & " > " & integer'image(to_integer(lo)) & ")"
                 severity error;
+
+                errors := errors + 1;
             end if;
         end loop;
 
@@ -60,6 +64,12 @@ begin
         vreg_in <= (others => to_signed(-1, word'length));
         lo <= to_signed(5, word'length), to_signed(6, word'length) after 10 ns;
 
+        if errors > 0 then
+            report "VIntMax: Test FAILED (" & integer'image(errors) & " errors)";
+        else
+            report "VIntMax: Test COMPLETE";
+        end if;
+        
         wait;
     end process UNITTEST;
     
