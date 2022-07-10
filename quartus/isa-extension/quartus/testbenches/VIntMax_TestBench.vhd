@@ -36,12 +36,13 @@ begin
         );
 
     UNITTEST: process
-        variable upper, lower : integer;
-
-        variable a              : vreg;
+        constant TEST_NAME      : string := "VIntMax";
         variable errors         : integer := 0;
+
+        variable upper, lower : integer;
+        variable a              : vreg;
     begin
-        report "VIntMax: Test START";
+        REPORT_TEST_START(TEST_NAME);
 
         for i in vreg'length/ELEN downto 1 loop
             upper := i * ELEN;
@@ -60,7 +61,7 @@ begin
             lower := upper - ELEN;
 
             if signed(vreg_out(upper-1 downto lower)) < lo then
-                report "VIntMax: Failed (asserted " & integer'image(to_integer(signed(vreg_out(upper-1 downto lower))))
+                report TEST_NAME & ": Failed (asserted " & integer'image(to_integer(signed(vreg_out(upper-1 downto lower))))
                     & " > " & integer'image(to_integer(lo)) & ")"
                 severity error;
 
@@ -76,12 +77,7 @@ begin
 
         -- TODO: add error checking for above, and add edgecases
 
-
-        if errors > 0 then
-            report "VIntMax: Test FAILED (" & integer'image(errors) & " errors)";
-        else
-            report "VIntMax: Test COMPLETE";
-        end if;
+        REPORT_TEST_END(TEST_NAME, errors);
         wait;
     end process UNITTEST;
 
