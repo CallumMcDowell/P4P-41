@@ -14,6 +14,10 @@
 --! limitations under the License.
 --!
 
+-- Modified (13/07/22)
+-- For de1 Soc
+-- Hao Lin
+
 --! Standard library
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -36,7 +40,7 @@ library work;
 --! Target dependable configuration: RTL, FPGA or ASIC.
 use work.config_target.all;
 
-entity river_stock is port 
+entity river_stock_top is port 
 ( 
   --! Input reset. Active HIGH.
   i_rst     : in std_logic;
@@ -77,9 +81,9 @@ entity river_stock is port
   io_emdio    : inout std_logic;
   o_erstn     : out   std_ulogic
 );
-end river_stock;
+end river_stock_top;
 
-architecture arch_river_stock of river_stock is
+architecture arch_river_stock_top of river_stock_top is
 
 component riscv_soc is port 
 ( 
@@ -332,4 +336,4 @@ begin
     o_antint_contr => open
   );
   
-end arch_river_stock;
+end arch_river_stock_top;
