@@ -1,0 +1,1 @@
+`$ py sv2v.py --pkg C:\Users\CM\Documents\Git\P4P-41\quartus\stock\cv32e40x-reattempt\rtl\include --include C:\Users\CM\Documents\Git\P4P-41\quartus\stock\cv32e40x-reattempt\rtl`
