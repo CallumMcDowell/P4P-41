@@ -173,4 +173,6 @@ set_global_assignment -name VHDL_FILE ../../commonlib/types_util.vhd -library co
 set_global_assignment -name VHDL_FILE ../../commonlib/types_common.vhd -library commonlib
 set_global_assignment -name VHDL_FILE hw/river_stock_top.vhd -library work
 set_global_assignment -name VHDL_FILE hw/config_de1.vhd -library work
+set_global_assignment -name TCL_SCRIPT_FILE passthruram_en.tcl
+set_global_assignment -name ADD_PASS_THROUGH_LOGIC_TO_INFERRED_RAMS OFF
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
