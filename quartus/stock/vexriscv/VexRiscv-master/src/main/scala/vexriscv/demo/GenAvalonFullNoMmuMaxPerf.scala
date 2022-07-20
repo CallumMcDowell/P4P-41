@@ -10,6 +10,10 @@ import spinal.lib.bus.avalon.AvalonMM
 import spinal.lib.com.jtag.Jtag
 import spinal.lib.eda.altera.{InterruptReceiverTag, QSysify, ResetEmitterTag}
 
+// from https://github.com/spinalhdl/vexriscv/issues/224
+import spinal.lib.com.jtag.JtagTapInstructionCtrl
+import spinal.lib.blackbox.altera.VJTAG
+
 /**
  * Created by cmcd407 on 19.07.22.
  *
@@ -130,6 +134,15 @@ object GenAvalonFullNoMmuMaxPerf {
           }
           case plugin: DebugPlugin => plugin.debugClockDomain {
             plugin.io.bus.setAsDirectionLess()
+            
+            // Virtual JTAG Wrapper for Altera
+            // Does not seem to work. Need to validate once software build chain is up.
+            // val tap = new VJTAG()
+            // val jtagCtrl = tap.toJtagTapInstructionCtrl()
+            // jtagCtrl <> plugin.io.bus.fromJtagInstructionCtrl(
+            //   jtagClockDomain=ClockDomain(tap.tck),
+            //   jtagHeaderIgnoreWidth=1)
+            
             val jtag = slave(new Jtag())
               .setName("jtag")
             jtag <> plugin.io.bus.fromJtag()
