@@ -4,6 +4,24 @@
 **/VexRiscv-master/opt/riscv
 
 # -------------------------------------------------------------------------
+# A gitignore for cmake
+# From https://github.com/github/gitignore/blob/main/CMake.gitignore
+
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+*.ninja
+*.ninja_*
+
+# -------------------------------------------------------------------------
 # A gitignore for Altera Quartus II that tries to ignore almost all of the
 # automatically Quartus-generated files. This primarily leaves the project,
 # settings, source, and constraint files to be added. The files ignored do not
