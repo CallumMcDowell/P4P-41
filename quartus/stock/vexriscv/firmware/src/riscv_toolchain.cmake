@@ -16,7 +16,8 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
 
 # configure cross-compiler
-set(BAREMETAL_RISCV_TOOLCHAIN_PATH      $ENV{RISCV_GCC})
+cmake_path(SET BAREMETAL_RISCV_TOOLCHAIN_PATH_ENV $ENV{RISCV_GCC}) # normalise path ('\' safe!)
+set(BAREMETAL_RISCV_TOOLCHAIN_PATH      "${BAREMETAL_RISCV_TOOLCHAIN_PATH_ENV}/")
 set(BAREMETAL_RISCV_TOOLCHAIN_BASE_NAME "riscv64-unknown-elf")
 set(EXECUTABLE_SUFFIX                   ".exe")
 
@@ -30,8 +31,12 @@ set(CMAKE_RANLIB                    ${BAREMETAL_RISCV_TOOLCHAIN_PATH}${BAREMETAL
 set(CMAKE_SIZE                      ${BAREMETAL_RISCV_TOOLCHAIN_PATH}${BAREMETAL_RISCV_TOOLCHAIN_BASE_NAME}-size${EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 set(CMAKE_STRIP                     ${BAREMETAL_RISCV_TOOLCHAIN_PATH}${BAREMETAL_RISCV_TOOLCHAIN_BASE_NAME}-strip${EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 
-set(CMAKE_C_FLAGS                   "-Wno-psabi --specs=nosys.specs -fdata-sections -ffunction-sections -Wl,--gc-sections" CACHE INTERNAL "")
-set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS} -fno-exceptions" CACHE INTERNAL "")
+
+# set(TFLITE_FLAGS                    "-DTFLITE_ENABLE_XNNPACK=OFF")
+set(TFLITE_FLAGS                    "")
+
+set(CMAKE_C_FLAGS                   "${TFLITE_FLAGS} -Wno-psabi --specs=nosys.specs -fdata-sections -ffunction-sections -Wl,--gc-sections" CACHE INTERNAL "")
+set(CMAKE_CXX_FLAGS                 "${TFLITE_FLAGS} ${CMAKE_C_FLAGS} -fno-exceptions" CACHE INTERNAL "")
 
 set(CMAKE_C_FLAGS_DEBUG             "-Os -g" CACHE INTERNAL "")
 set(CMAKE_C_FLAGS_RELEASE           "-Os -DNDEBUG" CACHE INTERNAL "")
