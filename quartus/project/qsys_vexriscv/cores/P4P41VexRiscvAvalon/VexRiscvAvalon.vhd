@@ -255,6 +255,7 @@ architecture rtl of VexRiscvAvalon is
 			dBusAvalon_write         : out std_logic;
 			dBusAvalon_waitRequestn  : in  std_logic;
 			dBusAvalon_address       : out std_logic_vector(31 downto 0);
+			dBusAvalon_burstCount    : out std_logic_vector( 3 downto 0); -- here
 			dBusAvalon_byteEnable    : out std_logic_vector( 3 downto 0);
 			dBusAvalon_writeData     : out std_logic_vector(31 downto 0);
 			dBusAvalon_response      : in  std_logic;
