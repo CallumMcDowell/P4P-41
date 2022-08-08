@@ -70,7 +70,7 @@ set_parameter_property CORE_CONFIG TYPE NATURAL
 set_parameter_property CORE_CONFIG UNITS None
 set_parameter_property CORE_CONFIG DESCRIPTION "Choose a RISC-V Core configuration with associated ISA."
 set_parameter_property CORE_CONFIG HDL_PARAMETER true
-set_parameter_property CORE_CONFIG ALLOWED_RANGES {0:RV32I 1:RV32IM 2:RV32IM-Cached 3:RV32IMAC-Cached 4:RV32IMAFC-Cached}
+set_parameter_property CORE_CONFIG ALLOWED_RANGES {0:RV32I 1:RV32IM 2:RV32IM-Cached 3:RV32IMAC-Cached 4:RV32IMAFC-Cached 5:MyVexRiscv}
 
 #
 # file sets
