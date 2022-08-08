@@ -120,7 +120,7 @@ architecture rtl of VexRiscvAvalon is
 		);
 	end component VexInterruptController;
 	--------------------------------------------------------------------
-    - No difference in wiring between VexRiscvAvalon_0 and 1
+    -- No difference in wiring between VexRiscvAvalon_0 and 1
     --------------------------------------------------------------------
 	component VexRiscvAvalon_0 is
 		generic (
@@ -212,10 +212,10 @@ architecture rtl of VexRiscvAvalon is
 		);
 	end component VexRiscvAvalon_1;
     --------------------------------------------------------------------
-    - VexRiscvAvalon_2 have extra ports:
-        - iBusAvalon_burstCount
-        - dBusAvalon_burstCount
-    - No difference in wiring between VexRiscvAvalon_2, 3, 4
+    -- VexRiscvAvalon_2 have extra ports:
+        -- iBusAvalon_burstCount
+        -- dBusAvalon_burstCount
+    -- No difference in wiring between VexRiscvAvalon_2, 3, 4
     --------------------------------------------------------------------
 	component VexRiscvAvalon_2 is
 		generic (
@@ -359,12 +359,12 @@ architecture rtl of VexRiscvAvalon is
 	end component VexRiscvAvalon_4;
 
     --------------------------------------------------------------------
-    __  __     __     __        ____  _
-    |  \/  |_   \ \   / /____  _|  _ \(_)___  _____   __
-    | |\/| | | | \ \ / / _ \ \/ / |_) | / __|/ __\ \ / /
-    | |  | | |_| |\ V /  __/>  <|  _ <| \__ \ (__ \ V /
-    |_|  |_|\__, | \_/ \___/_/\_\_| \_\_|___/\___| \_/
-            |___/
+    -- __  __     __     __        ____  _
+    -- |  \/  |_   \ \   / /____  _|  _ \(_)___  _____   __
+    -- | |\/| | | | \ \ / / _ \ \/ / |_) | / __|/ __\ \ / /
+    -- | |  | | |_| |\ V /  __/>  <|  _ <| \__ \ (__ \ V /
+    -- |_|  |_|\__, | \_/ \___/_/\_\_| \_\_|___/\___| \_/
+    --         |___/
     --------------------------------------------------------------------
     component VexRiscvAvalon_5 is
         generic (
