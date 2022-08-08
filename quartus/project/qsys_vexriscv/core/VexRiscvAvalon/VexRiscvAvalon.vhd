@@ -29,6 +29,7 @@
 -- (2) RV32IM, Caches
 -- (3) RV32IMC, Caches
 -- (4) RV32IMAFC, Caches
+-- (5) MyVexcRiscv
 
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -36,6 +37,7 @@ use IEEE.numeric_std.all;
 
 entity VexRiscvAvalon is
 	generic (
+	    -- In VexRiscvAvalon_hw.tcl
 		C_RESET_VECTOR : std_logic_vector(31 downto 0);
 		C_EXCEPTION_VECTOR : std_logic_vector(31 downto 0);
 		C_IO_BEGIN : std_logic_vector(31 downto 0);
@@ -87,7 +89,12 @@ end entity VexRiscvAvalon;
 
 architecture rtl of VexRiscvAvalon is
 
+    -- In csrplugin: utimeAccess = CsrAccess.READ_ONLY
+    --------------------------------------------------------------------
 	signal utime : std_logic_vector(63 downto 0) := x"0000000000000000";
+
+	-- Intermediate signals for interrupt controller
+	--------------------------------------------------------------------
 	signal irq_soft : std_logic := '0';
 	signal irq_timer : std_logic := '0';
 	signal irq_external : std_logic := '0';
@@ -112,7 +119,9 @@ architecture rtl of VexRiscvAvalon is
 			avalon_waitrequest : out std_logic
 		);
 	end component VexInterruptController;
-
+	--------------------------------------------------------------------
+    - No difference in wiring between VexRiscvAvalon_0 and 1
+    --------------------------------------------------------------------
 	component VexRiscvAvalon_0 is
 		generic (
 			C_RESET_VECTOR : std_logic_vector(31 downto 0);
@@ -202,7 +211,12 @@ architecture rtl of VexRiscvAvalon is
 			dBusAvalon_readData      : in  std_logic_vector(31 downto 0)
 		);
 	end component VexRiscvAvalon_1;
-
+    --------------------------------------------------------------------
+    - VexRiscvAvalon_2 have extra ports:
+        - iBusAvalon_burstCount
+        - dBusAvalon_burstCount
+    - No difference in wiring between VexRiscvAvalon_2, 3, 4
+    --------------------------------------------------------------------
 	component VexRiscvAvalon_2 is
 		generic (
 			C_RESET_VECTOR : std_logic_vector(31 downto 0);
@@ -233,7 +247,7 @@ architecture rtl of VexRiscvAvalon is
 			iBusAvalon_read          : out std_logic;
 			iBusAvalon_waitRequestn  : in  std_logic;
 			iBusAvalon_address       : out std_logic_vector(31 downto 0);
-			iBusAvalon_burstCount    : out std_logic_vector( 3 downto 0);
+			iBusAvalon_burstCount    : out std_logic_vector( 3 downto 0); - here
 			iBusAvalon_response      : in  std_logic;
 			iBusAvalon_readDataValid : in  std_logic;
 			iBusAvalon_readData      : in  std_logic_vector(31 downto 0);
@@ -241,7 +255,7 @@ architecture rtl of VexRiscvAvalon is
 			dBusAvalon_write         : out std_logic;
 			dBusAvalon_waitRequestn  : in  std_logic;
 			dBusAvalon_address       : out std_logic_vector(31 downto 0);
-			dBusAvalon_burstCount    : out std_logic_vector( 3 downto 0);
+			dBusAvalon_burstCount    : out std_logic_vector( 3 downto 0); - here
 			dBusAvalon_byteEnable    : out std_logic_vector( 3 downto 0);
 			dBusAvalon_writeData     : out std_logic_vector(31 downto 0);
 			dBusAvalon_response      : in  std_logic;
@@ -344,6 +358,59 @@ architecture rtl of VexRiscvAvalon is
 		);
 	end component VexRiscvAvalon_4;
 
+    --------------------------------------------------------------------
+    __  __     __     __        ____  _
+    |  \/  |_   \ \   / /____  _|  _ \(_)___  _____   __
+    | |\/| | | | \ \ / / _ \ \/ / |_) | / __|/ __\ \ / /
+    | |  | | |_| |\ V /  __/>  <|  _ <| \__ \ (__ \ V /
+    |_|  |_|\__, | \_/ \___/_/\_\_| \_\_|___/\___| \_/
+            |___/
+    --------------------------------------------------------------------
+    component VexRiscvAvalon_5 is
+        generic (
+            C_RESET_VECTOR : std_logic_vector(31 downto 0);
+            C_EXCEPTION_VECTOR : std_logic_vector(31 downto 0);
+            C_IO_BEGIN : std_logic_vector(31 downto 0);
+            C_IO_END : std_logic_vector(31 downto 0)
+        );
+        port (
+            -- common
+            clk   : in std_logic;
+            reset : in std_logic;
+
+            -- debug
+            debugReset     : in  std_logic;
+            jtag_tck       : in  std_logic;
+            jtag_tms       : in  std_logic;
+            jtag_tdi       : in  std_logic;
+            jtag_tdo       : out std_logic;
+            debug_resetOut : out std_logic;
+
+            -- riscv
+            timerInterrupt    : in std_logic;
+            softwareInterrupt : in std_logic;
+            externalInterrupt : in std_logic;
+            utime             : in std_logic_vector(63 downto 0);
+
+            -- avalon
+            iBusAvalon_read          : out std_logic;
+            iBusAvalon_waitRequestn  : in  std_logic;
+            iBusAvalon_address       : out std_logic_vector(31 downto 0);
+            iBusAvalon_response      : in  std_logic;
+            iBusAvalon_readDataValid : in  std_logic;
+            iBusAvalon_readData      : in  std_logic_vector(31 downto 0);
+            dBusAvalon_read          : out std_logic;
+            dBusAvalon_write         : out std_logic;
+            dBusAvalon_waitRequestn  : in  std_logic;
+            dBusAvalon_address       : out std_logic_vector(31 downto 0);
+            dBusAvalon_byteEnable    : out std_logic_vector( 3 downto 0);
+            dBusAvalon_writeData     : out std_logic_vector(31 downto 0);
+            dBusAvalon_response      : in  std_logic;
+            dBusAvalon_readDataValid : in  std_logic;
+            dBusAvalon_readData      : in  std_logic_vector(31 downto 0)
+        );
+    end component VexRiscvAvalon_5;
+
 begin
 
 	ic0 : component VexInterruptController
@@ -354,6 +421,8 @@ begin
 			ext_irq => irq_external,
 			tmr_irq => irq_timer,
 			sft_irq => irq_soft,
+
+			-- All following defined in VexRiscvAvalon_hw.tcl
 			avalon_address => ic_avalon_address,
 			avalon_write => ic_avalon_write,
 			avalon_writedata => ic_avalon_writedata,
@@ -564,10 +633,68 @@ begin
 			);
 	end generate r4;
 
+    -- Explicit uptime tracker
 	process (clk) begin
 		if (clk = '1' and clk'EVENT) then
 			utime <= std_logic_vector(unsigned(utime) + 1);
 		end if;
 	end process;
+
+    --------------------------------------------------------------------
+    __  __     __     __        ____  _
+    |  \/  |_   \ \   / /____  _|  _ \(_)___  _____   __
+    | |\/| | | | \ \ / / _ \ \/ / |_) | / __|/ __\ \ / /
+    | |  | | |_| |\ V /  __/>  <|  _ <| \__ \ (__ \ V /
+    |_|  |_|\__, | \_/ \___/_/\_\_| \_\_|___/\___| \_/
+            |___/
+    --------------------------------------------------------------------
+    r5 : if CORE_CONFIG = 5 generate
+        vex0 : component VexRiscvAvalon_5
+            generic map (
+                C_RESET_VECTOR => C_RESET_VECTOR,
+                C_EXCEPTION_VECTOR => C_EXCEPTION_VECTOR,
+                C_IO_BEGIN => C_IO_BEGIN,
+                C_IO_END => C_IO_END
+            )
+            port map (
+                clk => clk,
+                reset => reset or reset_debug,
+                debugReset => reset,
+
+                -------------------------------------------------------
+                JTAG
+                -------------------------------------------------------
+                jtag_tck => jtag_tck,
+                jtag_tms => jtag_tms,
+                jtag_tdi => jtag_tdi,
+                jtag_tdo => jtag_tdo,
+
+                -------------------------------------------------------
+                To IRQ Controller
+                -------------------------------------------------------
+                debug_resetOut => reset_debug,
+                timerInterrupt => irq_timer,
+                softwareInterrupt => irq_soft,
+                externalInterrupt => irq_external,
+
+                utime => utime,
+
+                iBusAvalon_read => iBusAvalon_read,
+                iBusAvalon_waitRequestn => iBusAvalon_waitRequestn,
+                iBusAvalon_address => iBusAvalon_address,
+                iBusAvalon_response => iBusAvalon_response,
+                iBusAvalon_readDataValid => iBusAvalon_readDataValid,
+                iBusAvalon_readData => iBusAvalon_readData,
+                dBusAvalon_read => dBusAvalon_read,
+                dBusAvalon_write => dBusAvalon_write,
+                dBusAvalon_waitRequestn => dBusAvalon_waitRequestn,
+                dBusAvalon_address => dBusAvalon_address,
+                dBusAvalon_byteEnable => dBusAvalon_byteEnable,
+                dBusAvalon_writeData => dBusAvalon_writeData,
+                dBusAvalon_response => dBusAvalon_response,
+                dBusAvalon_readDataValid => dBusAvalon_readDataValid,
+                dBusAvalon_readData => dBusAvalon_readData
+            );
+    end generate r5;
 
 end architecture rtl;
