@@ -3,7 +3,14 @@
 
 `timescale 1ns/1ps
 
-module MyVexRiscvAvalon (
+module MyVexRiscvAvalon
+#(
+  parameter [31:0] C_RESET_VECTOR,
+  parameter [31:0] C_EXCEPTION_VECTOR,
+  parameter [31:0] C_IO_BEGIN,
+  parameter [31:0] C_IO_END
+)
+(
   output              debug_resetOut,
   input               timerInterrupt,
   input               externalInterrupt,
