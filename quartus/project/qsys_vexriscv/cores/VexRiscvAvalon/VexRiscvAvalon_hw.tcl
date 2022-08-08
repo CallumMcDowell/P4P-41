@@ -6,13 +6,13 @@ package require -exact qsys 13.1
 #
 
 set_module_property DESCRIPTION ""
-set_module_property NAME VexRiscvAvalon
+set_module_property NAME P4P41VexRiscvAvalon
 set_module_property VERSION 1.0
 set_module_property INTERNAL false
 set_module_property OPAQUE_ADDRESS_MAP true
 set_module_property GROUP RISC-V
-set_module_property AUTHOR "SpinalHDL & ARIES Embedded GmbH"
-set_module_property DISPLAY_NAME VexRiscvAvalon
+set_module_property AUTHOR "SpinalHDL & ARIES Embedded GmbH & Hao Lin"
+set_module_property DISPLAY_NAME P4P41VexRiscvAvalon
 set_module_property INSTANTIATE_IN_SYSTEM_MODULE true
 set_module_property EDITABLE false
 set_module_property ANALYZE_HDL true
