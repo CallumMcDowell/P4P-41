@@ -247,7 +247,7 @@ architecture rtl of VexRiscvAvalon is
 			iBusAvalon_read          : out std_logic;
 			iBusAvalon_waitRequestn  : in  std_logic;
 			iBusAvalon_address       : out std_logic_vector(31 downto 0);
-			iBusAvalon_burstCount    : out std_logic_vector( 3 downto 0); - here
+			iBusAvalon_burstCount    : out std_logic_vector( 3 downto 0); -- here
 			iBusAvalon_response      : in  std_logic;
 			iBusAvalon_readDataValid : in  std_logic;
 			iBusAvalon_readData      : in  std_logic_vector(31 downto 0);
@@ -255,7 +255,7 @@ architecture rtl of VexRiscvAvalon is
 			dBusAvalon_write         : out std_logic;
 			dBusAvalon_waitRequestn  : in  std_logic;
 			dBusAvalon_address       : out std_logic_vector(31 downto 0);
-			dBusAvalon_burstCount    : out std_logic_vector( 3 downto 0); - here
+			dBusAvalon_burstCount    : out std_logic_vector( 3 downto 0); -- here
 			dBusAvalon_byteEnable    : out std_logic_vector( 3 downto 0);
 			dBusAvalon_writeData     : out std_logic_vector(31 downto 0);
 			dBusAvalon_response      : in  std_logic;
@@ -359,12 +359,7 @@ architecture rtl of VexRiscvAvalon is
 	end component VexRiscvAvalon_4;
 
     --------------------------------------------------------------------
-    -- __  __     __     __        ____  _
-    -- |  \/  |_   \ \   / /____  _|  _ \(_)___  _____   __
-    -- | |\/| | | | \ \ / / _ \ \/ / |_) | / __|/ __\ \ / /
-    -- | |  | | |_| |\ V /  __/>  <|  _ <| \__ \ (__ \ V /
-    -- |_|  |_|\__, | \_/ \___/_/\_\_| \_\_|___/\___| \_/
-    --         |___/
+    -- MyVexRiscv
     --------------------------------------------------------------------
     component VexRiscvAvalon_5 is
         generic (
