@@ -662,7 +662,7 @@ begin
                 debugReset => reset,
 
                 -------------------------------------------------------
-                JTAG
+                -- JTAG
                 -------------------------------------------------------
                 jtag_tck => jtag_tck,
                 jtag_tms => jtag_tms,
@@ -670,7 +670,7 @@ begin
                 jtag_tdo => jtag_tdo,
 
                 -------------------------------------------------------
-                To IRQ Controller
+                -- To IRQ Controller
                 -------------------------------------------------------
                 debug_resetOut => reset_debug,
                 timerInterrupt => irq_timer,
