@@ -1,9 +1,9 @@
 // Generator : SpinalHDL v1.7.1    git head : 0444bb76ab1d6e19f0ec46bc03c4769776deb7d5
-// Component : MyVexRiscvAvalon
+// Component : VexRiscvAvalon_5
 
 `timescale 1ns/1ps
 
-module MyVexRiscvAvalon
+module VexRiscvAvalon_5
 #(
   parameter [31:0] C_RESET_VECTOR,
   parameter [31:0] C_EXCEPTION_VECTOR,

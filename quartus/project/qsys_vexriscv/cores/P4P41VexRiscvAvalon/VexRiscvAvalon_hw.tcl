@@ -100,6 +100,7 @@ add_fileset_file VexRiscvAvalon_1.v VERILOG PATH VexRiscvAvalon_1.v
 add_fileset_file VexRiscvAvalon_2.v VERILOG PATH VexRiscvAvalon_2.v
 add_fileset_file VexRiscvAvalon_3.v VERILOG PATH VexRiscvAvalon_3.v
 add_fileset_file VexRiscvAvalon_4.v VERILOG PATH VexRiscvAvalon_4.v
+add_fileset_file VexRiscvAvalon_5.v VERILOG PATH VexRiscvAvalon_5.v
 
 #
 # connection point clock
