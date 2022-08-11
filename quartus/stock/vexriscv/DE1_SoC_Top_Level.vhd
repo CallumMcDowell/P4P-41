@@ -40,9 +40,9 @@ entity DE1_SoC_top_level is
 
         -- CLOCK
         CLOCK_50  : in std_logic;
-        CLOCK2_50 : in std_logic;
-        CLOCK3_50 : in std_logic;
-        CLOCK4_50 : in std_logic;
+        -- CLOCK2_50 : in std_logic;
+        -- CLOCK3_50 : in std_logic;
+        -- CLOCK4_50 : in std_logic;
 
         -- SDRAM
 --        DRAM_ADDR  : out   std_logic_vector(12 downto 0);
@@ -169,20 +169,60 @@ entity DE1_SoC_top_level is
 end entity DE1_SoC_top_level;
 
 architecture rtl of DE1_SoC_top_level is
+
+	-- Raw Keys?
 	signal KEY : std_logic_vector(3 downto 0);
+
+	-- HW blinky
+	signal counter : integer range 1 to 12500000 := 1;
+	signal led_mod : std_logic := '0';
+
+	signal gpio : std_logic_vector(31 downto 0);
+
+	-- ArieEmbedded VexRiscv 
+--	component vexriscv_system is
+--		port (
+--			clk_clk       : in    std_logic                     := '0';             --   clk.clk
+--			gpio_export   : inout std_logic_vector(31 downto 0) := (others => '0'); --  gpio.export
+--			reset_reset_n : in    std_logic                     := '0'              -- reset.reset_n
+--		);
+--	end component;
+	
 begin
 
 	KEY <= not KEY_N;
-
+	
 	VEXRISCV: entity vexriscv_system.vexriscv_system
 	port map (
 		clk_clk => CLOCK_50,
-		reset_reset_n => KEY(0),
-		vexriscvavalonmaxperf_0_jtag_tms => '0',
-		vexriscvavalonmaxperf_0_jtag_tdi => '0',
+		reset_reset_n => '1',      -- Hardwired reset F                        
+		gpio_export => gpio,
+		vexriscvavalonmaxperf_0_jtag_tms => open,
+		vexriscvavalonmaxperf_0_jtag_tdi => open,
 		vexriscvavalonmaxperf_0_jtag_tdo => open,
-		vexriscvavalonmaxperf_0_jtag_tck => '0',
-		vexriscvavalonmaxperf_0_softwareinterrupt_export => '0'
-	);
+		vexriscvavalonmaxperf_0_jtag_tck => open,                             
+		vexriscvavalonmaxperf_0_softwareinterrupt_export => SW(9)
+		);
+		-- ArieEmbedded VexRiscv
+--        u0 : component vexriscv_system
+--                port map(
+--                        clk_clk       => CLOCK_50,       --   clk.clk
+--                        gpio_export   => gpio, 				--  gpio.export
+--                        reset_reset_n => '1'             -- reset.reset_n
+--                );
 
+        -- Blinky
+        process (CLOCK_50) begin
+                if (CLOCK_50 = '1' and CLOCK_50'EVENT) then
+                        if (counter < 12500000) then
+                                counter <= counter + 1;
+                        else
+                                led_mod <= not led_mod;
+                                counter <= 1;
+                        end if;
+                end if;
+        end process;
+
+        LEDR(9) <= led_mod;
+        LEDR(7 downto 0) <= gpio(7 downto 0);
 end;

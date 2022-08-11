@@ -29,11 +29,13 @@ object GenAvalonFullNoMmuMaxPerf {
       // CPU Configuration
       val cpuConfig = VexRiscvConfig(
         plugins = List(
-          new PcManagerSimplePlugin(
-            resetVector = 0x80000000l, // TODO: SET 0x0..0!?
-            relaxedPcCalculation = false
-          ),
+          // Deprecated, does nothing
+//          new PcManagerSimplePlugin(
+//            resetVector = 0x80000000l, // TODO: SET 0x0..0!?
+//            relaxedPcCalculation = false
+//          ),
           new IBusCachedPlugin(
+            resetVector = 0x00000010l, // Set to same reset vector expected in sw
             prediction = DYNAMIC_TARGET,
             historyRamSizeLog2 = 8,
             config = InstructionCacheConfig(

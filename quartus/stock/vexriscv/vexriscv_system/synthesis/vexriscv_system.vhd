@@ -8,13 +8,14 @@ use IEEE.numeric_std.all;
 
 entity vexriscv_system is
 	port (
-		clk_clk                                          : in  std_logic := '0'; --                                       clk.clk
-		reset_reset_n                                    : in  std_logic := '0'; --                                     reset.reset_n
-		vexriscvavalonmaxperf_0_jtag_tms                 : in  std_logic := '0'; --              vexriscvavalonmaxperf_0_jtag.tms
-		vexriscvavalonmaxperf_0_jtag_tdi                 : in  std_logic := '0'; --                                          .tdi
-		vexriscvavalonmaxperf_0_jtag_tdo                 : out std_logic;        --                                          .tdo
-		vexriscvavalonmaxperf_0_jtag_tck                 : in  std_logic := '0'; --                                          .tck
-		vexriscvavalonmaxperf_0_softwareinterrupt_export : in  std_logic := '0'  -- vexriscvavalonmaxperf_0_softwareinterrupt.export
+		clk_clk                                          : in    std_logic                     := '0';             --                                       clk.clk
+		gpio_export                                      : inout std_logic_vector(31 downto 0) := (others => '0'); --                                      gpio.export
+		reset_reset_n                                    : in    std_logic                     := '0';             --                                     reset.reset_n
+		vexriscvavalonmaxperf_0_jtag_tms                 : in    std_logic                     := '0';             --              vexriscvavalonmaxperf_0_jtag.tms
+		vexriscvavalonmaxperf_0_jtag_tdi                 : in    std_logic                     := '0';             --                                          .tdi
+		vexriscvavalonmaxperf_0_jtag_tdo                 : out   std_logic;                                        --                                          .tdo
+		vexriscvavalonmaxperf_0_jtag_tck                 : in    std_logic                     := '0';             --                                          .tck
+		vexriscvavalonmaxperf_0_softwareinterrupt_export : in    std_logic                     := '0'              -- vexriscvavalonmaxperf_0_softwareinterrupt.export
 	);
 end entity vexriscv_system;
 
@@ -52,25 +53,57 @@ architecture rtl of vexriscv_system is
 		);
 	end component VexRiscvAvalonMaxPerf;
 
-	component vexriscv_system_jtag_uart_0 is
+	component vexriscv_system_gpio is
 		port (
-			clk            : in  std_logic                     := 'X';             -- clk
-			rst_n          : in  std_logic                     := 'X';             -- reset_n
-			av_chipselect  : in  std_logic                     := 'X';             -- chipselect
-			av_address     : in  std_logic                     := 'X';             -- address
-			av_read_n      : in  std_logic                     := 'X';             -- read_n
-			av_readdata    : out std_logic_vector(31 downto 0);                    -- readdata
-			av_write_n     : in  std_logic                     := 'X';             -- write_n
-			av_writedata   : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
-			av_waitrequest : out std_logic;                                        -- waitrequest
-			av_irq         : out std_logic                                         -- irq
+			clk        : in    std_logic                     := 'X';             -- clk
+			reset_n    : in    std_logic                     := 'X';             -- reset_n
+			address    : in    std_logic_vector(2 downto 0)  := (others => 'X'); -- address
+			write_n    : in    std_logic                     := 'X';             -- write_n
+			writedata  : in    std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			chipselect : in    std_logic                     := 'X';             -- chipselect
+			readdata   : out   std_logic_vector(31 downto 0);                    -- readdata
+			bidir_port : inout std_logic_vector(31 downto 0) := (others => 'X')  -- export
 		);
-	end component vexriscv_system_jtag_uart_0;
+	end component vexriscv_system_gpio;
+
+	component vexriscv_system_onchip_memory2_0 is
+		port (
+			clk         : in  std_logic                     := 'X';             -- clk
+			address     : in  std_logic_vector(13 downto 0) := (others => 'X'); -- address
+			clken       : in  std_logic                     := 'X';             -- clken
+			chipselect  : in  std_logic                     := 'X';             -- chipselect
+			write       : in  std_logic                     := 'X';             -- write
+			readdata    : out std_logic_vector(31 downto 0);                    -- readdata
+			writedata   : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			byteenable  : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			reset       : in  std_logic                     := 'X';             -- reset
+			reset_req   : in  std_logic                     := 'X';             -- reset_req
+			address2    : in  std_logic_vector(13 downto 0) := (others => 'X'); -- address
+			chipselect2 : in  std_logic                     := 'X';             -- chipselect
+			clken2      : in  std_logic                     := 'X';             -- clken
+			write2      : in  std_logic                     := 'X';             -- write
+			readdata2   : out std_logic_vector(31 downto 0);                    -- readdata
+			writedata2  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			byteenable2 : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			clk2        : in  std_logic                     := 'X';             -- clk
+			reset2      : in  std_logic                     := 'X';             -- reset
+			reset_req2  : in  std_logic                     := 'X';             -- reset_req
+			freeze      : in  std_logic                     := 'X'              -- freeze
+		);
+	end component vexriscv_system_onchip_memory2_0;
+
+	component vexriscv_system_pll_0 is
+		port (
+			refclk   : in  std_logic := 'X'; -- clk
+			rst      : in  std_logic := 'X'; -- reset
+			outclk_0 : out std_logic;        -- clk
+			locked   : out std_logic         -- export
+		);
+	end component vexriscv_system_pll_0;
 
 	component vexriscv_system_mm_interconnect_0 is
 		port (
-			clk_0_clk_clk                                             : in  std_logic                     := 'X';             -- clk
-			jtag_uart_0_reset_reset_bridge_in_reset_reset             : in  std_logic                     := 'X';             -- reset
+			pll_0_outclk0_clk                                         : in  std_logic                     := 'X';             -- clk
 			VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset_reset : in  std_logic                     := 'X';             -- reset
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_address                : in  std_logic_vector(31 downto 0) := (others => 'X'); -- address
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_waitrequest            : out std_logic;                                        -- waitrequest
@@ -82,6 +115,25 @@ architecture rtl of vexriscv_system is
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_write                  : in  std_logic                     := 'X';             -- write
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_writedata              : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_response               : out std_logic_vector(1 downto 0);                     -- response
+			gpio_s1_address                                           : out std_logic_vector(2 downto 0);                     -- address
+			gpio_s1_write                                             : out std_logic;                                        -- write
+			gpio_s1_readdata                                          : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			gpio_s1_writedata                                         : out std_logic_vector(31 downto 0);                    -- writedata
+			gpio_s1_chipselect                                        : out std_logic;                                        -- chipselect
+			onchip_memory2_0_s2_address                               : out std_logic_vector(13 downto 0);                    -- address
+			onchip_memory2_0_s2_write                                 : out std_logic;                                        -- write
+			onchip_memory2_0_s2_readdata                              : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			onchip_memory2_0_s2_writedata                             : out std_logic_vector(31 downto 0);                    -- writedata
+			onchip_memory2_0_s2_byteenable                            : out std_logic_vector(3 downto 0);                     -- byteenable
+			onchip_memory2_0_s2_chipselect                            : out std_logic;                                        -- chipselect
+			onchip_memory2_0_s2_clken                                 : out std_logic                                         -- clken
+		);
+	end component vexriscv_system_mm_interconnect_0;
+
+	component vexriscv_system_mm_interconnect_1 is
+		port (
+			pll_0_outclk0_clk                                         : in  std_logic                     := 'X';             -- clk
+			VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset_reset : in  std_logic                     := 'X';             -- reset
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_address                : in  std_logic_vector(31 downto 0) := (others => 'X'); -- address
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_waitrequest            : out std_logic;                                        -- waitrequest
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_burstcount             : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- burstcount
@@ -89,15 +141,15 @@ architecture rtl of vexriscv_system is
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_readdata               : out std_logic_vector(31 downto 0);                    -- readdata
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_readdatavalid          : out std_logic;                                        -- readdatavalid
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_response               : out std_logic_vector(1 downto 0);                     -- response
-			jtag_uart_0_avalon_jtag_slave_address                     : out std_logic_vector(0 downto 0);                     -- address
-			jtag_uart_0_avalon_jtag_slave_write                       : out std_logic;                                        -- write
-			jtag_uart_0_avalon_jtag_slave_read                        : out std_logic;                                        -- read
-			jtag_uart_0_avalon_jtag_slave_readdata                    : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
-			jtag_uart_0_avalon_jtag_slave_writedata                   : out std_logic_vector(31 downto 0);                    -- writedata
-			jtag_uart_0_avalon_jtag_slave_waitrequest                 : in  std_logic                     := 'X';             -- waitrequest
-			jtag_uart_0_avalon_jtag_slave_chipselect                  : out std_logic                                         -- chipselect
+			onchip_memory2_0_s1_address                               : out std_logic_vector(13 downto 0);                    -- address
+			onchip_memory2_0_s1_write                                 : out std_logic;                                        -- write
+			onchip_memory2_0_s1_readdata                              : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			onchip_memory2_0_s1_writedata                             : out std_logic_vector(31 downto 0);                    -- writedata
+			onchip_memory2_0_s1_byteenable                            : out std_logic_vector(3 downto 0);                     -- byteenable
+			onchip_memory2_0_s1_chipselect                            : out std_logic;                                        -- chipselect
+			onchip_memory2_0_s1_clken                                 : out std_logic                                         -- clken
 		);
-	end component vexriscv_system_mm_interconnect_0;
+	end component vexriscv_system_mm_interconnect_1;
 
 	component vexriscv_system_irq_mapper is
 		port (
@@ -107,16 +159,7 @@ architecture rtl of vexriscv_system is
 		);
 	end component vexriscv_system_irq_mapper;
 
-	component vexriscv_system_irq_mapper_001 is
-		port (
-			clk           : in  std_logic                    := 'X'; -- clk
-			reset         : in  std_logic                    := 'X'; -- reset
-			receiver0_irq : in  std_logic                    := 'X'; -- irq
-			sender_irq    : out std_logic_vector(0 downto 0)         -- irq
-		);
-	end component vexriscv_system_irq_mapper_001;
-
-	component vexriscv_system_rst_controller is
+	component altera_reset_controller is
 		generic (
 			NUM_RESET_INPUTS          : integer := 6;
 			OUTPUT_RESET_SYNC_EDGES   : string  := "deassert";
@@ -144,110 +187,45 @@ architecture rtl of vexriscv_system is
 			ADAPT_RESET_REQUEST       : integer := 0
 		);
 		port (
-			reset_in0      : in  std_logic := 'X'; -- reset_in0.reset
-			reset_in1      : in  std_logic := 'X'; -- reset_in1.reset
-			clk            : in  std_logic := 'X'; --       clk.clk
-			reset_out      : out std_logic;        -- reset_out.reset
-			reset_in10     : in  std_logic := 'X';
-			reset_in11     : in  std_logic := 'X';
-			reset_in12     : in  std_logic := 'X';
-			reset_in13     : in  std_logic := 'X';
-			reset_in14     : in  std_logic := 'X';
-			reset_in15     : in  std_logic := 'X';
-			reset_in2      : in  std_logic := 'X';
-			reset_in3      : in  std_logic := 'X';
-			reset_in4      : in  std_logic := 'X';
-			reset_in5      : in  std_logic := 'X';
-			reset_in6      : in  std_logic := 'X';
-			reset_in7      : in  std_logic := 'X';
-			reset_in8      : in  std_logic := 'X';
-			reset_in9      : in  std_logic := 'X';
-			reset_req      : out std_logic;
-			reset_req_in0  : in  std_logic := 'X';
-			reset_req_in1  : in  std_logic := 'X';
-			reset_req_in10 : in  std_logic := 'X';
-			reset_req_in11 : in  std_logic := 'X';
-			reset_req_in12 : in  std_logic := 'X';
-			reset_req_in13 : in  std_logic := 'X';
-			reset_req_in14 : in  std_logic := 'X';
-			reset_req_in15 : in  std_logic := 'X';
-			reset_req_in2  : in  std_logic := 'X';
-			reset_req_in3  : in  std_logic := 'X';
-			reset_req_in4  : in  std_logic := 'X';
-			reset_req_in5  : in  std_logic := 'X';
-			reset_req_in6  : in  std_logic := 'X';
-			reset_req_in7  : in  std_logic := 'X';
-			reset_req_in8  : in  std_logic := 'X';
-			reset_req_in9  : in  std_logic := 'X'
+			reset_in0      : in  std_logic := 'X'; -- reset
+			clk            : in  std_logic := 'X'; -- clk
+			reset_out      : out std_logic;        -- reset
+			reset_req      : out std_logic;        -- reset_req
+			reset_req_in0  : in  std_logic := 'X'; -- reset_req
+			reset_in1      : in  std_logic := 'X'; -- reset
+			reset_req_in1  : in  std_logic := 'X'; -- reset_req
+			reset_in2      : in  std_logic := 'X'; -- reset
+			reset_req_in2  : in  std_logic := 'X'; -- reset_req
+			reset_in3      : in  std_logic := 'X'; -- reset
+			reset_req_in3  : in  std_logic := 'X'; -- reset_req
+			reset_in4      : in  std_logic := 'X'; -- reset
+			reset_req_in4  : in  std_logic := 'X'; -- reset_req
+			reset_in5      : in  std_logic := 'X'; -- reset
+			reset_req_in5  : in  std_logic := 'X'; -- reset_req
+			reset_in6      : in  std_logic := 'X'; -- reset
+			reset_req_in6  : in  std_logic := 'X'; -- reset_req
+			reset_in7      : in  std_logic := 'X'; -- reset
+			reset_req_in7  : in  std_logic := 'X'; -- reset_req
+			reset_in8      : in  std_logic := 'X'; -- reset
+			reset_req_in8  : in  std_logic := 'X'; -- reset_req
+			reset_in9      : in  std_logic := 'X'; -- reset
+			reset_req_in9  : in  std_logic := 'X'; -- reset_req
+			reset_in10     : in  std_logic := 'X'; -- reset
+			reset_req_in10 : in  std_logic := 'X'; -- reset_req
+			reset_in11     : in  std_logic := 'X'; -- reset
+			reset_req_in11 : in  std_logic := 'X'; -- reset_req
+			reset_in12     : in  std_logic := 'X'; -- reset
+			reset_req_in12 : in  std_logic := 'X'; -- reset_req
+			reset_in13     : in  std_logic := 'X'; -- reset
+			reset_req_in13 : in  std_logic := 'X'; -- reset_req
+			reset_in14     : in  std_logic := 'X'; -- reset
+			reset_req_in14 : in  std_logic := 'X'; -- reset_req
+			reset_in15     : in  std_logic := 'X'; -- reset
+			reset_req_in15 : in  std_logic := 'X'  -- reset_req
 		);
-	end component vexriscv_system_rst_controller;
+	end component altera_reset_controller;
 
-	component vexriscv_system_rst_controller_001 is
-		generic (
-			NUM_RESET_INPUTS          : integer := 6;
-			OUTPUT_RESET_SYNC_EDGES   : string  := "deassert";
-			SYNC_DEPTH                : integer := 2;
-			RESET_REQUEST_PRESENT     : integer := 0;
-			RESET_REQ_WAIT_TIME       : integer := 1;
-			MIN_RST_ASSERTION_TIME    : integer := 3;
-			RESET_REQ_EARLY_DSRT_TIME : integer := 1;
-			USE_RESET_REQUEST_IN0     : integer := 0;
-			USE_RESET_REQUEST_IN1     : integer := 0;
-			USE_RESET_REQUEST_IN2     : integer := 0;
-			USE_RESET_REQUEST_IN3     : integer := 0;
-			USE_RESET_REQUEST_IN4     : integer := 0;
-			USE_RESET_REQUEST_IN5     : integer := 0;
-			USE_RESET_REQUEST_IN6     : integer := 0;
-			USE_RESET_REQUEST_IN7     : integer := 0;
-			USE_RESET_REQUEST_IN8     : integer := 0;
-			USE_RESET_REQUEST_IN9     : integer := 0;
-			USE_RESET_REQUEST_IN10    : integer := 0;
-			USE_RESET_REQUEST_IN11    : integer := 0;
-			USE_RESET_REQUEST_IN12    : integer := 0;
-			USE_RESET_REQUEST_IN13    : integer := 0;
-			USE_RESET_REQUEST_IN14    : integer := 0;
-			USE_RESET_REQUEST_IN15    : integer := 0;
-			ADAPT_RESET_REQUEST       : integer := 0
-		);
-		port (
-			reset_in0      : in  std_logic := 'X'; -- reset_in0.reset
-			clk            : in  std_logic := 'X'; --       clk.clk
-			reset_out      : out std_logic;        -- reset_out.reset
-			reset_in1      : in  std_logic := 'X';
-			reset_in10     : in  std_logic := 'X';
-			reset_in11     : in  std_logic := 'X';
-			reset_in12     : in  std_logic := 'X';
-			reset_in13     : in  std_logic := 'X';
-			reset_in14     : in  std_logic := 'X';
-			reset_in15     : in  std_logic := 'X';
-			reset_in2      : in  std_logic := 'X';
-			reset_in3      : in  std_logic := 'X';
-			reset_in4      : in  std_logic := 'X';
-			reset_in5      : in  std_logic := 'X';
-			reset_in6      : in  std_logic := 'X';
-			reset_in7      : in  std_logic := 'X';
-			reset_in8      : in  std_logic := 'X';
-			reset_in9      : in  std_logic := 'X';
-			reset_req      : out std_logic;
-			reset_req_in0  : in  std_logic := 'X';
-			reset_req_in1  : in  std_logic := 'X';
-			reset_req_in10 : in  std_logic := 'X';
-			reset_req_in11 : in  std_logic := 'X';
-			reset_req_in12 : in  std_logic := 'X';
-			reset_req_in13 : in  std_logic := 'X';
-			reset_req_in14 : in  std_logic := 'X';
-			reset_req_in15 : in  std_logic := 'X';
-			reset_req_in2  : in  std_logic := 'X';
-			reset_req_in3  : in  std_logic := 'X';
-			reset_req_in4  : in  std_logic := 'X';
-			reset_req_in5  : in  std_logic := 'X';
-			reset_req_in6  : in  std_logic := 'X';
-			reset_req_in7  : in  std_logic := 'X';
-			reset_req_in8  : in  std_logic := 'X';
-			reset_req_in9  : in  std_logic := 'X'
-		);
-	end component vexriscv_system_rst_controller_001;
-
+	signal pll_0_outclk0_clk                                                : std_logic;                     -- pll_0:outclk_0 -> [VexRiscvAvalonMaxPerf_0:clk, gpio:clk, irq_mapper:clk, irq_mapper_001:clk, mm_interconnect_0:pll_0_outclk0_clk, mm_interconnect_1:pll_0_outclk0_clk, onchip_memory2_0:clk, onchip_memory2_0:clk2, rst_controller:clk]
 	signal mm_interconnect_0_vexriscvavalonmaxperf_0_dbusavalon_waitrequest : std_logic;                     -- mm_interconnect_0:VexRiscvAvalonMaxPerf_0_dBusAvalon_waitrequest -> mm_interconnect_0_vexriscvavalonmaxperf_0_dbusavalon_waitrequest:in
 	signal vexriscvavalonmaxperf_0_dbusavalon_readdata                      : std_logic_vector(31 downto 0); -- mm_interconnect_0:VexRiscvAvalonMaxPerf_0_dBusAvalon_readdata -> VexRiscvAvalonMaxPerf_0:dBusAvalon_readData
 	signal vexriscvavalonmaxperf_0_dbusavalon_address                       : std_logic_vector(31 downto 0); -- VexRiscvAvalonMaxPerf_0:dBusAvalon_address -> mm_interconnect_0:VexRiscvAvalonMaxPerf_0_dBusAvalon_address
@@ -258,32 +236,41 @@ architecture rtl of vexriscv_system is
 	signal vexriscvavalonmaxperf_0_dbusavalon_write                         : std_logic;                     -- VexRiscvAvalonMaxPerf_0:dBusAvalon_write -> mm_interconnect_0:VexRiscvAvalonMaxPerf_0_dBusAvalon_write
 	signal vexriscvavalonmaxperf_0_dbusavalon_writedata                     : std_logic_vector(31 downto 0); -- VexRiscvAvalonMaxPerf_0:dBusAvalon_writeData -> mm_interconnect_0:VexRiscvAvalonMaxPerf_0_dBusAvalon_writedata
 	signal vexriscvavalonmaxperf_0_dbusavalon_burstcount                    : std_logic_vector(3 downto 0);  -- VexRiscvAvalonMaxPerf_0:dBusAvalon_burstCount -> mm_interconnect_0:VexRiscvAvalonMaxPerf_0_dBusAvalon_burstcount
-	signal mm_interconnect_0_vexriscvavalonmaxperf_0_ibusavalon_waitrequest : std_logic;                     -- mm_interconnect_0:VexRiscvAvalonMaxPerf_0_iBusAvalon_waitrequest -> mm_interconnect_0_vexriscvavalonmaxperf_0_ibusavalon_waitrequest:in
-	signal vexriscvavalonmaxperf_0_ibusavalon_readdata                      : std_logic_vector(31 downto 0); -- mm_interconnect_0:VexRiscvAvalonMaxPerf_0_iBusAvalon_readdata -> VexRiscvAvalonMaxPerf_0:iBusAvalon_readData
-	signal vexriscvavalonmaxperf_0_ibusavalon_address                       : std_logic_vector(31 downto 0); -- VexRiscvAvalonMaxPerf_0:iBusAvalon_address -> mm_interconnect_0:VexRiscvAvalonMaxPerf_0_iBusAvalon_address
-	signal vexriscvavalonmaxperf_0_ibusavalon_read                          : std_logic;                     -- VexRiscvAvalonMaxPerf_0:iBusAvalon_read -> mm_interconnect_0:VexRiscvAvalonMaxPerf_0_iBusAvalon_read
-	signal vexriscvavalonmaxperf_0_ibusavalon_readdatavalid                 : std_logic;                     -- mm_interconnect_0:VexRiscvAvalonMaxPerf_0_iBusAvalon_readdatavalid -> VexRiscvAvalonMaxPerf_0:iBusAvalon_readDataValid
-	signal vexriscvavalonmaxperf_0_ibusavalon_response                      : std_logic_vector(1 downto 0);  -- mm_interconnect_0:VexRiscvAvalonMaxPerf_0_iBusAvalon_response -> VexRiscvAvalonMaxPerf_0:iBusAvalon_response
-	signal vexriscvavalonmaxperf_0_ibusavalon_burstcount                    : std_logic_vector(3 downto 0);  -- VexRiscvAvalonMaxPerf_0:iBusAvalon_burstCount -> mm_interconnect_0:VexRiscvAvalonMaxPerf_0_iBusAvalon_burstcount
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect       : std_logic;                     -- mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_chipselect -> jtag_uart_0:av_chipselect
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_readdata         : std_logic_vector(31 downto 0); -- jtag_uart_0:av_readdata -> mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_readdata
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_waitrequest      : std_logic;                     -- jtag_uart_0:av_waitrequest -> mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_waitrequest
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_address          : std_logic_vector(0 downto 0);  -- mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_address -> jtag_uart_0:av_address
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read             : std_logic;                     -- mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_read -> mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read:in
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write            : std_logic;                     -- mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_write -> mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write:in
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata        : std_logic_vector(31 downto 0); -- mm_interconnect_0:jtag_uart_0_avalon_jtag_slave_writedata -> jtag_uart_0:av_writedata
+	signal mm_interconnect_0_gpio_s1_chipselect                             : std_logic;                     -- mm_interconnect_0:gpio_s1_chipselect -> gpio:chipselect
+	signal mm_interconnect_0_gpio_s1_readdata                               : std_logic_vector(31 downto 0); -- gpio:readdata -> mm_interconnect_0:gpio_s1_readdata
+	signal mm_interconnect_0_gpio_s1_address                                : std_logic_vector(2 downto 0);  -- mm_interconnect_0:gpio_s1_address -> gpio:address
+	signal mm_interconnect_0_gpio_s1_write                                  : std_logic;                     -- mm_interconnect_0:gpio_s1_write -> mm_interconnect_0_gpio_s1_write:in
+	signal mm_interconnect_0_gpio_s1_writedata                              : std_logic_vector(31 downto 0); -- mm_interconnect_0:gpio_s1_writedata -> gpio:writedata
+	signal mm_interconnect_0_onchip_memory2_0_s2_chipselect                 : std_logic;                     -- mm_interconnect_0:onchip_memory2_0_s2_chipselect -> onchip_memory2_0:chipselect2
+	signal mm_interconnect_0_onchip_memory2_0_s2_readdata                   : std_logic_vector(31 downto 0); -- onchip_memory2_0:readdata2 -> mm_interconnect_0:onchip_memory2_0_s2_readdata
+	signal mm_interconnect_0_onchip_memory2_0_s2_address                    : std_logic_vector(13 downto 0); -- mm_interconnect_0:onchip_memory2_0_s2_address -> onchip_memory2_0:address2
+	signal mm_interconnect_0_onchip_memory2_0_s2_byteenable                 : std_logic_vector(3 downto 0);  -- mm_interconnect_0:onchip_memory2_0_s2_byteenable -> onchip_memory2_0:byteenable2
+	signal mm_interconnect_0_onchip_memory2_0_s2_write                      : std_logic;                     -- mm_interconnect_0:onchip_memory2_0_s2_write -> onchip_memory2_0:write2
+	signal mm_interconnect_0_onchip_memory2_0_s2_writedata                  : std_logic_vector(31 downto 0); -- mm_interconnect_0:onchip_memory2_0_s2_writedata -> onchip_memory2_0:writedata2
+	signal mm_interconnect_0_onchip_memory2_0_s2_clken                      : std_logic;                     -- mm_interconnect_0:onchip_memory2_0_s2_clken -> onchip_memory2_0:clken2
+	signal mm_interconnect_1_vexriscvavalonmaxperf_0_ibusavalon_waitrequest : std_logic;                     -- mm_interconnect_1:VexRiscvAvalonMaxPerf_0_iBusAvalon_waitrequest -> mm_interconnect_1_vexriscvavalonmaxperf_0_ibusavalon_waitrequest:in
+	signal vexriscvavalonmaxperf_0_ibusavalon_readdata                      : std_logic_vector(31 downto 0); -- mm_interconnect_1:VexRiscvAvalonMaxPerf_0_iBusAvalon_readdata -> VexRiscvAvalonMaxPerf_0:iBusAvalon_readData
+	signal vexriscvavalonmaxperf_0_ibusavalon_address                       : std_logic_vector(31 downto 0); -- VexRiscvAvalonMaxPerf_0:iBusAvalon_address -> mm_interconnect_1:VexRiscvAvalonMaxPerf_0_iBusAvalon_address
+	signal vexriscvavalonmaxperf_0_ibusavalon_read                          : std_logic;                     -- VexRiscvAvalonMaxPerf_0:iBusAvalon_read -> mm_interconnect_1:VexRiscvAvalonMaxPerf_0_iBusAvalon_read
+	signal vexriscvavalonmaxperf_0_ibusavalon_readdatavalid                 : std_logic;                     -- mm_interconnect_1:VexRiscvAvalonMaxPerf_0_iBusAvalon_readdatavalid -> VexRiscvAvalonMaxPerf_0:iBusAvalon_readDataValid
+	signal vexriscvavalonmaxperf_0_ibusavalon_response                      : std_logic_vector(1 downto 0);  -- mm_interconnect_1:VexRiscvAvalonMaxPerf_0_iBusAvalon_response -> VexRiscvAvalonMaxPerf_0:iBusAvalon_response
+	signal vexriscvavalonmaxperf_0_ibusavalon_burstcount                    : std_logic_vector(3 downto 0);  -- VexRiscvAvalonMaxPerf_0:iBusAvalon_burstCount -> mm_interconnect_1:VexRiscvAvalonMaxPerf_0_iBusAvalon_burstcount
+	signal mm_interconnect_1_onchip_memory2_0_s1_chipselect                 : std_logic;                     -- mm_interconnect_1:onchip_memory2_0_s1_chipselect -> onchip_memory2_0:chipselect
+	signal mm_interconnect_1_onchip_memory2_0_s1_readdata                   : std_logic_vector(31 downto 0); -- onchip_memory2_0:readdata -> mm_interconnect_1:onchip_memory2_0_s1_readdata
+	signal mm_interconnect_1_onchip_memory2_0_s1_address                    : std_logic_vector(13 downto 0); -- mm_interconnect_1:onchip_memory2_0_s1_address -> onchip_memory2_0:address
+	signal mm_interconnect_1_onchip_memory2_0_s1_byteenable                 : std_logic_vector(3 downto 0);  -- mm_interconnect_1:onchip_memory2_0_s1_byteenable -> onchip_memory2_0:byteenable
+	signal mm_interconnect_1_onchip_memory2_0_s1_write                      : std_logic;                     -- mm_interconnect_1:onchip_memory2_0_s1_write -> onchip_memory2_0:write
+	signal mm_interconnect_1_onchip_memory2_0_s1_writedata                  : std_logic_vector(31 downto 0); -- mm_interconnect_1:onchip_memory2_0_s1_writedata -> onchip_memory2_0:writedata
+	signal mm_interconnect_1_onchip_memory2_0_s1_clken                      : std_logic;                     -- mm_interconnect_1:onchip_memory2_0_s1_clken -> onchip_memory2_0:clken
 	signal vexriscvavalonmaxperf_0_timerinterrupt_irq                       : std_logic;                     -- irq_mapper:sender_irq -> VexRiscvAvalonMaxPerf_0:timerInterrupt
-	signal irq_mapper_001_receiver0_irq                                     : std_logic;                     -- jtag_uart_0:av_irq -> irq_mapper_001:receiver0_irq
 	signal vexriscvavalonmaxperf_0_externalinterrupt_irq                    : std_logic;                     -- irq_mapper_001:sender_irq -> VexRiscvAvalonMaxPerf_0:externalInterrupt
-	signal rst_controller_reset_out_reset                                   : std_logic;                     -- rst_controller:reset_out -> [VexRiscvAvalonMaxPerf_0:reset, irq_mapper:reset, irq_mapper_001:reset, mm_interconnect_0:VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset_reset]
-	signal vexriscvavalonmaxperf_0_debug_resetout_reset                     : std_logic;                     -- VexRiscvAvalonMaxPerf_0:debug_resetOut -> rst_controller:reset_in1
-	signal rst_controller_001_reset_out_reset                               : std_logic;                     -- rst_controller_001:reset_out -> [VexRiscvAvalonMaxPerf_0:debugReset, mm_interconnect_0:jtag_uart_0_reset_reset_bridge_in_reset_reset, rst_controller_001_reset_out_reset:in]
-	signal reset_reset_n_ports_inv                                          : std_logic;                     -- reset_reset_n:inv -> [rst_controller:reset_in0, rst_controller_001:reset_in0]
+	signal rst_controller_reset_out_reset                                   : std_logic;                     -- rst_controller:reset_out -> [VexRiscvAvalonMaxPerf_0:debugReset, VexRiscvAvalonMaxPerf_0:reset, irq_mapper:reset, irq_mapper_001:reset, mm_interconnect_0:VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset_reset, mm_interconnect_1:VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset_reset, onchip_memory2_0:reset, onchip_memory2_0:reset2, rst_controller_reset_out_reset:in, rst_translator:in_reset]
+	signal rst_controller_reset_out_reset_req                               : std_logic;                     -- rst_controller:reset_req -> [onchip_memory2_0:reset_req, onchip_memory2_0:reset_req2, rst_translator:reset_req_in]
+	signal reset_reset_n_ports_inv                                          : std_logic;                     -- reset_reset_n:inv -> [pll_0:rst, rst_controller:reset_in0]
 	signal vexriscvavalonmaxperf_0_dbusavalon_inv                           : std_logic;                     -- mm_interconnect_0_vexriscvavalonmaxperf_0_dbusavalon_waitrequest:inv -> VexRiscvAvalonMaxPerf_0:dBusAvalon_waitRequestn
-	signal vexriscvavalonmaxperf_0_ibusavalon_inv                           : std_logic;                     -- mm_interconnect_0_vexriscvavalonmaxperf_0_ibusavalon_waitrequest:inv -> VexRiscvAvalonMaxPerf_0:iBusAvalon_waitRequestn
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv   : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read:inv -> jtag_uart_0:av_read_n
-	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write:inv -> jtag_uart_0:av_write_n
-	signal rst_controller_001_reset_out_reset_ports_inv                     : std_logic;                     -- rst_controller_001_reset_out_reset:inv -> jtag_uart_0:rst_n
+	signal mm_interconnect_0_gpio_s1_write_ports_inv                        : std_logic;                     -- mm_interconnect_0_gpio_s1_write:inv -> gpio:write_n
+	signal vexriscvavalonmaxperf_0_ibusavalon_inv                           : std_logic;                     -- mm_interconnect_1_vexriscvavalonmaxperf_0_ibusavalon_waitrequest:inv -> VexRiscvAvalonMaxPerf_0:iBusAvalon_waitRequestn
+	signal rst_controller_reset_out_reset_ports_inv                         : std_logic;                     -- rst_controller_reset_out_reset:inv -> gpio:reset_n
 
 begin
 
@@ -292,7 +279,7 @@ begin
 			timerInterrupt           => vexriscvavalonmaxperf_0_timerinterrupt_irq,       --    timerInterrupt.irq
 			externalInterrupt        => vexriscvavalonmaxperf_0_externalinterrupt_irq,    -- externalInterrupt.irq
 			softwareInterrupt        => vexriscvavalonmaxperf_0_softwareinterrupt_export, -- softwareInterrupt.export
-			debug_resetOut           => vexriscvavalonmaxperf_0_debug_resetout_reset,     --    debug_resetOut.reset
+			debug_resetOut           => open,                                             --    debug_resetOut.reset
 			iBusAvalon_address       => vexriscvavalonmaxperf_0_ibusavalon_address,       --        iBusAvalon.address
 			iBusAvalon_read          => vexriscvavalonmaxperf_0_ibusavalon_read,          --                  .read
 			iBusAvalon_waitRequestn  => vexriscvavalonmaxperf_0_ibusavalon_inv,           --                  .waitrequest_n
@@ -314,29 +301,59 @@ begin
 			jtag_tdi                 => vexriscvavalonmaxperf_0_jtag_tdi,                 --                  .export
 			jtag_tdo                 => vexriscvavalonmaxperf_0_jtag_tdo,                 --                  .export
 			jtag_tck                 => vexriscvavalonmaxperf_0_jtag_tck,                 --                  .export
-			clk                      => clk_clk,                                          --               clk.clk
+			clk                      => pll_0_outclk0_clk,                                --               clk.clk
 			reset                    => rst_controller_reset_out_reset,                   --             reset.reset
-			debugReset               => rst_controller_001_reset_out_reset                --        debugReset.reset
+			debugReset               => rst_controller_reset_out_reset                    --        debugReset.reset
 		);
 
-	jtag_uart_0 : component vexriscv_system_jtag_uart_0
+	gpio : component vexriscv_system_gpio
 		port map (
-			clk            => clk_clk,                                                         --               clk.clk
-			rst_n          => rst_controller_001_reset_out_reset_ports_inv,                    --             reset.reset_n
-			av_chipselect  => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect,      -- avalon_jtag_slave.chipselect
-			av_address     => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_address(0),      --                  .address
-			av_read_n      => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv,  --                  .read_n
-			av_readdata    => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_readdata,        --                  .readdata
-			av_write_n     => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv, --                  .write_n
-			av_writedata   => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata,       --                  .writedata
-			av_waitrequest => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_waitrequest,     --                  .waitrequest
-			av_irq         => irq_mapper_001_receiver0_irq                                     --               irq.irq
+			clk        => pll_0_outclk0_clk,                         --                 clk.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv,  --               reset.reset_n
+			address    => mm_interconnect_0_gpio_s1_address,         --                  s1.address
+			write_n    => mm_interconnect_0_gpio_s1_write_ports_inv, --                    .write_n
+			writedata  => mm_interconnect_0_gpio_s1_writedata,       --                    .writedata
+			chipselect => mm_interconnect_0_gpio_s1_chipselect,      --                    .chipselect
+			readdata   => mm_interconnect_0_gpio_s1_readdata,        --                    .readdata
+			bidir_port => gpio_export                                -- external_connection.export
+		);
+
+	onchip_memory2_0 : component vexriscv_system_onchip_memory2_0
+		port map (
+			clk         => pll_0_outclk0_clk,                                --   clk1.clk
+			address     => mm_interconnect_1_onchip_memory2_0_s1_address,    --     s1.address
+			clken       => mm_interconnect_1_onchip_memory2_0_s1_clken,      --       .clken
+			chipselect  => mm_interconnect_1_onchip_memory2_0_s1_chipselect, --       .chipselect
+			write       => mm_interconnect_1_onchip_memory2_0_s1_write,      --       .write
+			readdata    => mm_interconnect_1_onchip_memory2_0_s1_readdata,   --       .readdata
+			writedata   => mm_interconnect_1_onchip_memory2_0_s1_writedata,  --       .writedata
+			byteenable  => mm_interconnect_1_onchip_memory2_0_s1_byteenable, --       .byteenable
+			reset       => rst_controller_reset_out_reset,                   -- reset1.reset
+			reset_req   => rst_controller_reset_out_reset_req,               --       .reset_req
+			address2    => mm_interconnect_0_onchip_memory2_0_s2_address,    --     s2.address
+			chipselect2 => mm_interconnect_0_onchip_memory2_0_s2_chipselect, --       .chipselect
+			clken2      => mm_interconnect_0_onchip_memory2_0_s2_clken,      --       .clken
+			write2      => mm_interconnect_0_onchip_memory2_0_s2_write,      --       .write
+			readdata2   => mm_interconnect_0_onchip_memory2_0_s2_readdata,   --       .readdata
+			writedata2  => mm_interconnect_0_onchip_memory2_0_s2_writedata,  --       .writedata
+			byteenable2 => mm_interconnect_0_onchip_memory2_0_s2_byteenable, --       .byteenable
+			clk2        => pll_0_outclk0_clk,                                --   clk2.clk
+			reset2      => rst_controller_reset_out_reset,                   -- reset2.reset
+			reset_req2  => rst_controller_reset_out_reset_req,               --       .reset_req
+			freeze      => '0'                                               -- (terminated)
+		);
+
+	pll_0 : component vexriscv_system_pll_0
+		port map (
+			refclk   => clk_clk,                 --  refclk.clk
+			rst      => reset_reset_n_ports_inv, --   reset.reset
+			outclk_0 => pll_0_outclk0_clk,       -- outclk0.clk
+			locked   => open                     -- (terminated)
 		);
 
 	mm_interconnect_0 : component vexriscv_system_mm_interconnect_0
 		port map (
-			clk_0_clk_clk                                             => clk_clk,                                                          --                                           clk_0_clk.clk
-			jtag_uart_0_reset_reset_bridge_in_reset_reset             => rst_controller_001_reset_out_reset,                               --             jtag_uart_0_reset_reset_bridge_in_reset.reset
+			pll_0_outclk0_clk                                         => pll_0_outclk0_clk,                                                --                                       pll_0_outclk0.clk
 			VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset_reset => rst_controller_reset_out_reset,                                   -- VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset.reset
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_address                => vexriscvavalonmaxperf_0_dbusavalon_address,                       --                  VexRiscvAvalonMaxPerf_0_dBusAvalon.address
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_waitrequest            => mm_interconnect_0_vexriscvavalonmaxperf_0_dbusavalon_waitrequest, --                                                    .waitrequest
@@ -348,108 +365,60 @@ begin
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_write                  => vexriscvavalonmaxperf_0_dbusavalon_write,                         --                                                    .write
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_writedata              => vexriscvavalonmaxperf_0_dbusavalon_writedata,                     --                                                    .writedata
 			VexRiscvAvalonMaxPerf_0_dBusAvalon_response               => vexriscvavalonmaxperf_0_dbusavalon_response,                      --                                                    .response
+			gpio_s1_address                                           => mm_interconnect_0_gpio_s1_address,                                --                                             gpio_s1.address
+			gpio_s1_write                                             => mm_interconnect_0_gpio_s1_write,                                  --                                                    .write
+			gpio_s1_readdata                                          => mm_interconnect_0_gpio_s1_readdata,                               --                                                    .readdata
+			gpio_s1_writedata                                         => mm_interconnect_0_gpio_s1_writedata,                              --                                                    .writedata
+			gpio_s1_chipselect                                        => mm_interconnect_0_gpio_s1_chipselect,                             --                                                    .chipselect
+			onchip_memory2_0_s2_address                               => mm_interconnect_0_onchip_memory2_0_s2_address,                    --                                 onchip_memory2_0_s2.address
+			onchip_memory2_0_s2_write                                 => mm_interconnect_0_onchip_memory2_0_s2_write,                      --                                                    .write
+			onchip_memory2_0_s2_readdata                              => mm_interconnect_0_onchip_memory2_0_s2_readdata,                   --                                                    .readdata
+			onchip_memory2_0_s2_writedata                             => mm_interconnect_0_onchip_memory2_0_s2_writedata,                  --                                                    .writedata
+			onchip_memory2_0_s2_byteenable                            => mm_interconnect_0_onchip_memory2_0_s2_byteenable,                 --                                                    .byteenable
+			onchip_memory2_0_s2_chipselect                            => mm_interconnect_0_onchip_memory2_0_s2_chipselect,                 --                                                    .chipselect
+			onchip_memory2_0_s2_clken                                 => mm_interconnect_0_onchip_memory2_0_s2_clken                       --                                                    .clken
+		);
+
+	mm_interconnect_1 : component vexriscv_system_mm_interconnect_1
+		port map (
+			pll_0_outclk0_clk                                         => pll_0_outclk0_clk,                                                --                                       pll_0_outclk0.clk
+			VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset_reset => rst_controller_reset_out_reset,                                   -- VexRiscvAvalonMaxPerf_0_reset_reset_bridge_in_reset.reset
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_address                => vexriscvavalonmaxperf_0_ibusavalon_address,                       --                  VexRiscvAvalonMaxPerf_0_iBusAvalon.address
-			VexRiscvAvalonMaxPerf_0_iBusAvalon_waitrequest            => mm_interconnect_0_vexriscvavalonmaxperf_0_ibusavalon_waitrequest, --                                                    .waitrequest
+			VexRiscvAvalonMaxPerf_0_iBusAvalon_waitrequest            => mm_interconnect_1_vexriscvavalonmaxperf_0_ibusavalon_waitrequest, --                                                    .waitrequest
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_burstcount             => vexriscvavalonmaxperf_0_ibusavalon_burstcount,                    --                                                    .burstcount
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_read                   => vexriscvavalonmaxperf_0_ibusavalon_read,                          --                                                    .read
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_readdata               => vexriscvavalonmaxperf_0_ibusavalon_readdata,                      --                                                    .readdata
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_readdatavalid          => vexriscvavalonmaxperf_0_ibusavalon_readdatavalid,                 --                                                    .readdatavalid
 			VexRiscvAvalonMaxPerf_0_iBusAvalon_response               => vexriscvavalonmaxperf_0_ibusavalon_response,                      --                                                    .response
-			jtag_uart_0_avalon_jtag_slave_address                     => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_address,          --                       jtag_uart_0_avalon_jtag_slave.address
-			jtag_uart_0_avalon_jtag_slave_write                       => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write,            --                                                    .write
-			jtag_uart_0_avalon_jtag_slave_read                        => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read,             --                                                    .read
-			jtag_uart_0_avalon_jtag_slave_readdata                    => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_readdata,         --                                                    .readdata
-			jtag_uart_0_avalon_jtag_slave_writedata                   => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata,        --                                                    .writedata
-			jtag_uart_0_avalon_jtag_slave_waitrequest                 => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_waitrequest,      --                                                    .waitrequest
-			jtag_uart_0_avalon_jtag_slave_chipselect                  => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect        --                                                    .chipselect
+			onchip_memory2_0_s1_address                               => mm_interconnect_1_onchip_memory2_0_s1_address,                    --                                 onchip_memory2_0_s1.address
+			onchip_memory2_0_s1_write                                 => mm_interconnect_1_onchip_memory2_0_s1_write,                      --                                                    .write
+			onchip_memory2_0_s1_readdata                              => mm_interconnect_1_onchip_memory2_0_s1_readdata,                   --                                                    .readdata
+			onchip_memory2_0_s1_writedata                             => mm_interconnect_1_onchip_memory2_0_s1_writedata,                  --                                                    .writedata
+			onchip_memory2_0_s1_byteenable                            => mm_interconnect_1_onchip_memory2_0_s1_byteenable,                 --                                                    .byteenable
+			onchip_memory2_0_s1_chipselect                            => mm_interconnect_1_onchip_memory2_0_s1_chipselect,                 --                                                    .chipselect
+			onchip_memory2_0_s1_clken                                 => mm_interconnect_1_onchip_memory2_0_s1_clken                       --                                                    .clken
 		);
 
 	irq_mapper : component vexriscv_system_irq_mapper
 		port map (
-			clk           => clk_clk,                                    --       clk.clk
+			clk           => pll_0_outclk0_clk,                          --       clk.clk
 			reset         => rst_controller_reset_out_reset,             -- clk_reset.reset
 			sender_irq(0) => vexriscvavalonmaxperf_0_timerinterrupt_irq  --    sender.irq
 		);
 
-	irq_mapper_001 : component vexriscv_system_irq_mapper_001
+	irq_mapper_001 : component vexriscv_system_irq_mapper
 		port map (
-			clk           => clk_clk,                                       --       clk.clk
+			clk           => pll_0_outclk0_clk,                             --       clk.clk
 			reset         => rst_controller_reset_out_reset,                -- clk_reset.reset
-			receiver0_irq => irq_mapper_001_receiver0_irq,                  -- receiver0.irq
 			sender_irq(0) => vexriscvavalonmaxperf_0_externalinterrupt_irq  --    sender.irq
 		);
 
-	rst_controller : component vexriscv_system_rst_controller
-		generic map (
-			NUM_RESET_INPUTS          => 2,
-			OUTPUT_RESET_SYNC_EDGES   => "deassert",
-			SYNC_DEPTH                => 2,
-			RESET_REQUEST_PRESENT     => 0,
-			RESET_REQ_WAIT_TIME       => 1,
-			MIN_RST_ASSERTION_TIME    => 3,
-			RESET_REQ_EARLY_DSRT_TIME => 1,
-			USE_RESET_REQUEST_IN0     => 0,
-			USE_RESET_REQUEST_IN1     => 0,
-			USE_RESET_REQUEST_IN2     => 0,
-			USE_RESET_REQUEST_IN3     => 0,
-			USE_RESET_REQUEST_IN4     => 0,
-			USE_RESET_REQUEST_IN5     => 0,
-			USE_RESET_REQUEST_IN6     => 0,
-			USE_RESET_REQUEST_IN7     => 0,
-			USE_RESET_REQUEST_IN8     => 0,
-			USE_RESET_REQUEST_IN9     => 0,
-			USE_RESET_REQUEST_IN10    => 0,
-			USE_RESET_REQUEST_IN11    => 0,
-			USE_RESET_REQUEST_IN12    => 0,
-			USE_RESET_REQUEST_IN13    => 0,
-			USE_RESET_REQUEST_IN14    => 0,
-			USE_RESET_REQUEST_IN15    => 0,
-			ADAPT_RESET_REQUEST       => 0
-		)
-		port map (
-			reset_in0      => reset_reset_n_ports_inv,                      -- reset_in0.reset
-			reset_in1      => vexriscvavalonmaxperf_0_debug_resetout_reset, -- reset_in1.reset
-			clk            => clk_clk,                                      --       clk.clk
-			reset_out      => rst_controller_reset_out_reset,               -- reset_out.reset
-			reset_req      => open,                                         -- (terminated)
-			reset_req_in0  => '0',                                          -- (terminated)
-			reset_req_in1  => '0',                                          -- (terminated)
-			reset_in2      => '0',                                          -- (terminated)
-			reset_req_in2  => '0',                                          -- (terminated)
-			reset_in3      => '0',                                          -- (terminated)
-			reset_req_in3  => '0',                                          -- (terminated)
-			reset_in4      => '0',                                          -- (terminated)
-			reset_req_in4  => '0',                                          -- (terminated)
-			reset_in5      => '0',                                          -- (terminated)
-			reset_req_in5  => '0',                                          -- (terminated)
-			reset_in6      => '0',                                          -- (terminated)
-			reset_req_in6  => '0',                                          -- (terminated)
-			reset_in7      => '0',                                          -- (terminated)
-			reset_req_in7  => '0',                                          -- (terminated)
-			reset_in8      => '0',                                          -- (terminated)
-			reset_req_in8  => '0',                                          -- (terminated)
-			reset_in9      => '0',                                          -- (terminated)
-			reset_req_in9  => '0',                                          -- (terminated)
-			reset_in10     => '0',                                          -- (terminated)
-			reset_req_in10 => '0',                                          -- (terminated)
-			reset_in11     => '0',                                          -- (terminated)
-			reset_req_in11 => '0',                                          -- (terminated)
-			reset_in12     => '0',                                          -- (terminated)
-			reset_req_in12 => '0',                                          -- (terminated)
-			reset_in13     => '0',                                          -- (terminated)
-			reset_req_in13 => '0',                                          -- (terminated)
-			reset_in14     => '0',                                          -- (terminated)
-			reset_req_in14 => '0',                                          -- (terminated)
-			reset_in15     => '0',                                          -- (terminated)
-			reset_req_in15 => '0'                                           -- (terminated)
-		);
-
-	rst_controller_001 : component vexriscv_system_rst_controller_001
+	rst_controller : component altera_reset_controller
 		generic map (
 			NUM_RESET_INPUTS          => 1,
 			OUTPUT_RESET_SYNC_EDGES   => "deassert",
 			SYNC_DEPTH                => 2,
-			RESET_REQUEST_PRESENT     => 0,
+			RESET_REQUEST_PRESENT     => 1,
 			RESET_REQ_WAIT_TIME       => 1,
 			MIN_RST_ASSERTION_TIME    => 3,
 			RESET_REQ_EARLY_DSRT_TIME => 1,
@@ -473,9 +442,9 @@ begin
 		)
 		port map (
 			reset_in0      => reset_reset_n_ports_inv,            -- reset_in0.reset
-			clk            => clk_clk,                            --       clk.clk
-			reset_out      => rst_controller_001_reset_out_reset, -- reset_out.reset
-			reset_req      => open,                               -- (terminated)
+			clk            => pll_0_outclk0_clk,                  --       clk.clk
+			reset_out      => rst_controller_reset_out_reset,     -- reset_out.reset
+			reset_req      => rst_controller_reset_out_reset_req, --          .reset_req
 			reset_req_in0  => '0',                                -- (terminated)
 			reset_in1      => '0',                                -- (terminated)
 			reset_req_in1  => '0',                                -- (terminated)
@@ -513,12 +482,10 @@ begin
 
 	vexriscvavalonmaxperf_0_dbusavalon_inv <= not mm_interconnect_0_vexriscvavalonmaxperf_0_dbusavalon_waitrequest;
 
-	vexriscvavalonmaxperf_0_ibusavalon_inv <= not mm_interconnect_0_vexriscvavalonmaxperf_0_ibusavalon_waitrequest;
+	mm_interconnect_0_gpio_s1_write_ports_inv <= not mm_interconnect_0_gpio_s1_write;
 
-	mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv <= not mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read;
+	vexriscvavalonmaxperf_0_ibusavalon_inv <= not mm_interconnect_1_vexriscvavalonmaxperf_0_ibusavalon_waitrequest;
 
-	mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv <= not mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write;
-
-	rst_controller_001_reset_out_reset_ports_inv <= not rst_controller_001_reset_out_reset;
+	rst_controller_reset_out_reset_ports_inv <= not rst_controller_reset_out_reset;
 
 end architecture rtl; -- of vexriscv_system

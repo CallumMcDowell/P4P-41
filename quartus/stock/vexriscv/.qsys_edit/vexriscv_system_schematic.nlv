@@ -1,8 +1,18 @@
 # # File gsaved with Nlview version 6.3.8  2013-12-19 bk=1.2992 VDI=34 GEI=35
 # 
-preplace inst unsaved.clk_0 -pg 1 -lvl 1 -y 30
-preplace inst unsaved -pg 1 -lvl 1 -y 40 -regy -20
-preplace netloc EXPORT<net_container>unsaved</net_container>(SLAVE)unsaved.clk,(SLAVE)clk_0.clk_in) 1 0 1 NJ
-preplace netloc EXPORT<net_container>unsaved</net_container>(SLAVE)unsaved.reset,(SLAVE)clk_0.clk_in_reset) 1 0 1 NJ
-levelinfo -pg 1 0 50 270
-levelinfo -hier unsaved 60 90 260
+preplace inst vexriscv_system.clk_0 -pg 1 -lvl 1 -y 50
+preplace inst vexriscv_system.VexRiscvAvalon_0 -pg 1 -lvl 3 -y 90
+preplace inst vexriscv_system.gpio -pg 1 -lvl 4 -y 190
+preplace inst vexriscv_system.pll_0 -pg 1 -lvl 2 -y 50
+preplace inst vexriscv_system.onchip_memory2_0 -pg 1 -lvl 4 -y 30
+preplace inst vexriscv_system -pg 1 -lvl 1 -y 40 -regy -20
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.clk,(SLAVE)clk_0.clk_in) 1 0 1 NJ
+preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(MASTER)VexRiscvAvalon_0.instruction_bus,(SLAVE)onchip_memory2_0.s1) 1 3 1 N
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)gpio.external_connection,(SLAVE)vexriscv_system.gpio) 1 0 4 NJ 220 NJ 220 NJ 220 NJ
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)gpio.reset,(SLAVE)VexRiscvAvalon_0.reset,(MASTER)clk_0.clk_reset,(SLAVE)pll_0.reset,(SLAVE)onchip_memory2_0.reset1,(SLAVE)onchip_memory2_0.reset2) 1 1 3 260 160 460 240 870
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)onchip_memory2_0.clk2,(MASTER)pll_0.outclk0,(SLAVE)onchip_memory2_0.clk1,(SLAVE)VexRiscvAvalon_0.clock,(SLAVE)gpio.clk) 1 2 2 440 200 830
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.reset,(SLAVE)clk_0.clk_in_reset) 1 0 1 NJ
+preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(MASTER)clk_0.clk,(SLAVE)pll_0.refclk) 1 1 1 N
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)gpio.s1,(MASTER)VexRiscvAvalon_0.data_bus,(SLAVE)onchip_memory2_0.s2) 1 3 1 850
+levelinfo -pg 1 0 50 1080
+levelinfo -hier vexriscv_system 60 90 310 610 920 1070

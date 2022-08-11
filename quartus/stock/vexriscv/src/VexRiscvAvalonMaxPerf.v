@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.7.0a    git head : 150a9b9067020722818dfb17df4a23ac712a7af8
 // Component : VexRiscvAvalonMaxPerf
-// Git hash  : 4940801907dd514c6c58aee3ed01ad5ef747a0ec
+// Git hash  : daf3347c622c8ddcd32f3013665b9d719038affd
 
 `timescale 1ns/1ps
 
@@ -5331,9 +5331,9 @@ module JtagBridge (
     .debugReset                 (debugReset                                 )  //i
   );
   initial begin
-  // `ifndef SYNTHESIS
-  //   jtag_tap_fsm_state = {1{$urandom}};
-  // `endif
+//  `ifndef SYNTHESIS
+//    jtag_tap_fsm_state = {1{$urandom}};
+//  `endif
   end
 
   `ifndef SYNTHESIS
@@ -6751,10 +6751,10 @@ module FlowCCByToggle (
     .debugReset (debugReset                          )  //i
   );
   initial begin
-  // `ifndef SYNTHESIS
-  //   inputArea_target = $urandom;
-  //   outputArea_hit = $urandom;
-  // `endif
+  `ifndef SYNTHESIS
+//    inputArea_target = $urandom;
+//    outputArea_hit = $urandom;
+  `endif
   end
 
   assign outputArea_target = inputArea_target_buffercc_io_dataOut;
@@ -6802,10 +6802,10 @@ module BufferCC (
   (* async_reg = "true" *) reg                 buffers_1;
 
   initial begin
-  // `ifndef SYNTHESIS
-  //   buffers_0 = $urandom;
-  //   buffers_1 = $urandom;
-  // `endif
+  `ifndef SYNTHESIS
+//    buffers_0 = $urandom;
+//    buffers_1 = $urandom;
+  `endif
   end
 
   assign io_dataOut = buffers_1;
