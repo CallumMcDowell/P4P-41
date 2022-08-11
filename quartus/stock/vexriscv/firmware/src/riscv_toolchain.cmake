@@ -32,11 +32,7 @@ set(CMAKE_SIZE                      ${BAREMETAL_RISCV_TOOLCHAIN_PATH}${BAREMETAL
 set(CMAKE_STRIP                     ${BAREMETAL_RISCV_TOOLCHAIN_PATH}${BAREMETAL_RISCV_TOOLCHAIN_BASE_NAME}-strip${EXECUTABLE_SUFFIX} CACHE INTERNAL "")
 
 
-# set(TFLITE_FLAGS                    "-DTFLITE_ENABLE_XNNPACK=OFF")
 set(TFLITE_FLAGS                    "-IC:/Users/cjamc/Documents/Git/P4P-41/quartus/stock/vexriscv/VexRiscv-master/opt/riscv/riscv64-unknown-elf/include/machine")
-
-
-include_directories()
 
 set(CMAKE_C_FLAGS                   "${TFLITE_FLAGS} -Wno-psabi --specs=nosys.specs -fdata-sections -ffunction-sections -Wl,--gc-sections" CACHE INTERNAL "")
 set(CMAKE_CXX_FLAGS                 "${CMAKE_C_FLAGS} -fno-exceptions" CACHE INTERNAL "")

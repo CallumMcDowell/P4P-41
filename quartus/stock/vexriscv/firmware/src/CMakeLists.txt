@@ -12,8 +12,8 @@ message("CMAKE_TOOLCHAIN_FILE points to "   ${CMAKE_TOOLCHAIN_FILE})
 set(RISCV_PROJECT_NAME              "vexriscv-firmware")
 set(RISCV_PROJECT_VERSION           "0.1")
 
-# set(RISCV_EXECUTABLE_SOURCE         "hello.c")
-set(RISCV_EXECUTABLE_SOURCE         "minimal.cpp")
+set(RISCV_EXECUTABLE_SOURCE         "hello.c")
+# set(RISCV_EXECUTABLE_SOURCE         "minimal.cpp")
 set(RISCV_EXECUTABLE_NAME           "hello.exe")
 
 set(TENSORFLOW_SOURCE_DIR           "C:/Users/cjamc/Documents/Git/tensorflow_src")

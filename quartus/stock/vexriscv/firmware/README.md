@@ -1,3 +1,7 @@
+
+
+## NEWLY OUTDATED (for Lite, not micro!)
+
 Working Version: tensorflow-2.9.1 (most recent release version)
 
 The zipped tensorflow source must be downloaded and unpacked.
