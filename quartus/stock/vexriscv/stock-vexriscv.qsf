@@ -1367,7 +1367,7 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1[34]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1_34
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1[35]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_1_35
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VERILOG_FILE cores/VexRiscvAvalonMaxPerf.v
 set_global_assignment -name QIP_FILE vexriscv_system/synthesis/vexriscv_system.qip
 set_global_assignment -name VHDL_FILE DE1_SoC_Top_Level.vhd
-set_global_assignment -name VERILOG_FILE src/VexRiscvAvalonMaxPerf.v
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
