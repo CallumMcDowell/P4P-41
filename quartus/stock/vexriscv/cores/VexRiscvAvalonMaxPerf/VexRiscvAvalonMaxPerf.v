@@ -1,8 +1,10 @@
 // Generator : SpinalHDL v1.7.0a    git head : 150a9b9067020722818dfb17df4a23ac712a7af8
 // Component : VexRiscvAvalonMaxPerf
-// Git hash  : daf3347c622c8ddcd32f3013665b9d719038affd
+// Git hash  : 4bb2a7d2fe8c8c9ca7d3efaeb1f16d31b971bb96
 
 `timescale 1ns/1ps
+
+`define SYNTHESIS
 
 module VexRiscvAvalonMaxPerf (
   input               timerInterrupt,
@@ -4453,7 +4455,7 @@ module VexRiscvAvalonMaxPerf (
   assign jtag_tdo = jtagBridge_1_io_jtag_tdo;
   always @(posedge clk or posedge reset) begin
     if(reset) begin
-      IBusCachedPlugin_fetchPc_pcReg <= 32'h80000000;
+      IBusCachedPlugin_fetchPc_pcReg <= 32'h00000010;
       IBusCachedPlugin_fetchPc_correctionReg <= 1'b0;
       IBusCachedPlugin_fetchPc_booted <= 1'b0;
       IBusCachedPlugin_fetchPc_inc <= 1'b0;
@@ -5331,9 +5333,9 @@ module JtagBridge (
     .debugReset                 (debugReset                                 )  //i
   );
   initial begin
-//  `ifndef SYNTHESIS
-//    jtag_tap_fsm_state = {1{$urandom}};
-//  `endif
+  `ifndef SYNTHESIS
+    jtag_tap_fsm_state = {1{$urandom}};
+  `endif
   end
 
   `ifndef SYNTHESIS
@@ -6752,8 +6754,8 @@ module FlowCCByToggle (
   );
   initial begin
   `ifndef SYNTHESIS
-//    inputArea_target = $urandom;
-//    outputArea_hit = $urandom;
+    inputArea_target = $urandom;
+    outputArea_hit = $urandom;
   `endif
   end
 
@@ -6803,8 +6805,8 @@ module BufferCC (
 
   initial begin
   `ifndef SYNTHESIS
-//    buffers_0 = $urandom;
-//    buffers_1 = $urandom;
+    buffers_0 = $urandom;
+    buffers_1 = $urandom;
   `endif
   end
 

@@ -7,7 +7,7 @@
    <irq preferredWidth="63" />
   </columns>
  </systemtable>
- <library expandedCategories="Project,Library" />
+ <library expandedCategories="Library,Library/RISC-V,Project" />
  <window width="1292" height="741" x="74" y="27" />
  <generation synthesis="VHDL" />
 </preferences>

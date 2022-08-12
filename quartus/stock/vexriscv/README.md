@@ -20,15 +20,15 @@ Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonF
 
 ### Before Using the generated core in Qsys
 
-- Comment out `urand` under the `SYSTHESIS` blocks in the generated `.v` file. 
+- Define ``define SYNTHESIS` in file.
 - Ensure `iorange` and `resetvector` is correcly configured with the software HAL specifications (for gpio for example). Check both the scala and the generated `.v` for:
-  - SimplePlugin
+  - **SimplePlugin**
     - C_RESET_VECTOR
       - `IBusSimplePlugin_fetchPc_pcReg`
     - C_EXCEPTION_VECTOR
       - `CsrPlugin_mtvec_mode`
       - `CsrPlugin_mtvec_base`
-  - Cached Plugin
+  - **Cached Plugin**
     - C_RESET_VECTOR
       - `IBusCachedPlugin_fetchPc_pcReg`
       - `IBusCachedPlugin_decodePc_pcReg`
