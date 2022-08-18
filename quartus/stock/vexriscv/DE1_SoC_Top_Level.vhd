@@ -19,8 +19,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-library vexriscv_system;
-use vexriscv_system.all;
+--library vexriscv_system;
+--use vexriscv_system.all;
 
 entity DE1_SoC_top_level is
     port(
@@ -87,7 +87,7 @@ entity DE1_SoC_top_level is
 --        PS2_DAT2 : inout std_logic;
 
         -- SW
-        SW : in std_logic_vector(9 downto 0)
+        SW : in std_logic_vector(9 downto 0);
 
         -- Video-In
 --        TD_CLK27   : inout std_logic;
@@ -107,7 +107,7 @@ entity DE1_SoC_top_level is
 --        VGA_VS      : out std_logic;
 
         -- GPIO_0
---        GPIO_0 : inout std_logic_vector(35 downto 0);
+        GPIO_0 : inout std_logic_vector(35 downto 0)
 
         -- GPIO_1
 --        GPIO_1 : inout std_logic_vector(35 downto 0);
@@ -180,36 +180,44 @@ architecture rtl of DE1_SoC_top_level is
 	signal gpio : std_logic_vector(31 downto 0);
 
 	-- ArieEmbedded VexRiscv 
---	component vexriscv_system is
---		port (
---			clk_clk       : in    std_logic                     := '0';             --   clk.clk
---			gpio_export   : inout std_logic_vector(31 downto 0) := (others => '0'); --  gpio.export
---			reset_reset_n : in    std_logic                     := '0'              -- reset.reset_n
---		);
---	end component;
+	component vexriscv_system is
+		port (
+			clk_clk       : in    std_logic                     := '0';             --   clk.clk
+			gpio_export   : inout std_logic_vector(31 downto 0) := (others => '0'); --  gpio.export
+			vexriscvavalon_0_jtag_tms : in    std_logic := '0';             
+			vexriscvavalon_0_jtag_tdi : in    std_logic := '0';            
+			vexriscvavalon_0_jtag_tdo : out   std_logic;                
+			vexriscvavalon_0_jtag_tck : in    std_logic := '0';
+			reset_reset_n : in    std_logic                     := '0'              -- reset.reset_n
+		);
+	end component;
 	
 begin
 
 	KEY <= not KEY_N;
 	
-	VEXRISCV: entity vexriscv_system.vexriscv_system
-	port map (
-		clk_clk => CLOCK_50,
-		reset_reset_n => '1',      -- Hardwired reset F                        
-		gpio_export => gpio,
-		vexriscvavalonmaxperf_0_jtag_tms => open,
-		vexriscvavalonmaxperf_0_jtag_tdi => open,
-		vexriscvavalonmaxperf_0_jtag_tdo => open,
-		vexriscvavalonmaxperf_0_jtag_tck => open,                             
-		vexriscvavalonmaxperf_0_softwareinterrupt_export => SW(9)
-		);
+--	VEXRISCV: entity vexriscv_system.vexriscv_system
+--	port map (
+--		clk_clk => CLOCK_50,
+--		reset_reset_n => not KEY(0), -- or reset_debug,      -- Hardwired reset F                        
+--		gpio_export => gpio,
+--		vexriscvavalonmaxperf_0_jtag_tms => open,
+--		vexriscvavalonmaxperf_0_jtag_tdi => open,
+--		vexriscvavalonmaxperf_0_jtag_tdo => open,
+--		vexriscvavalonmaxperf_0_jtag_tck => open,                             
+--		vexriscvavalonmaxperf_0_softwareinterrupt_export => SW(9)
+--		);
 		-- ArieEmbedded VexRiscv
---        u0 : component vexriscv_system
---                port map(
---                        clk_clk       => CLOCK_50,       --   clk.clk
---                        gpio_export   => gpio, 				--  gpio.export
---                        reset_reset_n => '1'             -- reset.reset_n
---                );
+        u0 : component vexriscv_system
+                port map(
+                        clk_clk       => CLOCK_50,       --   clk.clk
+                        gpio_export   => gpio, 				--  gpio.export
+								vexriscvavalon_0_jtag_tck => GPIO_0(1),
+								vexriscvavalon_0_jtag_tdi => GPIO_0(3),            
+								vexriscvavalon_0_jtag_tdo => GPIO_0(5),  
+								vexriscvavalon_0_jtag_tms => GPIO_0(7),             
+                        reset_reset_n => not KEY(0) -- or reset_debug -- reset.reset_n
+                );
 
         -- Blinky
         process (CLOCK_50) begin

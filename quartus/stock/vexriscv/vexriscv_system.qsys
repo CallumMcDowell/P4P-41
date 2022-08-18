@@ -25,6 +25,14 @@
          type = "int";
       }
    }
+   element VexRiscvAvalon_0.irq_controller
+   {
+      datum baseAddress
+      {
+         value = "65536";
+         type = "String";
+      }
+   }
    element clk_0
    {
       datum _sortIndex
@@ -43,6 +51,11 @@
    }
    element gpio.s1
    {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
       datum baseAddress
       {
          value = "65792";
@@ -68,6 +81,22 @@
       {
          value = "5";
          type = "int";
+      }
+   }
+   element onchip_memory2_0.s1
+   {
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
+      }
+   }
+   element onchip_memory2_0.s2
+   {
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
       }
    }
    element pll_0
@@ -107,20 +136,30 @@
    dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
  <interface
-   name="vexriscvavalonmaxperf_0_jtag"
-   internal="VexRiscvAvalonMaxPerf_0.jtag"
+   name="vexriscvavalon_0_jtag"
+   internal="VexRiscvAvalon_0.jtag"
    type="conduit"
    dir="end" />
  <interface
+   name="vexriscvavalonmaxperf_0_debug_resetout"
+   internal="VexRiscvAvalonMaxPerf_0.debug_resetOut" />
+ <interface
+   name="vexriscvavalonmaxperf_0_externalinterrupt"
+   internal="VexRiscvAvalonMaxPerf_0.externalInterrupt" />
+ <interface
+   name="vexriscvavalonmaxperf_0_jtag"
+   internal="VexRiscvAvalonMaxPerf_0.jtag" />
+ <interface
    name="vexriscvavalonmaxperf_0_softwareinterrupt"
-   internal="VexRiscvAvalonMaxPerf_0.softwareInterrupt"
-   type="conduit"
-   dir="end" />
+   internal="VexRiscvAvalonMaxPerf_0.softwareInterrupt" />
+ <interface
+   name="vexriscvavalonmaxperf_0_timerinterrupt"
+   internal="VexRiscvAvalonMaxPerf_0.timerInterrupt" />
  <module
    name="VexRiscvAvalonMaxPerf_0"
    kind="VexRiscvAvalonMaxPerf"
    version="1.0"
-   enabled="1">
+   enabled="0">
   <parameter name="AUTO_EXTERNALINTERRUPT_INTERRUPTS_USED" value="0" />
   <parameter name="AUTO_TIMERINTERRUPT_INTERRUPTS_USED" value="0" />
  </module>
@@ -128,7 +167,7 @@
    name="VexRiscvAvalon_0"
    kind="VexRiscvAvalon"
    version="1.0"
-   enabled="0">
+   enabled="1">
   <parameter name="AUTO_INTERRUPT_RECEIVER_INTERRUPTS_USED" value="0" />
   <parameter name="CORE_CONFIG" value="1" />
   <parameter name="C_EXCEPTION_VECTOR" value="32" />
@@ -146,7 +185,7 @@
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="true" />
   <parameter name="captureEdge" value="false" />
-  <parameter name="clockRate" value="25000000" />
+  <parameter name="clockRate" value="50000000" />
   <parameter name="direction" value="Bidir" />
   <parameter name="edgeType" value="RISING" />
   <parameter name="generateIRQ" value="false" />
@@ -326,7 +365,7 @@
   <parameter name="gui_multiply_factor" value="1" />
   <parameter name="gui_number_of_clocks" value="1" />
   <parameter name="gui_operation_mode" value="normal" />
-  <parameter name="gui_output_clock_frequency0" value="25.0" />
+  <parameter name="gui_output_clock_frequency0" value="50.0" />
   <parameter name="gui_output_clock_frequency1" value="100.0" />
   <parameter name="gui_output_clock_frequency10" value="100.0" />
   <parameter name="gui_output_clock_frequency11" value="100.0" />
@@ -441,6 +480,15 @@
    kind="avalon"
    version="21.1"
    start="VexRiscvAvalon_0.data_bus"
+   end="VexRiscvAvalon_0.irq_controller">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00010000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="21.1"
+   start="VexRiscvAvalon_0.data_bus"
    end="gpio.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x00010100" />
@@ -483,13 +531,13 @@
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="clock" version="21.1" start="clk_0.clk" end="jtag_uart_0.clk" />
- <connection kind="clock" version="21.1" start="clk_0.clk" end="pll_0.refclk" />
- <connection kind="clock" version="21.1" start="pll_0.outclk0" end="gpio.clk" />
  <connection
    kind="clock"
    version="21.1"
-   start="pll_0.outclk0"
+   start="clk_0.clk"
    end="VexRiscvAvalonMaxPerf_0.clk" />
+ <connection kind="clock" version="21.1" start="clk_0.clk" end="pll_0.refclk" />
+ <connection kind="clock" version="21.1" start="pll_0.outclk0" end="gpio.clk" />
  <connection
    kind="clock"
    version="21.1"
@@ -528,12 +576,12 @@
    kind="reset"
    version="21.1"
    start="clk_0.clk_reset"
-   end="VexRiscvAvalon_0.reset" />
+   end="VexRiscvAvalonMaxPerf_0.reset" />
  <connection
    kind="reset"
    version="21.1"
    start="clk_0.clk_reset"
-   end="VexRiscvAvalonMaxPerf_0.reset" />
+   end="VexRiscvAvalon_0.reset" />
  <connection
    kind="reset"
    version="21.1"

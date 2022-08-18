@@ -23,54 +23,54 @@ DEALINGS IN THE SOFTWARE. */
 #include "FpgaConfig.h"
 #include "Hal.h"
 
-// static int counterMod = 1;
+static int counterMod = 1;
 
-// void IRQHandlerTimer(void) {
-// 	// Invert direction of counter
-// 	counterMod = -counterMod;
-// 	// Rearm timer
-// 	Hal_TimerStart(2 * CLK_FREQ); // 2 seconds
-// }
+void IRQHandlerTimer(void) {
+	// Invert direction of counter
+	counterMod = -counterMod;
+	// Rearm timer
+	Hal_TimerStart(2 * CLK_FREQ); // 2 seconds
+}
 
-// void IRQHandlerUart() {
-// 	char c;
-// 	if (g_Uart->status & UART_RRDY) {
-// 		c = UartGet(g_Uart);
-// 		UartPut(g_Uart, c);
-// 	}
-// 	g_Uart->status = 0;
-// }
+void IRQHandlerUart() {
+	char c;
+	if (g_Uart->status & UART_RRDY) {
+		c = UartGet(g_Uart);
+		UartPut(g_Uart, c);
+	}
+	g_Uart->status = 0;
+}
 
 int main() {
 
-	// // Greetings
-	// UartWrite(g_Uart, "\n\n* * * VexRiscv Demo  -  ");
-	// UartWrite(g_Uart, DBUILD_VERSION);
-	// UartWrite(g_Uart, "  - ");
-	// UartWrite(g_Uart, DBUILD_DATE);
-	// UartWrite(g_Uart, "  * * *\n");
+	// Greetings
+	UartWrite(g_Uart, "\n\n* * * VexRiscv Demo  -  ");
+	UartWrite(g_Uart, DBUILD_VERSION);
+	UartWrite(g_Uart, "  - ");
+	UartWrite(g_Uart, DBUILD_DATE);
+	UartWrite(g_Uart, "  * * *\n");
 
 	// Set GPIO to output.
 	g_Pio->direction = 0xffffffff;
 
-	// // Enable interrupt on timer and uart receive.
-	// Hal_SetExtIrqHandler(IRQ_UART, IRQHandlerUart);
-	// Hal_EnableInterrupt(IRQ_UART);
-	// g_Uart->control |= UART_RRDY;
-	// Hal_EnableMachineInterrupt(IRQ_M_EXT);
-	// Hal_SetTimerIrqHandler(IRQHandlerTimer);
-	// Hal_TimerStart(3 * CLK_FREQ); // 3 seconds
-	// Hal_GlobalEnableInterrupts();
+	// Enable interrupt on timer and uart receive.
+	Hal_SetExtIrqHandler(IRQ_UART, IRQHandlerUart);
+	Hal_EnableInterrupt(IRQ_UART);
+	g_Uart->control |= UART_RRDY;
+	Hal_EnableMachineInterrupt(IRQ_M_EXT);
+	Hal_SetTimerIrqHandler(IRQHandlerTimer);
+	Hal_TimerStart(3 * CLK_FREQ); // 3 seconds
+	Hal_GlobalEnableInterrupts();
 
 	// Binary counter that ticks 32 times per second
-	// uint32_t timeLast = Hal_ReadTime32();
+	uint32_t timeLast = Hal_ReadTime32();
 	while (1) {
-		g_Pio->port = 255;
-		// uint32_t timeNow = Hal_ReadTime32();
-		// if ((timeNow - timeLast) > (CLK_FREQ / 32)) {
-		// 	timeLast = timeNow;
-		// 	g_Pio->port = 255;
-		// }
+		// g_Pio->port = 255;
+		uint32_t timeNow = Hal_ReadTime32();
+		if ((timeNow - timeLast) > (CLK_FREQ / 32)) {
+			timeLast = timeNow;
+			g_Pio->port += counterMod;
+		}
 	}
 
 }

@@ -5,7 +5,7 @@
 
 #include "Uart.h"
 
-#define CLK_FREQ 25000000UL // 25 MHz
+#define CLK_FREQ 50000000UL // 25 MHz
 
 #define MEMADDR_OCRAM     ((uintptr_t)(0x00000000))
 #define MEMADDR_IRQCONTROLLER ((uintptr_t)(0x00010000))
