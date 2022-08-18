@@ -91,6 +91,7 @@ Notes:
 
 - Install [openOCD (Vexriscv port)](https://github.com/SpinalHDL/openocd_riscv). Note that only this port will work, as Vexriscv debug module does not adhere to the RISC-V Debug Specification.
 - Install the [D2XX drivers](http://ftdichip.com/Drivers/D2XX.htm) for the adaptor.
+- (If you already installed the riscv tool chain, the `riscv64-unknown-elf-gdb` application would be under `/opt/riscv/bin`)
 
 > It looks like following this (https://tomverbeure.github.io/2021/07/18/VexRiscv-OpenOCD-and-Traps.html) (and > https://github.com/SpinalHDL/VexRiscv/tree/master/doc/nativeJtag) is the way to go.
 
