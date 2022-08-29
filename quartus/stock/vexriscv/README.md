@@ -153,7 +153,15 @@ Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
 		-ex "target extended-remote localhost:3333"
 ```
 
+
+### Resources:
+- [openOCD, Vexrescv and Traps](https://github.com/tomverbeure/vexriscv_ocd_blog)
+
 ## GDB (RISC-V, shipped with the GNU toolchain)
+
+### Resources:
+- [Doc](https://sourceware.org/gdb/onlinedocs/gdb/index.html)
+- [Tutorial](https://www.usna.edu/Users/cs/lmcdowel/courses/ic220/S20/resources/gdb.html)
 
 1) Make sure the program you want to debug was compiled with debug symbols. 
 
@@ -171,6 +179,7 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 
 **Notes:**
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
+- The GUI is greate of looking, not so great for issuing commands (such as breaking the program). 
 
 # Quartus QNA:
 
