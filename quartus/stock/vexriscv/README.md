@@ -26,7 +26,9 @@ This is the project implementing a simple Vexriscv system through qsys with the 
 ...
 ├openOCD                // makefile firmware taken from AriesEmbedded project.
 │├interface             
-│└cfg                   
+│└cfg   
+││├vexriscv_init.cfg     // sets up parameters that are specific to the VexRiscv configuration of design
+││└vexriscv_init.yaml    // Vexriscv design info (generated in Spinal)
 ├cores                  // generated core sources of the CPU
 ├firmware               // cmake firmware built from scratch. 
 ├sw                     // makefile firmware taken from AriesEmbedded project.
@@ -71,6 +73,10 @@ Notes:
 
 ## SW
 
+## RISC-V Toolchain
+
+All toolchain is installed under `/opt` such as the `riscv64-unknown-elf-*` [toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain). Everything needed to perform cross-compilation and GDB debugging is included with this package. A prebuilt version of this toolchain is shipped with this repo in `./prebuilt/riscv`.
+
 ### Vectors
 
 0) Vexriscv CPU is **active low**, wire all neglected input ports to ‘0’ (i.e. `Softwareinterrupt`)
@@ -114,7 +120,7 @@ vexriscvavalon_0_jtag_tms => GPIO_0(7),
 
 1) Wire theJATG adaptor to GPIO_0 (above)
 > Sanity Check (find USB): lsusb
-2) Open a terminal in `/openOCD` and run 
+2) Open a terminal in `/openOCD` and run:
   
 ```sh
 openocd -f interface/ftdi/c232hm.cfg -c "adapter speed 1000; transport select jtag" \
@@ -134,7 +140,39 @@ Info : Listening on port 6666 for tcl connections
 Info : Listening on port 4444 for telnet connections
 ```
 
-## Quartus QNA:
+Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
+
+3) Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb:
+
+```sh
+# don't print header
+# connect to port opened by openOCD
+# not the spacing after \ matters
+/opt/riscv/bin/riscv64-unknown-elf-gdb -q \
+		bootrom.elf \
+		-ex "target extended-remote localhost:3333"
+```
+
+## GDB (RISC-V, shipped with the GNU toolchain)
+
+1) Make sure the program you want to debug was compiled with debug symbols. 
+
+- `.elf` file: Info on the program running on the target. 
+
+```sh
+gdbgui -g '/opt/riscv/bin/riscv64-unknown-elf-gdb -q bootrom.elf -ex "target extended-remote localhost:3333"'
+
+--debug
+```
+
+### GDBGUI
+
+Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
+
+**Notes:**
+- [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
+
+# Quartus QNA:
 
 Q: Quartus throws syntax error, everything is fine!!
 A: Check that Quartus is phasing the HDL in its correct version. Note that Quartus Lite will not support `VHDL 2008` and have trouble phasing `.sv`. However, if the code was able to compile before, but cannot now, try restarting Quartus, and if that does not work, restart your computer.
