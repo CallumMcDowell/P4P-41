@@ -276,8 +276,6 @@ Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
 
 ```sh
 gdbgui -g '/opt/riscv/bin/riscv64-unknown-elf-gdb -q bootrom.elf -ex "target extended-remote localhost:3333"'
-
---debug
 ```
 
 ### GDBGUI
@@ -286,7 +284,13 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 
 **Notes:**
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
-- The GUI is greate of looking, not so great for issuing commands (such as breaking the program). 
+- The GUI is greate of looking, not so great for issuing commands (such as breaking the program).
+- Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
+- you can `load` an `.elf` into flash apparenetly. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
+
+## GDB Resources
+
+- [gdb QuickStart](https://web.eecs.umich.edu/~sugih/pointers/gdbQS.html)
 
 # Quartus QNA:
 
