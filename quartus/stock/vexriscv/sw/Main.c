@@ -64,8 +64,8 @@ int main() {
 
 	// Binary counter that ticks 32 times per second
 	uint32_t timeLast = Hal_ReadTime32();
+	g_Pio->port = 255;
 	while (1) {
-		// g_Pio->port = 255;
 		uint32_t timeNow = Hal_ReadTime32();
 		if ((timeNow - timeLast) > (CLK_FREQ / 32)) {
 			timeLast = timeNow;
