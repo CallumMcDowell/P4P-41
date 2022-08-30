@@ -47,7 +47,7 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
 ├vexriscv-master         // local clone of Vexriscv repo
 │
 ...
-├openOCD                // cfg files for openOCD
+├openOCD                 // cfg files for openOCD
 │├interface
 ││├...                          // cfg for the JTAG probe used
 │└cfg                
