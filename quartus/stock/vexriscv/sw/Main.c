@@ -23,6 +23,9 @@ DEALINGS IN THE SOFTWARE. */
 #include "FpgaConfig.h"
 #include "Hal.h"
 
+#define CUSTOM_CORE
+
+#ifndef CUSTOM_CORE
 static int counterMod = 1;
 
 void IRQHandlerTimer(void) {
@@ -40,18 +43,17 @@ void IRQHandlerUart() {
 	}
 	g_Uart->status = 0;
 }
+#endif
 
 int main() {
 
+	#ifndef CUSTOM_CORE
 	// Greetings
 	UartWrite(g_Uart, "\n\n* * * VexRiscv Demo  -  ");
 	UartWrite(g_Uart, DBUILD_VERSION);
 	UartWrite(g_Uart, "  - ");
 	UartWrite(g_Uart, DBUILD_DATE);
 	UartWrite(g_Uart, "  * * *\n");
-
-	// Set GPIO to output.
-	g_Pio->direction = 0xffffffff;
 
 	// Enable interrupt on timer and uart receive.
 	Hal_SetExtIrqHandler(IRQ_UART, IRQHandlerUart);
@@ -62,9 +64,23 @@ int main() {
 	Hal_TimerStart(3 * CLK_FREQ); // 3 seconds
 	Hal_GlobalEnableInterrupts();
 
+	// Set GPIO to output.
+	g_Pio->direction = 0xffffffff;
+
 	// Binary counter that ticks 32 times per second
 	uint32_t timeLast = Hal_ReadTime32();
-	g_Pio->port = 255;
+	#endif
+	#ifdef CUSTOM_CORE
+	// Set GPIO to output.
+	g_Pio->direction = 0xffffffff;
+
+	while(1) {
+		g_Pio->port = 255;
+		g_Pio->port = 0;
+	}
+	#endif
+
+	#ifndef CUSTOM_CORE
 	while (1) {
 		uint32_t timeNow = Hal_ReadTime32();
 		if ((timeNow - timeLast) > (CLK_FREQ / 32)) {
@@ -72,5 +88,5 @@ int main() {
 			g_Pio->port += counterMod;
 		}
 	}
-
+	#endif
 }

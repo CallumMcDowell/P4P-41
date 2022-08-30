@@ -286,7 +286,7 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
 - The GUI is greate of looking, not so great for issuing commands (such as breaking the program).
 - Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
-- you can `load` an `.elf` into flash apparenetly. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
+- you can `load` an `.elf` into flash apparenetly! Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
 
 ## GDB Resources
 

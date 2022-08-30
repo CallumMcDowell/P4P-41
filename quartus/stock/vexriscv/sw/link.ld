@@ -1,3 +1,7 @@
+/* 
+Comments by: Hao Lin
+*/
+
 OUTPUT_FORMAT("elf32-littleriscv", "elf32-littleriscv", "elf32-littleriscv")
 OUTPUT_ARCH( "riscv" )
 
