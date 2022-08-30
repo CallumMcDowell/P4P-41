@@ -16,11 +16,14 @@
 -- _N     : to specify an active-low signal
 -- #############################################################################
 
+-- VHDL `98
 library ieee;
 use ieee.std_logic_1164.all;
 
---library vexriscv_system;
---use vexriscv_system.all;
+-- When using AriesEmbedded Ccore, also comment out the following library.
+-- (Can't do conditional includes in VHDL `98)
+library vexriscv_system;
+use vexriscv_system.all;
 
 entity DE1_SoC_top_level is
     port(
@@ -179,6 +182,7 @@ architecture rtl of DE1_SoC_top_level is
 
 	signal gpio : std_logic_vector(31 downto 0);
 
+	-- pragma synthesis_off
 	-- ArieEmbedded VexRiscv 
 	component vexriscv_system is
 		port (
@@ -191,46 +195,51 @@ architecture rtl of DE1_SoC_top_level is
 			reset_reset_n : in    std_logic                     := '0'              -- reset.reset_n
 		);
 	end component;
+-- pragma synthesis_on
 	
 begin
 
+	-- General Wiring
 	KEY <= not KEY_N;
-	
---	VEXRISCV: entity vexriscv_system.vexriscv_system
---	port map (
---		clk_clk => CLOCK_50,
---		reset_reset_n => not KEY(0), -- or reset_debug,      -- Hardwired reset F                        
---		gpio_export => gpio,
---		vexriscvavalonmaxperf_0_jtag_tms => open,
---		vexriscvavalonmaxperf_0_jtag_tdi => open,
---		vexriscvavalonmaxperf_0_jtag_tdo => open,
---		vexriscvavalonmaxperf_0_jtag_tck => open,                             
---		vexriscvavalonmaxperf_0_softwareinterrupt_export => SW(9)
---		);
-		-- ArieEmbedded VexRiscv
-        u0 : component vexriscv_system
-                port map(
-                        clk_clk       => CLOCK_50,       --   clk.clk
-                        gpio_export   => gpio, 				--  gpio.export
-								vexriscvavalon_0_jtag_tck => GPIO_0(1),
-								vexriscvavalon_0_jtag_tdi => GPIO_0(3),            
-								vexriscvavalon_0_jtag_tdo => GPIO_0(5),  
-								vexriscvavalon_0_jtag_tms => GPIO_0(7),             
-                        reset_reset_n => not KEY(0) -- or reset_debug -- reset.reset_n
-                );
+	LEDR(7 downto 0) <= gpio(7 downto 0);
+		
+	-- pragma synthesis_off
+	-- ArieEmbedded VexRiscv:
+	VEXRISCV: component vexriscv_system
+	port map(
+		clk_clk       => CLOCK_50,       
+		gpio_export   => gpio, 				
+		vexriscvavalon_0_jtag_tck => GPIO_0(1),
+		vexriscvavalon_0_jtag_tdi => GPIO_0(3),            
+		vexriscvavalon_0_jtag_tdo => GPIO_0(5),  
+		vexriscvavalon_0_jtag_tms => GPIO_0(7),             
+		reset_reset_n => not KEY(0) -- or reset_debug -- reset.reset_n
+	);
+	-- pragma synthesis_on
 
-        -- Blinky
-        process (CLOCK_50) begin
-                if (CLOCK_50 = '1' and CLOCK_50'EVENT) then
-                        if (counter < 12500000) then
-                                counter <= counter + 1;
-                        else
-                                led_mod <= not led_mod;
-                                counter <= 1;
-                        end if;
-                end if;
-        end process;
+	VEXRISCV: entity vexriscv_system.vexriscv_system
+	port map (
+		clk_clk => CLOCK_50,
+		reset_reset_n => not KEY(0), -- or reset_debug,      -- Hardwired reset F                        
+		gpio_export => gpio,
+		vexriscvavalonmaxperf_0_jtag_tck => GPIO_0(1), 
+		vexriscvavalonmaxperf_0_jtag_tdi => GPIO_0(3),
+		vexriscvavalonmaxperf_0_jtag_tdo => GPIO_0(5), 		
+		vexriscvavalonmaxperf_0_jtag_tms => GPIO_0(7),                 
+		vexriscvavalonmaxperf_0_softwareinterrupt_export => SW(9)
+	);
 
-        LEDR(9) <= led_mod;
-        LEDR(7 downto 0) <= gpio(7 downto 0);
+	-- HW Blinky
+	process (CLOCK_50) begin
+			 if (CLOCK_50 = '1' and CLOCK_50'EVENT) then
+						if (counter < 12500000) then
+								  counter <= counter + 1;
+						else
+								  led_mod <= not led_mod;
+								  counter <= 1;
+						end if;
+			 end if;
+	end process;
+
+	LEDR(9) <= led_mod;
 end;

@@ -1,19 +1,21 @@
 # # File gsaved with Nlview version 6.3.8  2013-12-19 bk=1.2992 VDI=34 GEI=35
 # 
+preplace inst vexriscv_system.VexRiscvAvalonMaxPerf_0 -pg 1 -lvl 2 -y 310
 preplace inst vexriscv_system.clk_0 -pg 1 -lvl 1 -y 50
-preplace inst vexriscv_system.VexRiscvAvalon_0 -pg 1 -lvl 4 -y 90
 preplace inst vexriscv_system.gpio -pg 1 -lvl 5 -y 230
 preplace inst vexriscv_system.pll_0 -pg 1 -lvl 2 -y 50
 preplace inst vexriscv_system.onchip_memory2_0 -pg 1 -lvl 5 -y 30
 preplace inst vexriscv_system -pg 1 -lvl 1 -y 40 -regy -20
-preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.clk,(SLAVE)clk_0.clk_in) 1 0 1 NJ
-preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)pll_0.reset,(SLAVE)onchip_memory2_0.reset2,(SLAVE)gpio.reset,(MASTER)clk_0.clk_reset,(SLAVE)onchip_memory2_0.reset1,(SLAVE)VexRiscvAvalon_0.reset) 1 1 4 350 120 NJ 120 740 60 1320
-preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)gpio.clk,(SLAVE)onchip_memory2_0.clk2,(SLAVE)onchip_memory2_0.clk1,(SLAVE)VexRiscvAvalon_0.clock,(MASTER)pll_0.outclk0) 1 2 3 NJ 60 720 40 1340
-preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(SLAVE)pll_0.refclk,(MASTER)clk_0.clk) 1 1 1 N
-preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)VexRiscvAvalon_0.jtag,(SLAVE)vexriscv_system.vexriscvavalon_0_jtag) 1 0 4 NJ 140 NJ 140 NJ 140 NJ
-preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(MASTER)VexRiscvAvalon_0.data_bus,(SLAVE)gpio.s1,(SLAVE)VexRiscvAvalon_0.irq_controller,(SLAVE)onchip_memory2_0.s2) 1 3 2 760 80 1300
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)onchip_memory2_0.reset2,(SLAVE)pll_0.reset,(SLAVE)VexRiscvAvalonMaxPerf_0.debugReset,(SLAVE)onchip_memory2_0.reset1,(SLAVE)gpio.reset,(MASTER)clk_0.clk_reset,(SLAVE)VexRiscvAvalonMaxPerf_0.reset) 1 1 4 410 120 NJ 120 NJ 120 1160
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)VexRiscvAvalonMaxPerf_0.jtag,(SLAVE)vexriscv_system.vexriscvavalonmaxperf_0_jtag) 1 0 2 NJ 360 NJ
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(MASTER)pll_0.outclk0,(SLAVE)gpio.clk,(SLAVE)onchip_memory2_0.clk2,(SLAVE)onchip_memory2_0.clk1) 1 2 3 NJ 60 NJ 60 1200
+preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(SLAVE)onchip_memory2_0.s1,(MASTER)VexRiscvAvalonMaxPerf_0.iBusAvalon) 1 2 3 NJ 380 NJ 380 1180
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)gpio.s1,(SLAVE)onchip_memory2_0.s2,(MASTER)VexRiscvAvalonMaxPerf_0.dBusAvalon) 1 2 3 690 300 NJ 300 1220
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)clk_0.clk_in,(SLAVE)vexriscv_system.clk) 1 0 1 NJ
 preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)gpio.external_connection,(SLAVE)vexriscv_system.gpio) 1 0 5 NJ 260 NJ 260 NJ 260 NJ 260 NJ
-preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.reset,(SLAVE)clk_0.clk_in_reset) 1 0 1 NJ
-preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(SLAVE)onchip_memory2_0.s1,(MASTER)VexRiscvAvalon_0.instruction_bus) 1 4 1 N
-levelinfo -pg 1 0 140 1550
-levelinfo -hier vexriscv_system 150 180 400 700 1080 1390 1540
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)clk_0.clk_in_reset,(SLAVE)vexriscv_system.reset) 1 0 1 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.vexriscvavalonmaxperf_0_softwareinterrupt,(SLAVE)VexRiscvAvalonMaxPerf_0.softwareInterrupt) 1 0 2 NJ 400 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(MASTER)vexriscv_system.vexriscvavalonmaxperf_0_debug_resetout,(MASTER)VexRiscvAvalonMaxPerf_0.debug_resetOut) 1 2 4 NJ 340 NJ 340 NJ 340 NJ
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)VexRiscvAvalonMaxPerf_0.clk,(MASTER)clk_0.clk,(SLAVE)pll_0.refclk) 1 1 1 430
+levelinfo -pg 1 0 200 1820
+levelinfo -hier vexriscv_system 210 240 460 760 1140 1450 1600

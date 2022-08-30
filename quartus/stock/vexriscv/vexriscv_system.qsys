@@ -135,31 +135,37 @@
    type="conduit"
    dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
+ <interface name="vexriscvavalon_0_jtag" internal="VexRiscvAvalon_0.jtag" />
  <interface
-   name="vexriscvavalon_0_jtag"
-   internal="VexRiscvAvalon_0.jtag"
+   name="vexriscvavalonmaxperf_0_debug_resetout"
+   internal="VexRiscvAvalonMaxPerf_0.debug_resetOut"
+   type="reset"
+   dir="start" />
+ <interface
+   name="vexriscvavalonmaxperf_0_externalinterrupt"
+   internal="VexRiscvAvalonMaxPerf_0.externalInterrupt"
+   type="interrupt"
+   dir="start" />
+ <interface
+   name="vexriscvavalonmaxperf_0_jtag"
+   internal="VexRiscvAvalonMaxPerf_0.jtag"
    type="conduit"
    dir="end" />
  <interface
-   name="vexriscvavalonmaxperf_0_debug_resetout"
-   internal="VexRiscvAvalonMaxPerf_0.debug_resetOut" />
- <interface
-   name="vexriscvavalonmaxperf_0_externalinterrupt"
-   internal="VexRiscvAvalonMaxPerf_0.externalInterrupt" />
- <interface
-   name="vexriscvavalonmaxperf_0_jtag"
-   internal="VexRiscvAvalonMaxPerf_0.jtag" />
- <interface
    name="vexriscvavalonmaxperf_0_softwareinterrupt"
-   internal="VexRiscvAvalonMaxPerf_0.softwareInterrupt" />
+   internal="VexRiscvAvalonMaxPerf_0.softwareInterrupt"
+   type="conduit"
+   dir="end" />
  <interface
    name="vexriscvavalonmaxperf_0_timerinterrupt"
-   internal="VexRiscvAvalonMaxPerf_0.timerInterrupt" />
+   internal="VexRiscvAvalonMaxPerf_0.timerInterrupt"
+   type="interrupt"
+   dir="start" />
  <module
    name="VexRiscvAvalonMaxPerf_0"
    kind="VexRiscvAvalonMaxPerf"
    version="1.0"
-   enabled="0">
+   enabled="1">
   <parameter name="AUTO_EXTERNALINTERRUPT_INTERRUPTS_USED" value="0" />
   <parameter name="AUTO_TIMERINTERRUPT_INTERRUPTS_USED" value="0" />
  </module>
@@ -167,7 +173,7 @@
    name="VexRiscvAvalon_0"
    kind="VexRiscvAvalon"
    version="1.0"
-   enabled="1">
+   enabled="0">
   <parameter name="AUTO_INTERRUPT_RECEIVER_INTERRUPTS_USED" value="0" />
   <parameter name="CORE_CONFIG" value="1" />
   <parameter name="C_EXCEPTION_VECTOR" value="32" />
@@ -576,12 +582,12 @@
    kind="reset"
    version="21.1"
    start="clk_0.clk_reset"
-   end="VexRiscvAvalonMaxPerf_0.reset" />
+   end="VexRiscvAvalon_0.reset" />
  <connection
    kind="reset"
    version="21.1"
    start="clk_0.clk_reset"
-   end="VexRiscvAvalon_0.reset" />
+   end="VexRiscvAvalonMaxPerf_0.reset" />
  <connection
    kind="reset"
    version="21.1"
