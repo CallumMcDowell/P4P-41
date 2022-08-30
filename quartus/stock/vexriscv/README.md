@@ -167,7 +167,7 @@ There are three major regions of work:
 ## RISC-V Toolchain
 
 All toolchain is installed under `/opt` such as the `riscv64-unknown-elf-*` [toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain). Everything needed to perform cross-compilation and GDB debugging is included with this package. A prebuilt version of this toolchain is shipped with this repo in `./prebuilt/riscv`.
--  **Includes but is not limited to (in RISC_V flavour):** GNU Compiler Collection (gcc), build tools like make, binUtil, newlib (if you chose to install), and the GNU Debugger (gdb)
+-  **Includes but is not limited to (in RISC_V flavour):** GNU Compiler Collection (gcc), build tools like make, binUtil, newlib (if you chose to install), glibc, and the GNU Debugger (gdb)
 -  The toolchain configuration used is:
 
 ```sh
@@ -175,6 +175,10 @@ All toolchain is installed under `/opt` such as the `riscv64-unknown-elf-*` [too
 
 sudo make
 ```
+
+### Toolchain Resources
+
+- [Getting Started with the RISC-V Open Source GNU Toolchain](https://mindchasers.com/dev/rv-getting-started)
 
 ### C Library Choice(s)
 
@@ -193,6 +197,8 @@ To do.
 ---
 
 # Debugging with openOCD+GDB
+
+**VERY IMPORTENT STEPS:**
 
 - Power off both target board and cable before plugging.
 - de1-SoC I/O Interface: 3.3V TTL
@@ -262,12 +268,13 @@ Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
 ### openOCD Resources:
 
 - [openOCD, Vexrescv and Traps](https://github.com/tomverbeure/vexriscv_ocd_blog)
+- [OpenOCD Project Setup](https://openocd.org/doc/html/OpenOCD-Project-Setup.html)
 
 ## GDB (RISC-V, shipped with the GNU toolchain)
 
 ### GDB Resources:
 
-- [Doc](https://sourceware.org/gdb/onlinedocs/gdb/index.html)
+- [Debugging with GDB](https://sourceware.org/gdb/onlinedocs/gdb/index.html)
 - [Tutorial](https://www.usna.edu/Users/cs/lmcdowel/courses/ic220/S20/resources/gdb.html)
 
 1) Make sure the program you want to debug was compiled with debug symbols. 
@@ -286,7 +293,7 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
 - The GUI is greate of looking, not so great for issuing commands (such as breaking the program).
 - Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
-- you can `load` an `.elf` into flash apparenetly! Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
+- you can `load` an `.elf` into OCRAM. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
 
 ## GDB Resources
 
