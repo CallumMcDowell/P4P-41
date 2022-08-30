@@ -1,6 +1,19 @@
-# ArieEmbedded Wrapper Adoptation
+# 2022 P4P #41 @ University of Auckland
+
+**Research Peers:**
+
+- Callum McDowell
+- Hao Lin
+
+**Supervisor:**
+
+- Morteza Biglari-Abhari 
 
 This is the project implementing a simple Vexriscv system through qsys with the generated `.v` file and `tcl` component from `Qsysfy()`.
+
+This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/ARIES-Embedded/riscv-on-max10) of the Vexriscv core to as an example to compare to test, develope software on when our custom core is not avaliable.
+
+**Note:** We did not utilise any SW ISA simulation (i.e. spike) or HW simulator (i.e. verilator).
 
 ## Equipment list
 
@@ -10,45 +23,85 @@ This is the project implementing a simple Vexriscv system through qsys with the 
 - **SW (macro, for other programs, see the installation log):**
   - Ubuntu 22.04 LTS
   - Quartus (Quartus Prime 21.1) Lite Edition
+  - **Others:** A typed up log of all installations ever done on Hao Lin's Ubuntu 22.04 LTS system during the lifespan of this project is provided in `../Workstation Setup`.
 
-## Start
+---
 
-1) Build the qsys system.
-2) Build the core (see [VexRiscv Core](#VexRiscv-Core-(Scala-project))).
-3) Compile the bitstream.
-4) Load the sitstream ontpo the target board.
+# Start Here
 
-## Structure
+- [HW](#hw)
+  1. Build the qsys system.
+  2. Build the core (see [VexRiscv Core](#vexriscv-core-scala-project)).
+  3. Compile the bitstream.
+  4. Load the bitstream onto the target board.
+- [SW](#sw)
+  1. Make the binaries.
+  2. Load the binaries into on-chip instruction memory (currently shared with data).
+  3. Load the bitstream onto the target board.
+- [Debugging (openOCD+GDB)](#debugging-with-openocdgdb)
+
+## Project Folder Structure
 
 ```
-├vexriscv-master        // local clone of Vexriscv repo
+├doc                     // documentation resources (for this README)
+├vexriscv-master         // local clone of Vexriscv repo
 │
 ...
-├openOCD                // makefile firmware taken from AriesEmbedded project.
-│├interface             
-│└cfg   
-││├vexriscv_init.cfg     // sets up parameters that are specific to the VexRiscv configuration of design
-││└vexriscv_init.yaml    // Vexriscv design info (generated in Spinal)
-├cores                  // generated core sources of the CPU
-├firmware               // cmake firmware built from scratch. 
-├sw                     // makefile firmware taken from AriesEmbedded project.
-│└out                   // binary output (we are using .mif)
+├openOCD                // cfg files for openOCD
+│├interface
+││├...                          // cfg for the JTAG probe used
+│└cfg                
+││├vexriscv_init.cfg            // sets up parameters that are specific to the VexRiscv configuration of design
+││└vexriscv_init.yaml           // Vexriscv design info (generated in Spinal)
+├cores                   // generated core sources of the CPU
+├firmware                // cmake firmware built from scratch (might be outdated? @Callum?). 
+├sw                      // makefile firmware taken from AriesEmbedded project.
+│├...
+│└out                    // binary output (we are using .mif)
+...
+# The following are either project files or generated files by Quartus/Qsys
+├db
+├incremental_db
+├output_files
+├vexriscv_system    
 ```
 
 **Note:**
 `sw` and `openOCD` is expected to be run from their respective folders (in terminal).
 
+---
+
+# HW
+
+There are three major regions of work:
+
+1. **Vexriscv Core design:** in scala/Spinal, in `./VexRiscv-master`. Generates the CPU HDL & `.tcl` script for qsys.
+2. **Qsys Setup:** in qsys, in `./vexriscv_system.qsys`. generates the qsys system for HW synthesis.
+3. **Quartus Setup+Toplevel:** in Quartus Prime Project and `toplevel.vhd`. Generates `.sof` bitstream to configure the FPGA.
+
+## Method
+
+If something Goes wrong, check out the [QNA](#quartus-qna) at the bottem of this document.
+
+0. Convince yourself you know:
+   - How to use the de1-SoC's cyclone V FPGA part (hint: there is a lot of stuff on the evaluation board, pheriherals etc). We will *not be using the HPS system*.
+   - How to deal with Quartus prime.
+1. Generate the core in the scala project under `VexRiscv-master` and copy to `cores`.
+2. Find and include the core in qsys. Convince yourself of the wirings of the conduits. See the [vexriscv_system.qsys](#qsys-vexriscvsystem).
+3. Code up the qsys syetem entity/component and wire up the ports appropriately.
+
 ## VexRiscv Core (Scala project)
 
 Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonFullNoMmuMaxPerf`. The generated files is placed under `cores/VexRiscvAvalonMaxPerf` to be included by qsys (to include in Quartus, open `qsys->tools->options` and add the path to `cores/`).
 
-Notes:
+**Notes:**
+
 - Vexriscv is **active low**.
 
-### Before Using the generated core in Qsys
+### Before Using the generated HDL core in Qsys
 
 - Define ``define SYNTHESIS` in file.
-- Ensure `iorange` and `resetvector` is correcly configured with the software HAL specifications (for gpio for example). Check both the scala and the generated `.v` for:
+- Ensure `iorange` and `resetvector` is correcly configured with the software HAL specifications found in `./sw/FpgaConfig.h` (for gpio for example). For **BOTH** the scala and the generated `.v`, check for:
   - **SimplePlugin**
     - C_RESET_VECTOR
       - `IBusSimplePlugin_fetchPc_pcReg`
@@ -66,29 +119,78 @@ Notes:
       - `IBusCachedPlugin_mmuBus_rsp_isIoAccess`
       - `DBusCachedPlugin_mmuBus_rsp_isIoAccess`
 
-### Method
+### Vectors
 
-0. Generate the core in the scala project under `VexRiscv-master` and copy to `cores`.
-1. To do
+0. Vexriscv CPU is **active low**, wire all neglected input ports to ‘0’ (i.e. `Softwareinterrupt`)
+    **Note:** interrupt_receive port through the `VexInterruptController.vhd` is threaded through many intermediate signals, but generally: `top-level input -> interrupt_controller -[back out as exception]-> CPU`
 
-## SW
+1. Assign instruction vector. There are three vectors to be aware of: `ibus_reset`, `ibus_exception`, and `static_io` regions. The SW need to be aware of ibus reset vector, OCRM origin vector for the dual port onchip-RAM (found in `./sw/link.ld`), and the memroy mapped `gpio` vector (instantiated in quartus).
+
+## Qsys: VexRiscv_system
+
+Borrowed & modified from the Aries Embedded project. Some considerations to keep in mind:
+
+- Included a pll for future `clk` changes.
+- JTAG interface need to be exported to be connected for [debugging](#debugging-with-openocdgdb).
+- The Interrupts (`timerInterrupt`, `externalInterrupt`, `softwareInterrupt`) are currently left open. need to port the software controller if we are going to use the functions that depends on the interrupt.
+- A single dual port access on-chip memory serves as both the data and the instructions memory. The settings are consistent with the `./sw/link.ld` settings (32K).
+
+## TopLevel VHDL
+
+Most documentation in the commenbs. More verbose notes documented here.
+
+### To switch between the aries_embedded core and our own cores:
+
+0. We must do this change because Quartus does not interpert the `.v` description of the AriesEmbedded core correctly with `.qip`.
+1. Switch wiring between the cores in Qsys (just enable and disable the cores if the wiring had been done).
+   - Might need to reconnect some conduits to get rid of the warnings.
+2. If:
+   - **Using our own core:**
+      1. Switch the included files to the `.qip` for the inclusion of the qsys system.
+      2. Include the system as an entity.
+   - **Using the `GEN_ARIES_EMBEDDED`**.
+      1. Switch the included files to the `.qsys` for the inclusion of the qsys system.
+      2. Include the system as an entity.
+
+---
+
+# SW
+
+There are three major regions of work:
+
+1. **Toolchain process:** from c code to executable. Sets up the compilation tools.
+2. **Software project Setup:** we are doing "barebone" programming. We'd have to cealry setup the memory mapped pheripherials (OCRAM, gpio etc.) as `.S`, `.h`, `.ld` and `makefile`. So that we actually uses the tools from (1.) to build the executable binaries.
+3. **Firmware program Developement:** in c. using the setup of (2.).
+4. **Debugging:** in openOCD+GDB directly tapping into the JTAG brideg on the debugger implemented internally by Vexriscv. Also performs validation on our memory usage.
+5. ... Any more?
 
 ## RISC-V Toolchain
 
 All toolchain is installed under `/opt` such as the `riscv64-unknown-elf-*` [toolchain](https://github.com/riscv-collab/riscv-gnu-toolchain). Everything needed to perform cross-compilation and GDB debugging is included with this package. A prebuilt version of this toolchain is shipped with this repo in `./prebuilt/riscv`.
+-  **Includes but is not limited to (in RISC_V flavour):** GNU Compiler Collection (gcc), build tools like make, binUtil, newlib (if you chose to install), and the GNU Debugger (gdb)
+-  The toolchain configuration used is:
 
-### Vectors
+```sh
+./configure --prefix=/opt/riscv --with-multilib-generator="rv32i-ilp32--;rv32im-ilp32-rv32ima-;rv32imc-ilp32-rv32imac-;rv32imafc-ilp32f--"
 
-0) Vexriscv CPU is **active low**, wire all neglected input ports to ‘0’ (i.e. `Softwareinterrupt`)
-    **Note:** interrupt_receive port through the `VexInterruptController.vhd` is threaded through many intermediate signals, but generally: `top-level input -> interrupt_controller -[back out as exception]-> CPU`
+sudo make
+```
 
-1) Assign instruction vector. There are three vectors to be aware of: `ibus_reset`, `ibus_exception`, and `static_io` regions. The SW need to be aware of ibus reset vector, OCRM origin vector for the dual port onchip-RAM (found in `sw/link.ld`), and the memroy mapped `gpio` vector (instantiated in quartus).
+### C Library Choice(s)
 
-## Qsys: VexRiscv_system
+Some options:
 
-- To do.
+- newlib
+- glibc/libc
+- newlib-nanolib/nanolib
 
-# OpenOCD
+## sw Program Folder/C Project
+
+To do.
+
+---
+
+# Debugging with openOCD+GDB
 
 - Power off both target board and cable before plugging.
 - de1-SoC I/O Interface: 3.3V TTL
@@ -118,9 +220,9 @@ vexriscvavalon_0_jtag_tms => GPIO_0(7),
 
 ## openOCD Steps
 
-1) Wire theJATG adaptor to GPIO_0 (above)
-> Sanity Check (find USB): lsusb
-2) Open a terminal in `/openOCD` and run:
+1. Wire theJATG adaptor to GPIO_0 (above)
+    > Sanity Check (find USB): lsusb
+2. Open a terminal in `/openOCD` and run:
   
 ```sh
 openocd -f interface/ftdi/c232hm.cfg -c "adapter speed 1000; transport select jtag" \
@@ -142,7 +244,7 @@ Info : Listening on port 4444 for telnet connections
 
 Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
 
-3) Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb:
+3. Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb:
 
 ```sh
 # don't print header
@@ -153,13 +255,14 @@ Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
 		-ex "target extended-remote localhost:3333"
 ```
 
+### openOCD Resources:
 
-### Resources:
 - [openOCD, Vexrescv and Traps](https://github.com/tomverbeure/vexriscv_ocd_blog)
 
 ## GDB (RISC-V, shipped with the GNU toolchain)
 
-### Resources:
+### GDB Resources:
+
 - [Doc](https://sourceware.org/gdb/onlinedocs/gdb/index.html)
 - [Tutorial](https://www.usna.edu/Users/cs/lmcdowel/courses/ic220/S20/resources/gdb.html)
 
@@ -183,13 +286,22 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 
 # Quartus QNA:
 
-Q: Quartus throws syntax error, everything is fine!!
-A: Check that Quartus is phasing the HDL in its correct version. Note that Quartus Lite will not support `VHDL 2008` and have trouble phasing `.sv`. However, if the code was able to compile before, but cannot now, try restarting Quartus, and if that does not work, restart your computer.
+Q: In Quartus [insert stupidly obvious things] (i.e. syntax error) that doesn't work and you believe everything is fine.
+
+A: Check that Quartus is phasing the HDL in its correct version. Note that **Quartus Lite** will not support `VHDL 2008` and have trouble phasing `.sv`. However, if the code was able to compile before, but cannot now, try restarting Quartus, and if that does not work, restart your computer.
+
+Q: How to add qsys componenets?
+
+A: Adding Search IP from `Assignments --> settings --> IP Search Path (global and/or project)`
+Adding Search path to Qsys window: `Tools --> options`
+
+Format is: `/opt/riscv-cores/**/*`
 
 Q: Cannot phase some `.v` file properly!
+
 A: If you have included the qsys via the `.qip`, try removing the inclusiong and included the `.qsys` file directly. Note this will regenerate the qsys system every time you compile.
 
-Q: What's up with `irq_soft`
+Q: What's up with `irq_soft` in the AriesEmbedded `irq_controller`?
 
 ```vhdl
 -- All following defined in VexRiscvAvalon_hw.tcl
@@ -282,3 +394,7 @@ set_interface_assignment irq_controller embeddedsw.configuration.isMemoryDevice 
 set_interface_assignment irq_controller embeddedsw.configuration.isNonVolatileStorage 0
 set_interface_assignment irq_controller embeddedsw.configuration.isPrintableDevice 0
 ```
+
+# Useful Tools
+
+- [This is useful for viewing and generating assembly from high-level code](https://godbolt.org/)
