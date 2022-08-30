@@ -133,7 +133,7 @@ Borrowed & modified from the Aries Embedded project. Some considerations to keep
 - Included a pll for future `clk` changes.
 - JTAG interface need to be exported to be connected for [debugging](#debugging-with-openocdgdb).
 - The Interrupts (`timerInterrupt`, `externalInterrupt`, `softwareInterrupt`) are currently left open. need to port the software controller if we are going to use the functions that depends on the interrupt.
-- A single dual port access on-chip memory serves as both the data and the instructions memory. The settings are consistent with the `./sw/link.ld` settings (32K).
+- **OCRAM:** A single dual port access on-chip memory serves as both the data and the instructions memory. The settings are consistent with the `./sw/link.ld` settings (32K). This memory will be loaded with an `.mif` executable binary in the project root at synthesis.
 
 ## TopLevel VHDL
 
@@ -188,6 +188,8 @@ Some options:
 
 To do.
 
+1. Just `make` the project, dump the `.mif` output into root for the synthesis to load it into the OCRAM.
+
 ---
 
 # Debugging with openOCD+GDB
@@ -200,17 +202,19 @@ To do.
 - Install [openOCD (Vexriscv port)](https://github.com/SpinalHDL/openocd_riscv). Note that only this port will work, as Vexriscv debug module does not adhere to the RISC-V Debug Specification.
 - Install the [D2XX drivers](http://ftdichip.com/Drivers/D2XX.htm) for the adaptor.
 - (If you already installed the riscv tool chain, the `riscv64-unknown-elf-gdb` application would be under `/opt/riscv/bin`)
+- All operations for debugging done in the `./openOCD` folder. Copy the `.elf` executable program that weas loaded onto the FPGA into the folder for use.
 
 > It looks like following this (https://tomverbeure.github.io/2021/07/18/VexRiscv-OpenOCD-and-Traps.html) (and > https://github.com/SpinalHDL/VexRiscv/tree/master/doc/nativeJtag) is the way to go.
 
 **Note:**
 - CPU clock must be higher than the JTAG clock
 
-## Wiring 
+## JTAG Pins Wiring
 
 ![](./doc/images/SoC%20GPIO.png)
 
 ```vhdl
+-- in toplevel:
 vexriscvavalon_0_jtag_tck => GPIO_0(1),
 vexriscvavalon_0_jtag_tdi => GPIO_0(3),            
 vexriscvavalon_0_jtag_tdo => GPIO_0(5),  
