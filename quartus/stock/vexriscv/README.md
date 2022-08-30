@@ -198,7 +198,7 @@ To do.
 
 # Debugging with openOCD+GDB
 
-**VERY IMPORTENT STEPS:**
+**VERY IMPORTENT Notes:**
 
 - Power off both target board and cable before plugging.
 - de1-SoC I/O Interface: 3.3V TTL
@@ -233,6 +233,7 @@ vexriscvavalon_0_jtag_tms => GPIO_0(7),
 1. Wire theJATG adaptor to GPIO_0 (above)
     > Sanity Check (find USB): lsusb
 2. Open a terminal in `/openOCD` and run:
+    - Intially, the commands defined in `vexriscv_init.cfg` will halt the CPU.
   
 ```sh
 openocd -f interface/ftdi/c232hm.cfg -c "adapter speed 1000; transport select jtag" \
@@ -252,9 +253,7 @@ Info : Listening on port 6666 for tcl connections
 Info : Listening on port 4444 for telnet connections
 ```
 
-Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
-
-3. Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb:
+1. Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb:
 
 ```sh
 # don't print header
@@ -277,9 +276,10 @@ Intially, the commands defined in `vexriscv_init.cfg ` will halt the CPU.
 - [Debugging with GDB](https://sourceware.org/gdb/onlinedocs/gdb/index.html)
 - [Tutorial](https://www.usna.edu/Users/cs/lmcdowel/courses/ic220/S20/resources/gdb.html)
 
-1) Make sure the program you want to debug was compiled with debug symbols. 
+1) Make sure the program you want to debug was compiled with debug symbols.
+   - `.elf` file: Info on the program running on the target.
 
-- `.elf` file: Info on the program running on the target. 
+2) Run the following.
 
 ```sh
 gdbgui -g '/opt/riscv/bin/riscv64-unknown-elf-gdb -q bootrom.elf -ex "target extended-remote localhost:3333"'
@@ -293,7 +293,8 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
 - The GUI is greate of looking, not so great for issuing commands (such as breaking the program).
 - Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
-- you can `load` an `.elf` into OCRAM. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
+- You can `load` an `.elf` into OCRAM. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
+- `monitor reset halt` will halt the CPU.
 
 ## GDB Resources
 
