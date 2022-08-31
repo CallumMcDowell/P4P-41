@@ -292,6 +292,28 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 
 - [gdb QuickStart](https://web.eecs.umich.edu/~sugih/pointers/gdbQS.html)
 
+# Assembly Setup for custom instruction extension
+
+## Rational
+
+- **Recall: A machine instruction is used/represented as:**
+  - A sequence of binary number. Each divided section represents a particular label (to be passed & used in datapath).
+  - A symbolic representatiion (name) of the instruction that can be used in assembly files `.s` or `.S` (wt. preprocessing) to define the code of 'instruction data' to be executed by the CPU.  
+
+**tldr:** After the HW for the instruction is designed, we'd have to compile the SW that uses saaid instruction. The SW assembler must be made aware of the newly added instruction AND include the representation of this awareness into its application code.
+
+**Two Options:**
+
+  1. Incorperate opcode and instruction name into the assembler. Such that the riscv GNU is able to recognise the instruction if used in assembly.
+    -
+  2. Incorperate opcode in an assembly code form, defining the usages as a function/macro call that loads the appropriate data into a memory space.
+
+## Method 
+
+  1. Design & implement the custom instruction detapath in HW.
+  2. Implement assembly function definitons of the custom instruction.
+  3. Use the function defintion as inline assembly (or maybe just as functions will do?).
+
 # Quartus QNA:
 
 Q: In Quartus [insert stupidly obvious things] (i.e. syntax error) that doesn't work and you believe everything is fine.
@@ -406,3 +428,4 @@ set_interface_assignment irq_controller embeddedsw.configuration.isPrintableDevi
 # Useful Tools
 
 - [This is useful for viewing and generating assembly from high-level code](https://godbolt.org/)
+- [This is useful for understanding unreadable c](https://cdecl.org/)
