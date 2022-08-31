@@ -24,6 +24,11 @@ DEALINGS IN THE SOFTWARE. */
 #include "Hal.h"
 
 #define CUSTOM_CORE
+#define CUSTOM_INSTRUCT
+
+#ifdef CUSTOM_INSTRUCT
+extern void _simd_add(uint32_t *r2, uint32_t *r1, uint32_t *rd);
+#endif
 
 #ifndef CUSTOM_CORE
 static int counterMod = 1;
