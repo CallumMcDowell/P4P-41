@@ -307,23 +307,23 @@ There are three major regions of work:
   - A sequence of binary number. Each divided section represents a particular label (to be passed & used in datapath).
   - A symbolic representatiion (name) of the instruction that can be used in assembly files `.s` or `.S` (wt. preprocessing) to define the code of 'instruction data' to be executed by the CPU.  
 
-
-
 **tldr:** After the HW for the instruction is designed, we'd have to compile the SW that uses said instruction. The SW assembler must be made aware of the newly added instruction AND include the representation of this awareness into its application code.
 
 **Two Options:**
 
   1. Incorperate opcode and instruction name into the assembler. Such that the riscv GNU is able to recognise the instruction if used in assembly.
-    -
+
   2. Incorperate opcode in an assembly code form, defining the usages as a function/macro call that loads the appropriate data into a memory space. Either as:
     - a seperate naming label/macro (this was chosen).
     - inline assembly.
 
-### Method 
+### Method
 
-  1. Design & implement the custom instruction detapath in HW.
-  2. Implement assembly function definitons of the custom instruction.
-  3. Use the function defintion as inline assembly (or maybe just as functions will do?).
+  0. Design & implement the custom instruction detapath in HW.
+  1. Implement assembly function definitons of the custom instruction.
+     1. Define a macro to construct a bit sequence as the instructions.
+     2. Under `.text` region, define the name label for the function representing the instruction. 
+  2. Use the function in sw.
 
 # Quartus QNA:
 
