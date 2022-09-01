@@ -328,9 +328,10 @@ And Read [RISC-V Assembly Programmer's Manual](https://github.com/riscv-non-isa/
 **Two Options:**
 
   1. Incorperate opcode and instruction encoding into the assembler. Such that the riscv GNU is able to recognise the instruction if used in assembly.
-     
+     - Add to gcc (riscv-opcode) to be automatically inferred.
+       - [](https://groups.google.com/a/groups.riscv.org/g/sw-dev/c/sL_OHXYj3LY/m/Gsm6sBc9BQAJ)
   2. Incorperate opcode in an assembly code form, defining the usages as a function/macro call that loads the appropriate data into a memory space. Either as:
-    - Construct instruction encoding with `.insn` directive.
+    - Construct instruction encoding with `.insn` (binutil) directive.
         - > inline assembly is treated as an extension in C. It is conditionally supported and implementation defined, meaning that it may not be present and, even when provided by the implementation, it does not have a fixed meaning.
 
     - Assembly line `.word` with hex encosing of instruction bit representation. As:
