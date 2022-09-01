@@ -34,6 +34,7 @@ object GenAvalonFullNoMmuMaxPerf {
 //            resetVector = 0x80000000l, // TODO: SET 0x0..0!?
 //            relaxedPcCalculation = false
 //          ),
+          new SimdAddPlugin,
           new IBusCachedPlugin(
             resetVector = 0x00000010l, // Set to same reset vector expected in sw
             prediction = DYNAMIC_TARGET,
@@ -98,7 +99,7 @@ object GenAvalonFullNoMmuMaxPerf {
             earlyBranch = false,
             catchAddressMisaligned = true
           ),
-          new YamlPlugin("cpu0.yaml")
+          new YamlPlugin("vexriscv_init.yaml")
         )
       )
 
