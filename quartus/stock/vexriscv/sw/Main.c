@@ -23,14 +23,15 @@ DEALINGS IN THE SOFTWARE. */
 #include "FpgaConfig.h"
 #include "Hal.h"
 
-#define CUSTOM_CORE
+// #define ARIES_EMBEDDED_CORE
+#define TEST_GPIO_LED
 #define CUSTOM_INSTRUCT
 
 #ifdef CUSTOM_INSTRUCT
-extern void _simd_add(uint32_t *r2, uint32_t *r1, uint32_t *rd);
+uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
 #endif
 
-#ifndef CUSTOM_CORE
+#ifdef ARIES_EMBEDDED_CORE
 static int counterMod = 1;
 
 void IRQHandlerTimer(void) {
@@ -50,9 +51,18 @@ void IRQHandlerUart() {
 }
 #endif
 
+// Test Functions
+uint32_t add(uint32_t a, uint32_t b) {
+	return a+b;
+}
+
+void write_to_port(uint32_t x) {
+	g_Pio->port = x;
+}
+
 int main() {
 
-	#ifndef CUSTOM_CORE
+#ifdef ARIES_EMBEDDED_CORE
 	// Greetings
 	UartWrite(g_Uart, "\n\n* * * VexRiscv Demo  -  ");
 	UartWrite(g_Uart, DBUILD_VERSION);
@@ -69,29 +79,52 @@ int main() {
 	Hal_TimerStart(3 * CLK_FREQ); // 3 seconds
 	Hal_GlobalEnableInterrupts();
 
-	// Set GPIO to output.
-	g_Pio->direction = 0xffffffff;
-
 	// Binary counter that ticks 32 times per second
 	uint32_t timeLast = Hal_ReadTime32();
-	#endif
-	#ifdef CUSTOM_CORE
+#endif
+
 	// Set GPIO to output.
 	g_Pio->direction = 0xffffffff;
 
-	while(1) {
-		g_Pio->port = 255;
-		g_Pio->port = 0;
-	}
-	#endif
+#ifdef CUSTOM_INSTRUCT
 
-	#ifndef CUSTOM_CORE
+	uint32_t x, y, z;
+	x = 0x01010000;
+	y = 0x00000101;
+	z = 0x00000000;
+
+	while(1) {
+		write_to_port(add(x, 1));
+		write_to_port(x);
+		write_to_port(y);
+		write_to_port(z);
+		z = _simd_add(x, y, z);
+	}
+#endif
+
+#ifdef ARIES_EMBEDDED_CORE
+	uint32_t x, y, z;
+	x = 1;
 	while (1) {
 		uint32_t timeNow = Hal_ReadTime32();
 		if ((timeNow - timeLast) > (CLK_FREQ / 32)) {
 			timeLast = timeNow;
-			g_Pio->port += counterMod;
+			write_to_port(add(x, 1));
 		}
 	}
-	#endif
+#endif
+
+#ifdef TEST_GPIO_LED
+	uint32_t x, y, z;
+	x = 2;
+	y = 3;
+	z = 4;
+
+	while(1) {
+		write_to_port(add(x, 1));
+		write_to_port(x);
+		write_to_port(y);
+		write_to_port(z);
+	}
+#endif
 }

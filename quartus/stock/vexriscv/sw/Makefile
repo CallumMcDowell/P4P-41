@@ -29,7 +29,7 @@ CFLAGS := -fno-delete-null-pointer-checks -march=$(ARCH) -mabi=$(ABI) -Wall -std
 CFLAGS += -DDBUILD_VERSION=\"$(BUILD_VERSION)\"
 CFLAGS += -DDBUILD_DATE=\"$(BUILD_DATE)\"
 # In order: generate debug info, include debug symbols, no optimisation, optimising for size
-CFLAGS += -g -ggdb -O0 -Os
+CFLAGS += -ggdb3 -O0 # -Os -g3 
 
 # Linker Flags
 LDFLAGS := -march=$(ARCH) -mabi=$(ABI) -static -nostartfiles -nostdlib -lgcc -lc -Wl,-print-memory-usage -Wl,-gc-sections
