@@ -24,7 +24,7 @@ DEALINGS IN THE SOFTWARE. */
 #include "Hal.h"
 
 // #define ARIES_EMBEDDED_CORE
-#define TEST_GPIO_LED
+// #define TEST_GPIO_LED
 #define CUSTOM_INSTRUCT
 
 #ifdef CUSTOM_INSTRUCT

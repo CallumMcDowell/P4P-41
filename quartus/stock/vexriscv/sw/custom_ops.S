@@ -113,5 +113,5 @@ r_type_insn(0b0000011, regnum_ ## _rs2, regnum_ ## _rs1, 0b000, regnum_ ## _rd, 
 
 _simd_add:
     SIMD_ADD(a0, a1, a2)
-    add a0, a2, zero
+    mv a0, a2
     ret
