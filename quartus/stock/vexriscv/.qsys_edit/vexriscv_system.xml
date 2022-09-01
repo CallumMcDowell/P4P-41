@@ -781,7 +781,7 @@
 								<delegate id="delegate_CommonDockStationFactory">
 									<root>true</root>
 									<content delegate="flap dock">
-										<window auto="true" direction="SOUTH"/>
+										<window auto="true" direction="NORTH"/>
 										<placeholders>
 											<version>0</version>
 											<format>dock.PlaceholderList</format>
@@ -802,7 +802,7 @@
 								<delegate id="delegate_CommonDockStationFactory">
 									<root>true</root>
 									<content delegate="flap dock">
-										<window auto="true" direction="EAST"/>
+										<window auto="true" direction="WEST"/>
 										<placeholders>
 											<version>0</version>
 											<format>dock.PlaceholderList</format>
@@ -827,7 +827,7 @@
 										<fullscreen-action>false</fullscreen-action>
 										<node nodeId="1372710005721" orientation="HORIZONTAL" divider="0.22181146025878004">
 											<node nodeId="1375985011088" orientation="VERTICAL" divider="0.504054054054054">
-												<leaf id="2" nodeId="1375985003630">
+												<leaf id="3" nodeId="1375985003630">
 													<placeholders>
 														<placeholder>dock.single.Clock\ Domains\ \-\ Beta</placeholder>
 														<placeholder>dock.single.IP\ Catalog</placeholder>
@@ -881,7 +881,7 @@
 												<node nodeId="1372710005727" orientation="HORIZONTAL" divider="0.6183193900785428">
 													<node nodeId="1372710005733" orientation="VERTICAL" divider="0.75">
 														<node nodeId="1660013992055" orientation="HORIZONTAL" divider="0.6352988949966794">
-															<leaf id="3" nodeId="1372710005735">
+															<leaf id="1" nodeId="1372710005735">
 																<placeholders>
 																	<placeholder>dock.single.Connections</placeholder>
 																	<placeholder>dock.single.System\ Contents</placeholder>
@@ -960,7 +960,7 @@
 														</placeholders>
 													</leaf>
 												</node>
-												<leaf id="1" nodeId="1372710005745">
+												<leaf id="2" nodeId="1372710005745">
 													<placeholders>
 														<placeholder>dock.single.Messages</placeholder>
 														<placeholder>dock.single.Generation\ Messages</placeholder>
@@ -1049,26 +1049,6 @@
 											<children ignore="false"/>
 										</child>
 									</children>
-								</child>
-								<child>
-									<layout factory="predefined" placeholder="dock.single.Messages">
-										<replacement id="dockablesingle Messages"/>
-										<delegate id="delegate_ccontrol backup factory id">
-											<id>Messages</id>
-											<area/>
-										</delegate>
-									</layout>
-									<children ignore="false"/>
-								</child>
-								<child>
-									<layout factory="predefined" placeholder="dock.single.IP\ Catalog">
-										<replacement id="dockablesingle IP Catalog"/>
-										<delegate id="delegate_ccontrol backup factory id">
-											<id>IP Catalog</id>
-											<area/>
-										</delegate>
-									</layout>
-									<children ignore="false"/>
 								</child>
 								<child>
 									<layout factory="delegate_StackDockStationFactory">
@@ -1226,6 +1206,26 @@
 										</child>
 									</children>
 								</child>
+								<child>
+									<layout factory="predefined" placeholder="dock.single.Messages">
+										<replacement id="dockablesingle Messages"/>
+										<delegate id="delegate_ccontrol backup factory id">
+											<id>Messages</id>
+											<area/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</child>
+								<child>
+									<layout factory="predefined" placeholder="dock.single.IP\ Catalog">
+										<replacement id="dockablesingle IP Catalog"/>
+										<delegate id="delegate_ccontrol backup factory id">
+											<id>IP Catalog</id>
+											<area/>
+										</delegate>
+									</layout>
+									<children ignore="false"/>
+								</child>
 							</children>
 						</root>
 						<root name="ccontrol west">
@@ -1234,7 +1234,7 @@
 								<delegate id="delegate_CommonDockStationFactory">
 									<root>true</root>
 									<content delegate="flap dock">
-										<window auto="true" direction="EAST"/>
+										<window auto="true" direction="WEST"/>
 										<placeholders>
 											<version>0</version>
 											<format>dock.PlaceholderList</format>

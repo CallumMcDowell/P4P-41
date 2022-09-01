@@ -35,10 +35,13 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
   3. Compile the bitstream.
   4. Load the bitstream onto the target board.
 - [SW](#sw)
-  1. Make the binaries.
-  2. Load the binaries into on-chip instruction memory (currently shared with data).
-  3. Load the bitstream onto the target board.
+  1. Setup makefile, write platform depenedent c program (with respect to memory mapped vectors of HW resources & pheripherials).
+  2. Make and load the binaries into on-chip instruction memory (currently shared with data).
 - [Debugging (openOCD+GDB)](#debugging-with-openocdgdb)
+- [Custom Instruction Design](-)
+  1. Build the generation definitions as a `CustomInstruction` plugin extension.
+  2. Accomedate the custom instruction opcode in assembly.
+  3. Validate and test the instruction in SW.
 
 ## Project Folder Structure
 
@@ -156,7 +159,7 @@ Most documentation in the commenbs. More verbose notes documented here.
 
 # SW
 
-There are three major regions of work:
+There are four major regions of work:
 
 1. **Toolchain process:** from c code to executable. Sets up the compilation tools.
 2. **Software project Setup:** we are doing "barebone" programming. We'd have to cealry setup the memory mapped pheripherials (OCRAM, gpio etc.) as `.S`, `.h`, `.ld` and `makefile`. So that we actually uses the tools from (1.) to build the executable binaries.
@@ -230,8 +233,11 @@ vexriscvavalon_0_jtag_tms => GPIO_0(7),
 
 ## openOCD Steps
 
+0. Build the sw and relocate `bootrom.elf` into `./openocd`. Make sure the program you want to debug was compiled with debug symbols with `-ggdb3` and lowest optimisation `-O0`.
+
 1. Wire theJATG adaptor to GPIO_0 (above)
     > Sanity Check (find USB): lsusb
+
 2. Open a terminal in `/openOCD` and run:
     - Intially, the commands defined in `vexriscv_init.cfg` will halt the CPU.
   
@@ -253,7 +259,11 @@ Info : Listening on port 6666 for tcl connections
 Info : Listening on port 4444 for telnet connections
 ```
 
-1. Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb:
+
+Intially, the commands defined in `vexriscv_init.cfg` will halt the CPU.
+
+3. Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb (or through gdbgui):
+   - `.elf` file: Info on the program running on the target.
 
 ```sh
 # don't print header
@@ -262,6 +272,10 @@ Info : Listening on port 4444 for telnet connections
 /opt/riscv/bin/riscv64-unknown-elf-gdb -q \
 		bootrom.elf \
 		-ex "target extended-remote localhost:3333"
+```
+
+```sh
+gdbgui -g '/opt/riscv/bin/riscv64-unknown-elf-gdb -q bootrom.elf -ex "target extended-remote localhost:3333"'
 ```
 
 ### openOCD Resources:
@@ -276,15 +290,6 @@ Info : Listening on port 4444 for telnet connections
 - [Debugging with GDB](https://sourceware.org/gdb/onlinedocs/gdb/index.html)
 - [Tutorial](https://www.usna.edu/Users/cs/lmcdowel/courses/ic220/S20/resources/gdb.html)
 
-1) Make sure the program you want to debug was compiled with debug symbols.
-   - `.elf` file: Info on the program running on the target.
-
-2) Run the following.
-
-```sh
-gdbgui -g '/opt/riscv/bin/riscv64-unknown-elf-gdb -q bootrom.elf -ex "target extended-remote localhost:3333"'
-```
-
 ### GDBGUI
 
 Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
@@ -295,10 +300,43 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 - Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
 - You can `load` an `.elf` into OCRAM. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
 - `monitor reset halt` will halt the CPU.
+- `target extended-remote localhost:3333`
 
-## GDB Resources
+### GDB Resources
 
 - [gdb QuickStart](https://web.eecs.umich.edu/~sugih/pointers/gdbQS.html)
+
+## SW Accomedation for custom instruction extension
+
+There are three major regions of work:
+
+1. **CustomInstructionPlugin:** from scala design to verilog design. Implements the instructions.
+2. **SW Accomedation for Included Instruction:** in assembly macro. Adds machine code for instruction in sw.
+   - Combination of riscv assembly and c program passings.
+
+### Rational
+
+- **Recall: A machine instruction is used/represented as:**
+  - A sequence of binary number. Each divided section represents a particular label (to be passed & used in datapath).
+  - A symbolic representatiion (name) of the instruction that can be used in assembly files `.s` or `.S` (wt. preprocessing) to define the code of 'instruction data' to be executed by the CPU.  
+
+**tldr:** After the HW for the instruction is designed, we'd have to compile the SW that uses said instruction. The SW assembler must be made aware of the newly added instruction AND include the representation of this awareness into its application code.
+
+**Two Options:**
+
+  1. Incorperate opcode and instruction name into the assembler. Such that the riscv GNU is able to recognise the instruction if used in assembly.
+
+  2. Incorperate opcode in an assembly code form, defining the usages as a function/macro call that loads the appropriate data into a memory space. Either as:
+    - a seperate naming label/macro (this was chosen).
+    - inline assembly.
+
+### Method
+
+  0. Design & implement the custom instruction detapath in HW.
+  1. Implement assembly function definitons of the custom instruction.
+     1. Define a macro to construct a bit sequence as the instructions.
+     2. Under `.text` region, define the name label for the function representing the instruction. 
+  2. Use the function in sw.
 
 # Quartus QNA:
 
@@ -414,3 +452,4 @@ set_interface_assignment irq_controller embeddedsw.configuration.isPrintableDevi
 # Useful Tools
 
 - [This is useful for viewing and generating assembly from high-level code](https://godbolt.org/)
+- [This is useful for understanding unreadable c](https://cdecl.org/)
