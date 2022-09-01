@@ -1,2 +1,5 @@
 vexriscv_system/
 *sopcinfo
+!prebuilt/stock-vexriscv_no_mif.sof
+!prebuilt/stock-vexriscv_stock_simd.sof
+!prebuilt/stock-vexriscv-aires_embedded.sof
