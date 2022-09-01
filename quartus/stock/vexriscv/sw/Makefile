@@ -28,8 +28,14 @@ BUILD_DATE := "$(shell date '+%Y-%m-%d %H:%M:%S %:::z')"
 CFLAGS := -fno-delete-null-pointer-checks -march=$(ARCH) -mabi=$(ABI) -Wall -std=gnu99 -I. -ffunction-sections -fdata-sections -flto -fno-strict-aliasing
 CFLAGS += -DDBUILD_VERSION=\"$(BUILD_VERSION)\"
 CFLAGS += -DDBUILD_DATE=\"$(BUILD_DATE)\"
+
 # In order: generate debug info, include debug symbols, no optimisation, optimising for size
 CFLAGS += -ggdb3 -O0 # -Os -g3 
+# Logs configuration (flag) settings
+CFLAGS += -frecord-gcc-switches
+# Other Warnings options not covered by -Wall or -Wextra
+CFLAGS += -Wshadow -Wdouble-promotion -Wundef
+
 
 # Linker Flags
 LDFLAGS := -march=$(ARCH) -mabi=$(ABI) -static -nostartfiles -nostdlib -lgcc -lc -Wl,-print-memory-usage -Wl,-gc-sections
