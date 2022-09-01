@@ -182,6 +182,7 @@ sudo make
 ### Toolchain Resources
 
 - [Getting Started with the RISC-V Open Source GNU Toolchain](https://mindchasers.com/dev/rv-getting-started)
+- [RISC-V Toolchain Conventions](https://github.com/riscv-non-isa/riscv-toolchain-conventions)
 
 ### C Library Choice(s)
 
@@ -314,6 +315,8 @@ There are three major regions of work:
 2. **SW Accomedation for Included Instruction:** in assembly macro. Adds machine code for instruction in sw.
    - Combination of riscv assembly and c program passings.
 
+And Read [RISC-V Assembly Programmer's Manual](https://github.com/riscv-non-isa/riscv-asm-manual/blob/master/riscv-asm.md). And [Riscv Machines Depenednt Asembly Features](https://www.rowleydownload.co.uk/arm/documentation/gnu/as/RISC_002dV_002dDependent.html#RISC_002dV_002dDependent).
+
 ### Rational
 
 - **Recall: A machine instruction is used/represented as:**
@@ -324,11 +327,44 @@ There are three major regions of work:
 
 **Two Options:**
 
-  1. Incorperate opcode and instruction name into the assembler. Such that the riscv GNU is able to recognise the instruction if used in assembly.
-
+  1. Incorperate opcode and instruction encoding into the assembler. Such that the riscv GNU is able to recognise the instruction if used in assembly.
+     
   2. Incorperate opcode in an assembly code form, defining the usages as a function/macro call that loads the appropriate data into a memory space. Either as:
-    - a seperate naming label/macro (this was chosen).
-    - inline assembly.
+    - Construct instruction encoding with `.insn` directive.
+        - > inline assembly is treated as an extension in C. It is conditionally supported and implementation defined, meaning that it may not be present and, even when provided by the implementation, it does not have a fixed meaning.
+
+    - Assembly line `.word` with hex encosing of instruction bit representation. As:
+      - a seperate naming label/macro.
+      - [Inline assembly](https://en.cppreference.com/w/c/language/asm).
+        - [Linux Assembly HOWTO](https://tldp.org/HOWTO/Assembly-HOWTO/gcc.html)
+        - [GCC-Inline-Assembly-HOWTO](http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html)
+
+> For example, the instruction ‘add a0, a1, a2’ could be written as ‘.insn r 0x33, 0, 0, a0, a1, a2’
+> -- "Using as" User guide to the GNU assembler as (GNU Binutils) version 2.31.
+
+```c
+// Example Given by Jim Wilson @https://groups.google.com/a/groups.riscv.org/g/isa-dev/c/fONrcF2lxhQ/m/sb2ZN5Q_AQAJ
+rohan:2183$ cat tmp.c
+
+int sub (int a, int b)
+{
+  int result;
+  asm (".insn r 0x33, 0, 0, %0, %1, %2" : "=r" (result) : "r" (a), "r" (b));
+  return result;
+}
+
+rohan:2184$ riscv32-unknown-elf-gcc -O2 -c tmp.c
+rohan:2185$ riscv32-unknown-elf-objdump -dr tmp.o
+
+tmp.o: file format elf32-littleriscv
+
+Disassembly of section .text:
+
+00000000 <sub>:
+0: 00b50533 add a0,a0,a1
+4: 8082 ret
+rohan:2186$ 
+```
 
 ### Method
 
@@ -337,6 +373,35 @@ There are three major regions of work:
      1. Define a macro to construct a bit sequence as the instructions.
      2. Under `.text` region, define the name label for the function representing the instruction. 
   2. Use the function in sw.
+
+From [Pass an argument from C to assembly?](https://stackoverflow.com/questions/4330604/pass-an-argument-from-c-to-assembly)
+```c
+// main.c
+extern void myFunc(char * somedata);
+
+void main(){
+    myFunc("Hello World");
+}
+```
+
+```S
+// myFunc.S
+section .text
+    global myFunc
+    extern printf
+
+    myFunc:
+        push ebp
+        mov  ebp, esp
+
+        push dword [ebp+8]
+        call printf 
+
+        mov esp, ebp
+        pop ebp
+        ret
+// We have to export myFunc in the assembly file and declare myFunc as an extrnal function in the main.c file. In myFunc.asm we are also importing the printf function from stdlib so that we can output the message as simply as possible.
+```
 
 # Quartus QNA:
 
