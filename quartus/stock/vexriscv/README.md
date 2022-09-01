@@ -35,10 +35,13 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
   3. Compile the bitstream.
   4. Load the bitstream onto the target board.
 - [SW](#sw)
-  1. Make the binaries.
-  2. Load the binaries into on-chip instruction memory (currently shared with data).
-  3. Load the bitstream onto the target board.
+  1. Setup makefile, write platform depenedent c program (with respect to memory mapped vectors of HW resources & pheripherials).
+  2. Make and load the binaries into on-chip instruction memory (currently shared with data).
 - [Debugging (openOCD+GDB)](#debugging-with-openocdgdb)
+- [Custom Instruction Design](-)
+  1. Build the generation definitions as a `CustomInstruction` plugin extension.
+  2. Accomedate the custom instruction opcode in assembly.
+  3. Validate and test the instruction in SW.
 
 ## Project Folder Structure
 
