@@ -92,6 +92,9 @@ If something Goes wrong, check out the [QNA](#quartus-qna) at the bottem of this
 1. Generate the core in the scala project under `VexRiscv-master` and copy to `cores`.
 2. Find and include the core in qsys. Convince yourself of the wirings of the conduits. See the [vexriscv_system.qsys](#qsys-vexriscvsystem).
 3. Code up the qsys syetem entity/component and wire up the ports appropriately.
+4. Compile the bitstream image.
+5. Program the FPGA.
+   - For de1-SoC, remember the the FPGA image must be chained after the HPS image (even if we are not using the HPS part).
 
 ## VexRiscv Core (Scala project)
 
@@ -133,10 +136,18 @@ Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonF
 
 Borrowed & modified from the Aries Embedded project. Some considerations to keep in mind:
 
-- Included a pll for future `clk` changes.
+- **Clock:** Included a pll for future `clk` changes.
 - JTAG interface need to be exported to be connected for [debugging](#debugging-with-openocdgdb).
 - The Interrupts (`timerInterrupt`, `externalInterrupt`, `softwareInterrupt`) are currently left open. need to port the software controller if we are going to use the functions that depends on the interrupt.
 - **OCRAM:** A single dual port access on-chip memory serves as both the data and the instructions memory. The settings are consistent with the `./sw/link.ld` settings (32K). This memory will be loaded with an `.mif` executable binary in the project root at synthesis.
+
+Unlike an automatically generated `.sopinfo` for Intel's native Nios II processors, the barebone software needs to know some info from the system to function:
+
+- **In `FpgaConfig.h`:**
+  - **Clock:** Need to be set as a macro for the timers.
+  - **MM Peripherals:** Need to know the base address of the peripherals used.
+- **In `link.ld`:**
+  - **OCRAM:** Need to know the reset vector. See [Vector](#vectors).
 
 ## TopLevel VHDL
 
@@ -215,9 +226,6 @@ To do.
 - All operations for debugging done in the `./openOCD` folder. Copy the `.elf` executable program that weas loaded onto the FPGA into the folder for use.
 
 > It looks like following this (https://tomverbeure.github.io/2021/07/18/VexRiscv-OpenOCD-and-Traps.html) (and > https://github.com/SpinalHDL/VexRiscv/tree/master/doc/nativeJtag) is the way to go.
-
-**Note:**
-- CPU clock must be higher than the JTAG clock
 
 ## JTAG Pins Wiring
 
