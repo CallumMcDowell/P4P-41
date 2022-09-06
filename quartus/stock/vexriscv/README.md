@@ -527,3 +527,61 @@ set_interface_assignment irq_controller embeddedsw.configuration.isPrintableDevi
 
 - [This is useful for viewing and generating assembly from high-level code](https://godbolt.org/)
 - [This is useful for understanding unreadable c](https://cdecl.org/)
+
+
+
+# [How to Recognise Blaster @ USB on linux](https://community.intel.com/t5/Intel-Quartus-Prime-Software/Programming-DE1-SoC-FPGA-only-from-Quartus-Prime-Lite-Edition/td-p/191291)
+
+1) Create or paste in `/etc/udev/rules.d/51-usbblaster.rules`
+
+```sh
+SUBSYSTEM=="usb", 
+
+ENV{DEVTYPE}=="usb_device", 
+
+ATTR{idVendor}=="09fb", 
+
+ATTR{idProduct}=="6810", 
+
+MODE="0666", 
+
+NAME="bus/usb/$env{BUSNUM}/$env{DEVNUM}", 
+
+RUN+="/bin/chmod 0666 %c" 
+
+# USB-Blaster 
+
+# BUS=="usb", SYSFS{idVendor}=="09fb", SYSFS{idProduct}=="6001", MODE="0666" 
+
+# BUS=="usb", SYSFS{idVendor}=="09fb", SYSFS{idProduct}=="6002", MODE="0666"  
+
+# BUS=="usb", SYSFS{idVendor}=="09fb", SYSFS{idProduct}=="6003", MODE="0666"  
+
+# USB-Blaster II 
+
+# BUS=="usb", SYSFS{idVendor}=="09fb", SYSFS{idProduct}=="6010", MODE="0666" 
+
+# BUS=="usb", SYSFS{idVendor}=="09fb", SYSFS{idProduct}=="6810", MODE="0666" 
+```
+ 
+2) Create or paste in `/etc/udev/rules.d/altera-usb-blaster.rules` 
+   
+```sh
+ATTR{idVendor}=="09fb", ATTR{idProduct}=="6001", MODE="666" 
+```
+
+3) Search for `pgm_parts.txt` under quartus instaliation and copy it into the bin directory, which also has jtagd. I then ran jtagd.
+
+4) Run the following commands under `~/intelFPGA_lite/21.1/quartus/bin` to setup the JTAG server:
+
+```sh
+sudo ./jtagd
+sudo ./jtagconfig
+
+# You should see from jtagconfig:
+> 1) DE-SoC [2-1.3]
+  4BA00477   SOCVHPS
+  02D120DD   5CSE(BA5|MA5)/5CSTFD5D5/..
+```
+
+- More on [Quartus II on Linux setup](https://github.com/baioc/quartus-linux/blob/master/README.md)
