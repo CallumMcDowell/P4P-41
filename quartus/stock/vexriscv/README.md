@@ -98,7 +98,7 @@ If something Goes wrong, check out the [QNA](#quartus-qna) at the bottem of this
 
 ## VexRiscv Core (Scala project)
 
-Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonFullNoMmuMaxPerf`. The generated files is placed under `cores/VexRiscvAvalonMaxPerf` to be included by qsys (to include in Quartus, open `qsys->tools->options` and add the path to `cores/`).
+Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonFullNoMmuMaxPerf`. The generated files (HDL and `yaml`) is placed under `cores/VexRiscvAvalonMaxPerf` to be included by qsys (to include in Quartus, open `qsys->tools->options` and add the path to `cores/`). The `.yaml` is used for [debugging in openOCD](#debugging-with-openocdgdb)
 
 **Notes:**
 
