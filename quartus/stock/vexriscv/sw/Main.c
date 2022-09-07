@@ -23,9 +23,13 @@ DEALINGS IN THE SOFTWARE. */
 #include "FpgaConfig.h"
 #include "Hal.h"
 
+/* Define either or*/
 // #define ARIES_EMBEDDED_CORE
 // #define TEST_GPIO_LED
+
+/* Part of above either or */
 #define CUSTOM_INSTRUCT
+// Optional test benches
 #define CUSTOM_INSTRUCT_VACC
 
 #ifdef CUSTOM_INSTRUCT
@@ -105,18 +109,20 @@ int main() {
 	uint32_t vacc_r1;
 
 	while(1) {
-		vacc_r1 = 0xFFFFFFFF;
-		_vacc(vacc_r1, z);		// Should be -1 (signed) (FFFC)
-		vacc_r1 = 0x0F0F0F0F;
-		_vacc(vacc_r1, z);		// Should be 60 (signed) (60)
-		vacc_r1 = 0x80808080;
-		_vacc(vacc_r1, z);		// Should be -512 (signed)
 
-		write_to_port(add(x, 1));
-		write_to_port(x);
-		write_to_port(y);
-		write_to_port(z);
-		z = _simd_add(x, y, z);
+#ifdef CUSTOM_INSTRUCT_VACC
+		vacc_r1 = 0xFFFFFFFF;
+		_vacc(vacc_r1, z);		// a1 Should be -4(signed) 1020 (unsigned)
+		vacc_r1 = 0x0F0F0F0F;
+		_vacc(vacc_r1, z);		// a1 Should be 60 (signed) 60 (unsigned)
+		vacc_r1 = 0x80808080;
+		_vacc(vacc_r1, z);		// a1 Should be -512 (signed) 512 (unsigned)
+		vacc_r1 = 0x88888888;
+		_vacc(vacc_r1, z);		// a1 Should be -480 (signed) 544 (unsigned)
+#endif // CUSTOM_INSTRUCT_VACC
+
+		// Included to test compatibility with other custom instructions.
+		_simd_add(x, y, z);
 	}
 #endif
 
