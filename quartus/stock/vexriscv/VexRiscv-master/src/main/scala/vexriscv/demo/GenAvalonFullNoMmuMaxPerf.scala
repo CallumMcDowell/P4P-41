@@ -1,6 +1,7 @@
 package vexriscv.demo
 
 import spinal.core._
+import vexriscv.demo.P4PCustomInstructions.VectorPlugin
 import vexriscv.ip.{DataCacheConfig, InstructionCacheConfig}
 import vexriscv.plugin._
 import vexriscv.{VexRiscv, VexRiscvConfig, plugin}
@@ -35,6 +36,7 @@ object GenAvalonFullNoMmuMaxPerf {
 //            relaxedPcCalculation = false
 //          ),
           new SimdAddPlugin,
+          new VectorPlugin,
           new IBusCachedPlugin(
             resetVector = 0x00000010l, // Set to same reset vector expected in sw
             prediction = DYNAMIC_TARGET,

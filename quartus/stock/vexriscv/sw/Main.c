@@ -26,9 +26,18 @@ DEALINGS IN THE SOFTWARE. */
 // #define ARIES_EMBEDDED_CORE
 // #define TEST_GPIO_LED
 #define CUSTOM_INSTRUCT
+#define CUSTOM_INSTRUCT_VACC
 
 #ifdef CUSTOM_INSTRUCT
 uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
+
+// P4P Custom Instructions
+// ---------------------------------------
+// Must Have
+// ---------------------------------------
+#ifdef CUSTOM_INSTRUCT_VACC
+void _vacc(uint32_t r1, uint32_t rd);
+#endif
 #endif
 
 #ifdef ARIES_EMBEDDED_CORE
@@ -93,7 +102,11 @@ int main() {
 	y = 0x00000101;
 	z = 0x00000000;
 
+	uint32_t vacc_r1 = 0xFFFFFFFF;
+
 	while(1) {
+		_vacc(vacc_r1, z);
+
 		write_to_port(add(x, 1));
 		write_to_port(x);
 		write_to_port(y);

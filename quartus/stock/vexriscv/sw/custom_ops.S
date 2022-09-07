@@ -103,6 +103,15 @@
 #define SIMD_ADD(_rs2, _rs1, _rd) \
 r_type_insn(0b0000011, regnum_ ## _rs2, regnum_ ## _rs1, 0b000, regnum_ ## _rd, 0b0110011)
 
+// Custom VACC
+//Instruction encoding :
+//0000000----------010-----0001011
+//     ??|RS2||RS1|   |RD |CUSTOM0_RS1
+//
+
+#define VACC(_rs1, _rd) \
+r_type_insn(0b0000000, 0, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 0b0001011)
+
 //-------------------------------------------------------------------------------------------
 // Macro Definitions
 //-------------------------------------------------------------------------------------------
@@ -114,4 +123,11 @@ r_type_insn(0b0000011, regnum_ ## _rs2, regnum_ ## _rs1, 0b000, regnum_ ## _rd, 
 _simd_add:
     SIMD_ADD(a0, a1, a2)
     mv a0, a2
+    ret
+
+.global _vacc // extern void _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
+
+_vacc:
+    VACC(a0, a1)
+    mv a0, a1
     ret
