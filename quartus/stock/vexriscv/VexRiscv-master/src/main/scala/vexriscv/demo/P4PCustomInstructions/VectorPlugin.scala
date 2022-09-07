@@ -54,14 +54,14 @@ class VectorPlugin extends Plugin[VexRiscv]{
     execute plug new Area {
       //Define some signals used internally to the plugin
       val rs1 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
-      val rd = UInt(32 bits)
+      val rd = SInt(32 bits)
 
-      val temp0, temp1, temp2, temp3 = UInt(32 bits)
+      val temp0, temp1, temp2, temp3 = SInt(32 bits)
 
-      temp0 := rs1(7 downto 0).resized
-      temp1 := rs1(15 downto 8).resized
-      temp2 := rs1(23 downto 16).resized
-      temp3 := rs1(31 downto 24).resized
+      temp0 := rs1(7 downto 0).asSInt.resized
+      temp1 := rs1(15 downto 8).asSInt.resized
+      temp2 := rs1(23 downto 16).asSInt.resized
+      temp3 := rs1(31 downto 24).asSInt.resized
       rd := temp0 + temp1 + temp2 + temp3
 
       //When the instruction is a SIMD_ADD one, then write the result into the register file data path.

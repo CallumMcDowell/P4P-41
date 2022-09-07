@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.7.0a    git head : 150a9b9067020722818dfb17df4a23ac712a7af8
 // Component : VexRiscvAvalonMaxPerf
-// Git hash  : e4464b9622a779fdbaefa658245961ddf4ad3d13
+// Git hash  : 83e8a8c7629e03f0532b65819b92a3b6957c632b
 
 `timescale 1ns/1ps
 
@@ -1389,8 +1389,8 @@ module VexRiscvAvalonMaxPerf (
   assign _zz_execute_VectorPlugin_temp1 = execute_VectorPlugin_rs1[15 : 8];
   assign _zz_execute_VectorPlugin_temp2 = execute_VectorPlugin_rs1[23 : 16];
   assign _zz_execute_VectorPlugin_temp3 = execute_VectorPlugin_rs1[31 : 24];
-  assign _zz_execute_VectorPlugin_rd = (_zz_execute_VectorPlugin_rd_1 + execute_VectorPlugin_temp2);
-  assign _zz_execute_VectorPlugin_rd_1 = (execute_VectorPlugin_temp0 + execute_VectorPlugin_temp1);
+  assign _zz_execute_VectorPlugin_rd = ($signed(_zz_execute_VectorPlugin_rd_1) + $signed(execute_VectorPlugin_temp2));
+  assign _zz_execute_VectorPlugin_rd_1 = ($signed(execute_VectorPlugin_temp0) + $signed(execute_VectorPlugin_temp1));
   assign _zz__zz_IBusCachedPlugin_jump_pcLoad_payload_1 = (_zz_IBusCachedPlugin_jump_pcLoad_payload - 3'b001);
   assign _zz_IBusCachedPlugin_fetchPc_pc_1 = {IBusCachedPlugin_fetchPc_inc,2'b00};
   assign _zz_IBusCachedPlugin_fetchPc_pc = {29'd0, _zz_IBusCachedPlugin_fetchPc_pc_1};
@@ -3000,11 +3000,11 @@ module VexRiscvAvalonMaxPerf (
   end
 
   assign execute_VectorPlugin_rs1 = execute_RS1;
-  assign execute_VectorPlugin_temp0 = {24'd0, _zz_execute_VectorPlugin_temp0};
-  assign execute_VectorPlugin_temp1 = {24'd0, _zz_execute_VectorPlugin_temp1};
-  assign execute_VectorPlugin_temp2 = {24'd0, _zz_execute_VectorPlugin_temp2};
-  assign execute_VectorPlugin_temp3 = {24'd0, _zz_execute_VectorPlugin_temp3};
-  assign execute_VectorPlugin_rd = (_zz_execute_VectorPlugin_rd + execute_VectorPlugin_temp3);
+  assign execute_VectorPlugin_temp0 = {{24{_zz_execute_VectorPlugin_temp0[7]}}, _zz_execute_VectorPlugin_temp0};
+  assign execute_VectorPlugin_temp1 = {{24{_zz_execute_VectorPlugin_temp1[7]}}, _zz_execute_VectorPlugin_temp1};
+  assign execute_VectorPlugin_temp2 = {{24{_zz_execute_VectorPlugin_temp2[7]}}, _zz_execute_VectorPlugin_temp2};
+  assign execute_VectorPlugin_temp3 = {{24{_zz_execute_VectorPlugin_temp3[7]}}, _zz_execute_VectorPlugin_temp3};
+  assign execute_VectorPlugin_rd = ($signed(_zz_execute_VectorPlugin_rd) + $signed(execute_VectorPlugin_temp3));
   assign IBusCachedPlugin_externalFlush = ({writeBack_arbitration_flushNext,{memory_arbitration_flushNext,{execute_arbitration_flushNext,decode_arbitration_flushNext}}} != 4'b0000);
   assign IBusCachedPlugin_jump_pcLoad_valid = ({BranchPlugin_jumpInterface_valid,{CsrPlugin_jumpInterface_valid,DBusCachedPlugin_redoBranch_valid}} != 3'b000);
   assign _zz_IBusCachedPlugin_jump_pcLoad_payload = {BranchPlugin_jumpInterface_valid,{CsrPlugin_jumpInterface_valid,DBusCachedPlugin_redoBranch_valid}};

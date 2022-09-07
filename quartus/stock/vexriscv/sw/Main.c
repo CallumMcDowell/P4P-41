@@ -102,10 +102,15 @@ int main() {
 	y = 0x00000101;
 	z = 0x00000000;
 
-	uint32_t vacc_r1 = 0xFFFFFFFF;
+	uint32_t vacc_r1;
 
 	while(1) {
-		_vacc(vacc_r1, z);
+		vacc_r1 = 0xFFFFFFFF;
+		_vacc(vacc_r1, z);		// Should be -1 (signed) (FFFC)
+		vacc_r1 = 0x0F0F0F0F;
+		_vacc(vacc_r1, z);		// Should be 60 (signed) (60)
+		vacc_r1 = 0x80808080;
+		_vacc(vacc_r1, z);		// Should be -512 (signed)
 
 		write_to_port(add(x, 1));
 		write_to_port(x);
