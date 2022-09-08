@@ -94,6 +94,7 @@
 //-------------------------------------------------------------------------------------------
 #define r_type_insn(_f7, _rs2, _rs1, _f3, _rd, _opc) \
 .word (((_f7) << 25) | ((_rs2) << 20) | ((_rs1) << 15) | ((_f3) << 12) | ((_rd) << 7) | ((_opc) << 0))
+//-------------------------------------------------------------------------------------------
 
 // Stock SIMD_ADD
 // Instruction encoding :
@@ -103,29 +104,45 @@
 #define SIMD_ADD(_rs2, _rs1, _rd) \
 r_type_insn(0b0000011, regnum_ ## _rs2, regnum_ ## _rs1, 0b000, regnum_ ## _rd, 0b0110011)
 
+//-------------------------------------------------------------------------------------------
+
 // Custom VACC
 //Instruction encoding :
-//0000000----------010-----0001011
+//000000000000-----010-----0001011
 //     ??|RS2||RS1|   |RD |CUSTOM0_RS1
 //
 
 #define VACC(_rs1, _rd) \
-r_type_insn(0b0000000, 0, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 0b0001011)
+r_type_insn(0b0000000, 0b00000, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 0b0001011)
+
+// Custom VMIXE
+//Instruction encoding :
+//000000000000-----100-----0001011
+//     ??|RS2||RS1|   |RD |CUSTOM0_RS1
+//
+
+
+#define VMAXE(_rs1, _rd) \
+r_type_insn(0b0000000, 0b00000, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 0b0101011)
 
 //-------------------------------------------------------------------------------------------
 // Macro Definitions
 //-------------------------------------------------------------------------------------------
 .text
 
-
-.global _simd_add // extern void _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
+.global _simd_add // void _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
 
 _simd_add:
     SIMD_ADD(a0, a1, a2)
     ret
 
-.global _vacc // extern void _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
-
+.global _vacc // void _vacc(uint32_t r1, uint32_t rd);
 _vacc:
     VACC(a0, a1)
+    ret
+
+.global _vmaxe // void _vmaxe(uint32_t r1, uint32_t rd);
+
+_vmaxe:
+    VMAXE(a0, a1)
     ret

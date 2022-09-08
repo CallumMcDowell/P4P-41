@@ -31,6 +31,7 @@ DEALINGS IN THE SOFTWARE. */
 #define CUSTOM_INSTRUCT
 // Optional test benches
 #define CUSTOM_INSTRUCT_VACC
+#define CUSTOM_INSTRUCT_VMAXE_VMINE
 
 #ifdef CUSTOM_INSTRUCT
 uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
@@ -42,6 +43,10 @@ uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
 #ifdef CUSTOM_INSTRUCT_VACC
 void _vacc(uint32_t r1, uint32_t rd);
 #endif
+#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
+void _vmaxe(uint32_t r1, uint32_t rd);
+#endif
+
 #endif
 
 #ifdef ARIES_EMBEDDED_CORE
@@ -71,6 +76,14 @@ uint32_t add(uint32_t a, uint32_t b) {
 
 void write_to_port(uint32_t x) {
 	g_Pio->port = x;
+}
+
+uint32_t build_vec32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
+	uint32_t ret = a;
+	ret = (ret << 8) | b;
+	ret = (ret << 8) | c;
+	ret = (ret << 8) | d;
+	return ret;
 }
 
 int main() {
@@ -109,7 +122,6 @@ int main() {
 	uint32_t vacc_r1;
 
 	while(1) {
-
 #ifdef CUSTOM_INSTRUCT_VACC
 		vacc_r1 = 0xFFFFFFFF;
 		_vacc(vacc_r1, z);		// a1 Should be -4(signed) 1020 (unsigned)
@@ -120,6 +132,18 @@ int main() {
 		vacc_r1 = 0x88888888;
 		_vacc(vacc_r1, z);		// a1 Should be -480 (signed) 544 (unsigned)
 #endif // CUSTOM_INSTRUCT_VACC
+
+#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
+
+		_vmaxe(build_vec32(-1, -2, -3, -4), z); // -1
+		_vmaxe(build_vec32(1, 2, 3, 4), z);		// 4
+		_vmaxe(build_vec32(-8, 8, 9, -8), z);	// 9
+		_vmaxe(build_vec32(0, 0, 0, 0), z);		// 0
+		_vmaxe(build_vec32(-8, 8, 9, -8), z);	// 9
+		_vmaxe(build_vec32(9, -8, -8, 8), z);	// 9
+		_vmaxe(build_vec32(-8, -8, -8, -8), z);	// -8
+		
+#endif // CUSTOM_INSTRUCT_VMINE
 
 		// Included to test compatibility with other custom instructions.
 		_simd_add(x, y, z);
