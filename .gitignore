@@ -83,6 +83,9 @@ timing
 *sopc_*
 PLLJ_PLLSPE_INFO.txt # The generated PLL specification file
 
+# Output files
+*.sld
+*.cdf
 # --- RE-ENABLE THE BELOW WHEN REQUIRED ---
 
 ## Created by https://www.toptal.com/developers/gitignore/api/alteraquartusii
