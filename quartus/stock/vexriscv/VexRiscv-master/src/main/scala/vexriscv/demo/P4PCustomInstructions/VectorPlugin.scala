@@ -208,11 +208,11 @@ class VectorPlugin extends Plugin[VexRiscv]{
       // Select signals for mux
       comp01 := temp0 >= temp1
       comp23 := temp2 >= temp3
+      compFinal := largest01 >= largest23
 
       largest01 := comp01 ? temp0 | temp1
       largest23 := comp23 ? temp2 | temp3
 
-      compFinal := largest01 >= largest23
       rd := compFinal ? largest01 | largest23
 
       // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
