@@ -4,16 +4,40 @@ import spinal.core._
 import vexriscv.plugin.Plugin
 import vexriscv.{DecoderService, Stageable, VexRiscv}
 
-//This plugin example will add a new instruction named VACC which do the following :
-//
-// RS1: regfile source, RS2 not used.
-// Accumulates sum of 8-bit segments to RD.
-//
-//Instruction encoding :
-//000000000000-----010-----0001011
-//     ??|RS2||RS1|   |RD |CUSTOM0_RS1
-//
-//Note :  RS1, RS2, RD positions follow the RISC-V spec and are common for all instruction of the ISA
+/* 32-bit or 4*8-bit segments vector elements.
+
+This plugin will add the following new instructions:
+
+-  R-Type
+  - VMUL: Element-wise vector-vector multiplication
+    - Overflow undefined.
+    - ret: (32-bit) vector of 4*8-bit segments
+  - VACC: Accumulate (8-bit) vector contents
+    - ret: (32-bit) scalar
+  - VMAXE: Find largest element in vector
+    - ret: (32-bit) scalar
+  - VMINE: Find smallest element in vector
+    - ret: (32-bit) scalar
+  - VMAX.X: Element-wise vector-scalar comparision to find larger of the two for that position
+    - ret: (32-bit) vector of 4*8-bit segments
+
+- I-Type
+  - VSRLI: Element-wise vector-immediate logical shift right.
+    - ret: (32-bit) vector of 4*-*8-bit segments.
+*/
+
+/*
+VACC
+
+RS1: regfile source, RS2 not used.
+Accumulates sum of 8-bit segments to RD.
+
+Instruction encoding :
+000000000000-----010-----0001011
+     ??|RS2||RS1|   |RD |CUSTOM0_RS1
+*/
+
+// Note :  RS1, RS2, RD positions follow the RISC-V spec and are common for all instruction of the ISA
 
 class VectorPlugin extends Plugin[VexRiscv]{
   //Define the concept of IS_VMUL signals, which specify if the current instruction is destined for ths plugin
@@ -31,7 +55,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
     //Specify the instruction decoding which should be applied when the instruction match the 'key' parttern
     decoderService.add(
-      //Bit pattern of the new SIMD_ADD instruction
+      //Bit pattern of the new instruction
       key = M"000000000000-----010-----0001011",
 
       //Decoding specification when the 'key' pattern is recognized in the instruction
