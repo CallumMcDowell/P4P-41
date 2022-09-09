@@ -216,7 +216,7 @@ To do.
 **VERY IMPORTENT Notes:**
 
 - Power off both target board and cable before plugging.
-- de1-SoC I/O Interface: 3.3V TTL
+- **de1-SoC I/O Interface:** 3.3V TTL
 
 ## Setup
 
@@ -232,7 +232,7 @@ To do.
 ![](./doc/images/SoC%20GPIO.png)
 
 ```vhdl
--- in toplevel:
+-- in toplevel (RED TEXT corresponds to the PIN assignments):
 vexriscvavalon_0_jtag_tck => GPIO_0(1),
 vexriscvavalon_0_jtag_tdi => GPIO_0(3),            
 vexriscvavalon_0_jtag_tdo => GPIO_0(5),  
@@ -243,8 +243,9 @@ vexriscvavalon_0_jtag_tms => GPIO_0(7),
 ## openOCD Steps
 
 0. Build the sw and relocate `bootrom.elf` into `./openocd`. Make sure the program you want to debug was compiled with debug symbols with `-ggdb3` and lowest optimisation `-O0`.
+   - You MUST build a new `.elf` from your system to generate the correct path infomation.
 
-1. Wire theJATG adaptor to GPIO_0 (above)
+1. Wire the JATG adaptor to GPIO_0 (above)
     > Sanity Check (find USB): lsusb
 
 2. Open a terminal in `/openOCD` and run:
@@ -268,11 +269,12 @@ Info : Listening on port 6666 for tcl connections
 Info : Listening on port 4444 for telnet connections
 ```
 
-
 Intially, the commands defined in `vexriscv_init.cfg` will halt the CPU.
 
 3. Open a seperate terminal in the same location as the program's `.elf` executable. Run and start the gdb (or through gdbgui):
    - `.elf` file: Info on the program running on the target.
+
+- **A) If using terminal only:**
 
 ```sh
 # don't print header
@@ -282,6 +284,8 @@ Intially, the commands defined in `vexriscv_init.cfg` will halt the CPU.
 		bootrom.elf \
 		-ex "target extended-remote localhost:3333"
 ```
+
+- **B) If using gdbgui:**
 
 ```sh
 gdbgui -g '/opt/riscv/bin/riscv64-unknown-elf-gdb -q bootrom.elf -ex "target extended-remote localhost:3333"'
@@ -411,6 +415,10 @@ section .text
         ret
 // We have to export myFunc in the assembly file and declare myFunc as an extrnal function in the main.c file. In myFunc.asm we are also importing the printf function from stdlib so that we can output the message as simply as possible.
 ```
+
+# Custom Instruction Design
+
+- TBD
 
 # Quartus QNA:
 
