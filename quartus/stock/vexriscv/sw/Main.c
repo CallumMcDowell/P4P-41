@@ -41,10 +41,10 @@ uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
 // Must Have
 // ---------------------------------------
 #ifdef CUSTOM_INSTRUCT_VACC
-void _vacc(uint32_t r1, uint32_t rd);
+uint32_t _vacc(uint32_t rd, uint32_t r1);
 #endif
 #ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
-void _vmaxe(uint32_t r1, uint32_t rd);
+uint32_t _vmaxe(uint32_t rd, uint32_t r1);
 #endif
 
 #endif
@@ -114,39 +114,34 @@ int main() {
 
 #ifdef CUSTOM_INSTRUCT
 
-	uint32_t x, y, z;
+	int32_t x, y, z;
 	x = 0x01010000;
 	y = 0x00000101;
-	z = 0x00000000;
+	z = 0x10000000;
 
 	uint32_t vacc_r1;
 
 	while(1) {
 #ifdef CUSTOM_INSTRUCT_VACC
-		vacc_r1 = 0xFFFFFFFF;
-		_vacc(vacc_r1, z);		// a1 Should be -4(signed) 1020 (unsigned)
-		vacc_r1 = 0x0F0F0F0F;
-		_vacc(vacc_r1, z);		// a1 Should be 60 (signed) 60 (unsigned)
-		vacc_r1 = 0x80808080;
-		_vacc(vacc_r1, z);		// a1 Should be -512 (signed) 512 (unsigned)
-		vacc_r1 = 0x88888888;
-		_vacc(vacc_r1, z);		// a1 Should be -480 (signed) 544 (unsigned)
+		z = _vacc(z, build_vec32(-1,-1,-1,-1));		// -4(signed) 1020 (unsigned)
+		z = _vacc(z, build_vec32(15,15,15,15));		// 60 (signed) 60 (unsigned)
+		z = _vacc(z, build_vec32(-128,-128,-128,-128));		// -512 (signed) 512 (unsigned)
 #endif // CUSTOM_INSTRUCT_VACC
 
 #ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
 
-		_vmaxe(build_vec32(-1, -2, -3, -4), z); // -1
-		_vmaxe(build_vec32(1, 2, 3, 4), z);		// 4
-		_vmaxe(build_vec32(-8, 8, 9, -8), z);	// 9
-		_vmaxe(build_vec32(0, 0, 0, 0), z);		// 0
-		_vmaxe(build_vec32(-8, 8, 9, -8), z);	// 9
-		_vmaxe(build_vec32(9, -8, -8, 8), z);	// 9
-		_vmaxe(build_vec32(-8, -8, -8, -8), z);	// -8
+		z = _vmaxe(z, build_vec32(-1, -2, -3, -4)); // -1
+		z = _vmaxe(z, build_vec32(1, 2, 3, 4));		// 4
+		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
+		z = _vmaxe(z, build_vec32(0, 0, 0, 0));		// 0
+		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
+		z = _vmaxe(z, build_vec32(9, -8, -8, 8));	// 9
+		z = _vmaxe(z, build_vec32(-8, -8, -8, -8));	// -8
 		
 #endif // CUSTOM_INSTRUCT_VMINE
 
 		// Included to test compatibility with other custom instructions.
-		_simd_add(x, y, z);
+		z = _simd_add(z, x, y);
 	}
 #endif
 
