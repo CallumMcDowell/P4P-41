@@ -1,4 +1,5 @@
 vexriscv_system/
+outputfiles/
 *.sopcinfo
 *.elf
 !prebuilt/stock-vexriscv_no_mif.sof
