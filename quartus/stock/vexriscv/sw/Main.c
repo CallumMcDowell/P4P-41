@@ -120,8 +120,6 @@ int main() {
 	y = 0x00000101;
 	z = 0x10000000;
 
-	uint32_t vacc_r1;
-
 	while(1) {
 #ifdef CUSTOM_INSTRUCT_VACC
 		z = _vacc(z, build_vec32(-1,-1,-1,-1));				// -4(signed) 1020 (unsigned)
