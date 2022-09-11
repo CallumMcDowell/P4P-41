@@ -46,6 +46,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
   def CUSTOM1            = M"-----------------000-----0101011"
   def CUSTOM1_RS1_VMAXE  = M"0000000----------010-----0101011"
   def CUSTOM1_RS1_VMINE  = M"0000001----------010-----0101011"
+  def CUSTOM1_RS1_VMAX_X = M"0000001----------010-----0101011"
   def CUSTOM1_RS1_RS2    = M"-----------------011-----0101011"
   def CUSTOM1_RD         = M"-----------------100-----0101011"
   def CUSTOM1_RD_RS1     = M"-----------------110-----0101011"
@@ -83,6 +84,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
   object IS_VACC extends Stageable(Bool)
   object IS_VMAXE extends Stageable(Bool)
   object IS_VMINE extends Stageable(Bool)
+  object IS_VMAX_X extends Stageable(Bool)
 
   //Callback to setup the plugin and ask for different services
   override def setup(pipeline: VexRiscv): Unit = {
@@ -131,7 +133,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
       Finds largest 8-bit segment (signed) to RD
 
       Instruction encoding :
-      000000000000-----010-----0101011
+      0000000----------010-----0101011
         func7|RS2||RS1|   |RD |CUSTOM1_RS1
     --------------------------------------------------------------
     */
@@ -163,7 +165,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
       Finds lowest 8-bit segment (signed) to RD
 
       Instruction encoding :
-      000000100000-----010-----0101011
+      0000001----------010-----0101011
         func7|RS2||RS1|   |RD |CUSTOM1_RS1
     --------------------------------------------------------------
     */
@@ -179,6 +181,40 @@ class VectorPlugin extends Plugin[VexRiscv]{
       //Decoding specification when the 'key' pattern is recognized in the instruction
       List(
         IS_VMINE                 -> True,
+        REGFILE_WRITE_VALID      -> True, //Enable the register file write
+        BYPASSABLE_EXECUTE_STAGE -> True, //Notify the hazard management unit that the instruction result is already accessible in the EXECUTE stage (Bypass ready)
+        BYPASSABLE_MEMORY_STAGE  -> True, //Same as above but for the memory stage
+        RS1_USE                  -> True, //Notify the hazard management unit that this instruction use the RS1 value
+        RS2_USE                  -> False  //Same than above but for RS2.
+      )
+    )
+
+    /*
+    --------------------------------------------------------------
+      VMAX.X (VMAX_X)
+    --------------------------------------------------------------
+      RS1: regfile source, vector of 4*8-bit elements
+      RS2: regfile source, vector of 4*8-bit elements
+      Compare each element for largest, returning an vector of
+      (in 32-bit register) the results for each position at RD.
+
+      Instruction encoding :
+      0000010----------010-----0101011
+        func7|RS2||RS1|   |RD |CUSTOM1_RS1
+    --------------------------------------------------------------
+    */
+
+    //Specify the VACC default value when instruction are decoded
+    decoderService.addDefault(IS_VMAX_X, False)
+
+    //Specify the instruction decoding which should be applied when the instruction match the 'key' parttern
+    decoderService.add(
+      //Bit pattern of the new instruction
+      key = CUSTOM1_RS1_VMAX_X,
+
+      //Decoding specification when the 'key' pattern is recognized in the instruction
+      List(
+        IS_VMAX_X                 -> True,
         REGFILE_WRITE_VALID      -> True, //Enable the register file write
         BYPASSABLE_EXECUTE_STAGE -> True, //Notify the hazard management unit that the instruction result is already accessible in the EXECUTE stage (Bypass ready)
         BYPASSABLE_MEMORY_STAGE  -> True, //Same as above but for the memory stage
@@ -281,6 +317,73 @@ class VectorPlugin extends Plugin[VexRiscv]{
       largest23 := comp23 ? temp2 | temp3
 
       rd := compFinal ? largest01 | largest23
+
+      // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
+      when(execute.input(IS_VMINE)) {
+        execute.output(REGFILE_WRITE_DATA) := rd.asBits
+      }
+    }
+    /*
+    --------------------------------------------------------------
+    VMINE
+    --------------------------------------------------------------
+    */
+    //Add a new scope on the execute stage (used to give a name to signals)
+    execute plug new Area {
+      //Define some signals used internally to the plugin
+      val rs1 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
+      val rs2 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
+      val rd = UInt(32 bits)
+
+      val temp0, temp1, temp2, temp3 = SInt(8 bits)
+      val temp10, temp11, temp12, temp13 = SInt(8 bits)
+      val temp20, temp21, temp22, temp23 = SInt(8 bits)
+      val comp0, comp1, comp2, comp3 = Bool
+
+      temp10 := rs1(7 downto 0).asSInt
+      temp11 := rs1(15 downto 8).asSInt
+      temp12 := rs1(23 downto 16).asSInt
+      temp13 := rs1(31 downto 24).asSInt
+
+      temp20 := rs2(7 downto 0).asSInt
+      temp21 := rs2(15 downto 8).asSInt
+      temp22 := rs2(23 downto 16).asSInt
+      temp23 := rs2(31 downto 24).asSInt
+
+      comp0 := temp10 >= temp20
+      comp1 := temp11 >= temp21
+      comp2 := temp12 >= temp22
+      comp3 := temp13 >= temp23
+
+      temp0 := comp0 ? temp10 | temp20
+      temp1 := comp1 ? temp11 | temp21
+      temp2 := comp2 ? temp12 | temp22
+      temp3 := comp3 ? temp13 | temp23
+
+      rd := Cat(temp3, temp2, temp1, temp0).asUInt
+
+      // WIP size adaptable code.
+
+      //      var temp1, temp2 = ListBuffer[SInt()]()
+      //      val comp = ListBuffer[Bool]()
+      //      val largest_element = List(SInt(8 bits))
+      //
+      //      val temp0 = SInt(8 bits)
+      //
+      //      var i: Int = 0;
+      //
+      //      for (i <- 0 to (rd.getWidth/8)-1) {
+      //        temp1.prepend(rs1(7 downto 0).asSInt)
+      //        temp2.prepend(rs1(7 downto 0).asSInt)
+      //        comp.prepend(temp1.head >= temp2.head)
+      //      }
+      //
+      //      for (c <- comp) {
+      //        largest_element(i) := c ? temp1(i) | temp2(i)
+      //        i = i+1
+      //      }
+      //
+      //      rd := Cat(largest_element).asUInt
 
       // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
       when(execute.input(IS_VMINE)) {
