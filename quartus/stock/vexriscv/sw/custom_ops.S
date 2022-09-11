@@ -117,12 +117,21 @@ r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 
 
 // Custom VMAXE
 //Instruction encoding :
-//000000000000-----100-----0001011
-//     ??|RS2||RS1|   |RD |CUSTOM0_RS1
+//0000000----------010-----0101011
+//  func7|RS2||RS1|   |RD |CUSTOM1_RS1
 //
 
 #define VMAXE(_rd, _rs1, _rs2) \
 r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 0b0101011)
+
+// Custom VMINE
+//Instruction encoding :
+//0000001----------010-----0101011
+//  func7|RS2||RS1|   |RD |CUSTOM1_RS1
+//
+
+#define VMINE(_rd, _rs1, _rs2) \
+r_type_insn(0b0000001, regnum_ ## _rs2, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 0b0101011)
 
 //-------------------------------------------------------------------------------------------
 // Macro Definitions
@@ -130,7 +139,6 @@ r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 
 .text
 
 .global _simd_add // void _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
-
 _simd_add:
     SIMD_ADD(a0, a1, a2)
     ret
@@ -141,7 +149,11 @@ _vacc:
     ret
 
 .global _vmaxe // void _vmaxe(uint32_t rd, uint32_t r1);
-
 _vmaxe:
     VMAXE(a0, a1, zero)
+    ret
+
+.global _vmine // void _vmine(uint32_t rd, uint32_t r1);
+_vmine:
+    VMINE(a0, a1, zero)
     ret

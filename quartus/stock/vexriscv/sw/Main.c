@@ -45,6 +45,7 @@ uint32_t _vacc(uint32_t rd, uint32_t r1);
 #endif
 #ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
 uint32_t _vmaxe(uint32_t rd, uint32_t r1);
+uint32_t _vmine(uint32_t rd, uint32_t r1);
 #endif
 
 #endif
@@ -123,8 +124,8 @@ int main() {
 
 	while(1) {
 #ifdef CUSTOM_INSTRUCT_VACC
-		z = _vacc(z, build_vec32(-1,-1,-1,-1));		// -4(signed) 1020 (unsigned)
-		z = _vacc(z, build_vec32(15,15,15,15));		// 60 (signed) 60 (unsigned)
+		z = _vacc(z, build_vec32(-1,-1,-1,-1));				// -4(signed) 1020 (unsigned)
+		z = _vacc(z, build_vec32(15,15,15,15));				// 60 (signed) 60 (unsigned)
 		z = _vacc(z, build_vec32(-128,-128,-128,-128));		// -512 (signed) 512 (unsigned)
 #endif // CUSTOM_INSTRUCT_VACC
 
@@ -137,6 +138,14 @@ int main() {
 		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
 		z = _vmaxe(z, build_vec32(9, -8, -8, 8));	// 9
 		z = _vmaxe(z, build_vec32(-8, -8, -8, -8));	// -8
+
+		z = _vmine(z, build_vec32(-1, -2, -3, -4)); // -4
+		z = _vmine(z, build_vec32(1, 2, 3, 4));		// 1
+		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
+		z = _vmine(z, build_vec32(0, 0, 0, 0));		// 0
+		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
+		z = _vmine(z, build_vec32(9, -8, -8, 8));	// -8
+		z = _vmine(z, build_vec32(-8, -8, -8, -8));	// -8
 		
 #endif // CUSTOM_INSTRUCT_VMINE
 
