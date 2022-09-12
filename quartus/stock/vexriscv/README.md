@@ -9,7 +9,7 @@
 
 - Morteza Biglari-Abhari 
 
-This is the project implementing a simple Vexriscv system through qsys with the generated `.v` file and `tcl` component from `Qsysfy()`.
+This is the project implementing a simple Vexriscv system through qsys with the generated `.v` file and `tcl` component from `Qsysfy()`. We designed and implemented a brownfield extnesion on the RISC V ISA.
 
 This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/ARIES-Embedded/riscv-on-max10) of the Vexriscv core to as an example to compare to test, develope software on when our custom core is not avaliable.
 

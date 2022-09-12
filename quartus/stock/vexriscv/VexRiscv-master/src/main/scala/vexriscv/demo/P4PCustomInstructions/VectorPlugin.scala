@@ -46,7 +46,6 @@ class VectorPlugin extends Plugin[VexRiscv]{
   def CUSTOM1            = M"-----------------000-----0101011"
   def CUSTOM1_RS1_VMAXE  = M"0000000----------010-----0101011"
   def CUSTOM1_RS1_VMINE  = M"0000001----------010-----0101011"
-  def CUSTOM1_RS1_VMAX_X = M"0000001----------010-----0101011"
   def CUSTOM1_RS1_RS2    = M"-----------------011-----0101011"
   def CUSTOM1_RD         = M"-----------------100-----0101011"
   def CUSTOM1_RD_RS1     = M"-----------------110-----0101011"
@@ -138,7 +137,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
     --------------------------------------------------------------
     */
 
-    //Specify the VACC default value when instruction are decoded
+    //Specify the default value when instruction are decoded
     decoderService.addDefault(IS_VMAXE, False)
 
     //Specify the instruction decoding which should be applied when the instruction match the 'key' parttern
@@ -170,7 +169,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
     --------------------------------------------------------------
     */
 
-    //Specify the VACC default value when instruction are decoded
+    //Specify the default value when instruction are decoded
     decoderService.addDefault(IS_VMINE, False)
 
     //Specify the instruction decoding which should be applied when the instruction match the 'key' parttern
@@ -199,18 +198,18 @@ class VectorPlugin extends Plugin[VexRiscv]{
       (in 32-bit register) the results for each position at RD.
 
       Instruction encoding :
-      0000010----------010-----0101011
+      -----------------111-----0101011
         func7|RS2||RS1|   |RD |CUSTOM1_RS1
     --------------------------------------------------------------
     */
 
-    //Specify the VACC default value when instruction are decoded
+    //Specify the default value when instruction are decoded
     decoderService.addDefault(IS_VMAX_X, False)
 
     //Specify the instruction decoding which should be applied when the instruction match the 'key' parttern
     decoderService.add(
       //Bit pattern of the new instruction
-      key = CUSTOM1_RS1_VMAX_X,
+      key = CUSTOM1_RD_RS1_RS2,
 
       //Decoding specification when the 'key' pattern is recognized in the instruction
       List(
@@ -332,7 +331,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
     execute plug new Area {
       //Define some signals used internally to the plugin
       val rs1 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
-      val rs2 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
+      val rs2 = execute.input(RS2).asUInt //32 bits UInt value of the regfile[RS1]
       val rd = UInt(32 bits)
 
       val temp0, temp1, temp2, temp3 = SInt(8 bits)
@@ -386,7 +385,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
       //      rd := Cat(largest_element).asUInt
 
       // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
-      when(execute.input(IS_VMINE)) {
+      when(execute.input(IS_VMAX_X)) {
         execute.output(REGFILE_WRITE_DATA) := rd.asBits
       }
     }

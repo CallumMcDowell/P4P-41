@@ -133,6 +133,15 @@ r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 
 #define VMINE(_rd, _rs1, _rs2) \
 r_type_insn(0b0000001, regnum_ ## _rs2, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 0b0101011)
 
+// Custom VMAX_X
+//Instruction encoding :
+//-----------------111-----0101011
+//  func7|RS2||RS1|   |RD |CUSTOM1_RS1
+//
+
+#define VMAX_X(_rd, _rs1, _rs2) \
+r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b111, regnum_ ## _rd, 0b0101011)
+
 //-------------------------------------------------------------------------------------------
 // Macro Definitions
 //-------------------------------------------------------------------------------------------
@@ -156,4 +165,9 @@ _vmaxe:
 .global _vmine // void _vmine(uint32_t rd, uint32_t r1);
 _vmine:
     VMINE(a0, a1, zero)
+    ret
+
+.global _vmax_x // void _vmax_x(uint32_t rd, uint32_t r1);
+_vmax_x:
+    VMAX_X(a0, a1, a2)
     ret
