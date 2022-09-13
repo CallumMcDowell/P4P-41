@@ -4,6 +4,8 @@ import spinal.core._
 import vexriscv.plugin.Plugin
 import vexriscv.{DecoderService, Stageable, VexRiscv}
 
+import scala.collection.mutable.ListBuffer
+
 /* Vector Plugin
 
 32-bit or 4*8-bit segments vector elements.
@@ -38,15 +40,15 @@ class VectorPlugin extends Plugin[VexRiscv]{
   // |  custom-0   |   (01010)   |
   // |  custom-1   |   (01001)   |
   // The inst[14:12] A.K.A. func3 still act as operation distinguishing field
-  def CUSTOM0_RS1        = M"000000000000-----010-----0001011"
+  def CUSTOM0_RS1        = M"000000000000-----010-----0001011" //
   def CUSTOM0_RS1_RS2    = M"-----------------011-----0001011"
   def CUSTOM0_RD         = M"-----------------100-----0001011"
   def CUSTOM0_RD_RS1     = M"-----------------110-----0001011"
   def CUSTOM0_RD_RS1_RS2 = M"-----------------111-----0001011"
   def CUSTOM1            = M"-----------------000-----0101011"
-  def CUSTOM1_RS1_VMAXE  = M"0000000----------010-----0101011"
-  def CUSTOM1_RS1_VMINE  = M"0000001----------010-----0101011"
-  def CUSTOM1_RS1_RS2    = M"-----------------011-----0101011"
+  def CUSTOM1_RS1_VMAXE  = M"0000000----------010-----0101011" //
+  def CUSTOM1_RS1_VMINE  = M"0000001----------010-----0101011" //
+  def CUSTOM1_RS1_RS2    = M"-----------------011-----0101011" //
   def CUSTOM1_RD         = M"-----------------100-----0101011"
   def CUSTOM1_RD_RS1     = M"-----------------110-----0101011"
   def CUSTOM1_RD_RS1_RS2 = M"-----------------111-----0101011"
@@ -334,55 +336,21 @@ class VectorPlugin extends Plugin[VexRiscv]{
       val rs2 = execute.input(RS2).asUInt //32 bits UInt value of the regfile[RS1]
       val rd = UInt(32 bits)
 
-      val temp0, temp1, temp2, temp3 = SInt(8 bits)
-      val temp10, temp11, temp12, temp13 = SInt(8 bits)
-      val temp20, temp21, temp22, temp23 = SInt(8 bits)
-      val comp0, comp1, comp2, comp3 = Bool
+      val rs1_vec = rs1.subdivideIn(8 bits)
+      val rs2_vec = rs2.subdivideIn(8 bits)
 
-      temp10 := rs1(7 downto 0).asSInt
-      temp11 := rs1(15 downto 8).asSInt
-      temp12 := rs1(23 downto 16).asSInt
-      temp13 := rs1(31 downto 24).asSInt
+      val largest_elems = ListBuffer(UInt(0 bits))
 
-      temp20 := rs2(7 downto 0).asSInt
-      temp21 := rs2(15 downto 8).asSInt
-      temp22 := rs2(23 downto 16).asSInt
-      temp23 := rs2(31 downto 24).asSInt
+      // Reviewed from here: https://stackoverflow.com/questions/61492744/scala-compare-elements-at-same-position-in-two-arrays
+      // Tuple of slice pair
+      rs1_vec.zip(rs2_vec).foreach {
+        case (rs1, rs2) =>
+          val comp = rs1.asSInt >= rs2.asSInt
+          largest_elems.append(comp ? rs1 | rs2)
+      }
 
-      comp0 := temp10 >= temp20
-      comp1 := temp11 >= temp21
-      comp2 := temp12 >= temp22
-      comp3 := temp13 >= temp23
-
-      temp0 := comp0 ? temp10 | temp20
-      temp1 := comp1 ? temp11 | temp21
-      temp2 := comp2 ? temp12 | temp22
-      temp3 := comp3 ? temp13 | temp23
-
-      rd := Cat(temp3, temp2, temp1, temp0).asUInt
-
-      // WIP size adaptable code.
-
-      //      var temp1, temp2 = ListBuffer[SInt()]()
-      //      val comp = ListBuffer[Bool]()
-      //      val largest_element = List(SInt(8 bits))
-      //
-      //      val temp0 = SInt(8 bits)
-      //
-      //      var i: Int = 0;
-      //
-      //      for (i <- 0 to (rd.getWidth/8)-1) {
-      //        temp1.prepend(rs1(7 downto 0).asSInt)
-      //        temp2.prepend(rs1(7 downto 0).asSInt)
-      //        comp.prepend(temp1.head >= temp2.head)
-      //      }
-      //
-      //      for (c <- comp) {
-      //        largest_element(i) := c ? temp1(i) | temp2(i)
-      //        i = i+1
-      //      }
-      //
-      //      rd := Cat(largest_element).asUInt
+      // Concat over iterable
+      rd := Cat(largest_elems).asUInt
 
       // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
       when(execute.input(IS_VMAX_X)) {

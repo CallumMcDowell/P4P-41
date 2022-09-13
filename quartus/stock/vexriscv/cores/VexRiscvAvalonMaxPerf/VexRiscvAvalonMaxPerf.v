@@ -1,9 +1,11 @@
 // Generator : SpinalHDL v1.7.0a    git head : 150a9b9067020722818dfb17df4a23ac712a7af8
 // Component : VexRiscvAvalonMaxPerf
-// Git hash  : 257cef58f79bf90cb3a2b2a5e724812b601875c4
+// Git hash  : 06f3a87e55acfe7d77c54b0aab1dc9eb75f9de6a
 
 `timescale 1ns/1ps
+
 `define SYNTHESIS
+
 module VexRiscvAvalonMaxPerf (
   input               timerInterrupt,
   input               externalInterrupt,
@@ -190,6 +192,14 @@ module VexRiscvAvalonMaxPerf (
   wire       [7:0]    _zz_execute_VectorPlugin_temp1_2;
   wire       [7:0]    _zz_execute_VectorPlugin_temp2_2;
   wire       [7:0]    _zz_execute_VectorPlugin_temp3_2;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_1_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_2;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_2_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_3;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_3_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_4;
+  wire       [7:0]    _zz_execute_VectorPlugin_largest_elems_4_1;
   wire       [2:0]    _zz__zz_IBusCachedPlugin_jump_pcLoad_payload_1;
   reg        [31:0]   _zz_IBusCachedPlugin_jump_pcLoad_payload_4;
   wire       [1:0]    _zz_IBusCachedPlugin_jump_pcLoad_payload_5;
@@ -760,22 +770,18 @@ module VexRiscvAvalonMaxPerf (
   wire       [31:0]   execute_VectorPlugin_rs1_3;
   wire       [31:0]   execute_VectorPlugin_rs2;
   wire       [31:0]   execute_VectorPlugin_rd_3;
-  wire       [7:0]    execute_VectorPlugin_temp0_3;
-  wire       [7:0]    execute_VectorPlugin_temp1_3;
-  wire       [7:0]    execute_VectorPlugin_temp2_3;
-  wire       [7:0]    execute_VectorPlugin_temp3_3;
-  wire       [7:0]    execute_VectorPlugin_temp10;
-  wire       [7:0]    execute_VectorPlugin_temp11;
-  wire       [7:0]    execute_VectorPlugin_temp12;
-  wire       [7:0]    execute_VectorPlugin_temp13;
-  wire       [7:0]    execute_VectorPlugin_temp20;
-  wire       [7:0]    execute_VectorPlugin_temp21;
-  wire       [7:0]    execute_VectorPlugin_temp22;
-  wire       [7:0]    execute_VectorPlugin_temp23;
-  wire                execute_VectorPlugin_comp0;
-  wire                execute_VectorPlugin_comp1;
-  wire                execute_VectorPlugin_comp2;
-  wire                execute_VectorPlugin_comp3;
+  wire       [7:0]    execute_VectorPlugin_rs1_vec_0;
+  wire       [7:0]    execute_VectorPlugin_rs1_vec_1;
+  wire       [7:0]    execute_VectorPlugin_rs1_vec_2;
+  wire       [7:0]    execute_VectorPlugin_rs1_vec_3;
+  wire       [7:0]    execute_VectorPlugin_rs2_vec_0;
+  wire       [7:0]    execute_VectorPlugin_rs2_vec_1;
+  wire       [7:0]    execute_VectorPlugin_rs2_vec_2;
+  wire       [7:0]    execute_VectorPlugin_rs2_vec_3;
+  wire       [7:0]    execute_VectorPlugin_largest_elems_1;
+  wire       [7:0]    execute_VectorPlugin_largest_elems_2;
+  wire       [7:0]    execute_VectorPlugin_largest_elems_3;
+  wire       [7:0]    execute_VectorPlugin_largest_elems_4;
   wire                IBusCachedPlugin_externalFlush;
   wire                IBusCachedPlugin_jump_pcLoad_valid;
   wire       [31:0]   IBusCachedPlugin_jump_pcLoad_payload;
@@ -1473,6 +1479,14 @@ module VexRiscvAvalonMaxPerf (
   assign _zz_execute_VectorPlugin_temp1_2 = execute_VectorPlugin_rs1_2[15 : 8];
   assign _zz_execute_VectorPlugin_temp2_2 = execute_VectorPlugin_rs1_2[23 : 16];
   assign _zz_execute_VectorPlugin_temp3_2 = execute_VectorPlugin_rs1_2[31 : 24];
+  assign _zz_execute_VectorPlugin_largest_elems_1 = execute_VectorPlugin_rs2_vec_0;
+  assign _zz_execute_VectorPlugin_largest_elems_1_1 = execute_VectorPlugin_rs1_vec_0;
+  assign _zz_execute_VectorPlugin_largest_elems_2 = execute_VectorPlugin_rs2_vec_1;
+  assign _zz_execute_VectorPlugin_largest_elems_2_1 = execute_VectorPlugin_rs1_vec_1;
+  assign _zz_execute_VectorPlugin_largest_elems_3 = execute_VectorPlugin_rs2_vec_2;
+  assign _zz_execute_VectorPlugin_largest_elems_3_1 = execute_VectorPlugin_rs1_vec_2;
+  assign _zz_execute_VectorPlugin_largest_elems_4 = execute_VectorPlugin_rs2_vec_3;
+  assign _zz_execute_VectorPlugin_largest_elems_4_1 = execute_VectorPlugin_rs1_vec_3;
   assign _zz__zz_IBusCachedPlugin_jump_pcLoad_payload_1 = (_zz_IBusCachedPlugin_jump_pcLoad_payload - 3'b001);
   assign _zz_IBusCachedPlugin_fetchPc_pc_1 = {IBusCachedPlugin_fetchPc_inc,2'b00};
   assign _zz_IBusCachedPlugin_fetchPc_pc = {29'd0, _zz_IBusCachedPlugin_fetchPc_pc_1};
@@ -3141,23 +3155,19 @@ module VexRiscvAvalonMaxPerf (
   assign execute_VectorPlugin_rd_2 = (execute_VectorPlugin_compFinal_1 ? execute_VectorPlugin_largest01_1 : execute_VectorPlugin_largest23_1);
   assign execute_VectorPlugin_rs1_3 = execute_RS1;
   assign execute_VectorPlugin_rs2 = execute_RS2;
-  assign execute_VectorPlugin_temp10 = execute_VectorPlugin_rs1_3[7 : 0];
-  assign execute_VectorPlugin_temp11 = execute_VectorPlugin_rs1_3[15 : 8];
-  assign execute_VectorPlugin_temp12 = execute_VectorPlugin_rs1_3[23 : 16];
-  assign execute_VectorPlugin_temp13 = execute_VectorPlugin_rs1_3[31 : 24];
-  assign execute_VectorPlugin_temp20 = execute_VectorPlugin_rs2[7 : 0];
-  assign execute_VectorPlugin_temp21 = execute_VectorPlugin_rs2[15 : 8];
-  assign execute_VectorPlugin_temp22 = execute_VectorPlugin_rs2[23 : 16];
-  assign execute_VectorPlugin_temp23 = execute_VectorPlugin_rs2[31 : 24];
-  assign execute_VectorPlugin_comp0 = ($signed(execute_VectorPlugin_temp20) <= $signed(execute_VectorPlugin_temp10));
-  assign execute_VectorPlugin_comp1 = ($signed(execute_VectorPlugin_temp21) <= $signed(execute_VectorPlugin_temp11));
-  assign execute_VectorPlugin_comp2 = ($signed(execute_VectorPlugin_temp22) <= $signed(execute_VectorPlugin_temp12));
-  assign execute_VectorPlugin_comp3 = ($signed(execute_VectorPlugin_temp23) <= $signed(execute_VectorPlugin_temp13));
-  assign execute_VectorPlugin_temp0_3 = (execute_VectorPlugin_comp0 ? execute_VectorPlugin_temp10 : execute_VectorPlugin_temp20);
-  assign execute_VectorPlugin_temp1_3 = (execute_VectorPlugin_comp1 ? execute_VectorPlugin_temp11 : execute_VectorPlugin_temp21);
-  assign execute_VectorPlugin_temp2_3 = (execute_VectorPlugin_comp2 ? execute_VectorPlugin_temp12 : execute_VectorPlugin_temp22);
-  assign execute_VectorPlugin_temp3_3 = (execute_VectorPlugin_comp3 ? execute_VectorPlugin_temp13 : execute_VectorPlugin_temp23);
-  assign execute_VectorPlugin_rd_3 = {execute_VectorPlugin_temp3_3,{execute_VectorPlugin_temp2_3,{execute_VectorPlugin_temp1_3,execute_VectorPlugin_temp0_3}}};
+  assign execute_VectorPlugin_rs1_vec_0 = execute_VectorPlugin_rs1_3[7 : 0];
+  assign execute_VectorPlugin_rs1_vec_1 = execute_VectorPlugin_rs1_3[15 : 8];
+  assign execute_VectorPlugin_rs1_vec_2 = execute_VectorPlugin_rs1_3[23 : 16];
+  assign execute_VectorPlugin_rs1_vec_3 = execute_VectorPlugin_rs1_3[31 : 24];
+  assign execute_VectorPlugin_rs2_vec_0 = execute_VectorPlugin_rs2[7 : 0];
+  assign execute_VectorPlugin_rs2_vec_1 = execute_VectorPlugin_rs2[15 : 8];
+  assign execute_VectorPlugin_rs2_vec_2 = execute_VectorPlugin_rs2[23 : 16];
+  assign execute_VectorPlugin_rs2_vec_3 = execute_VectorPlugin_rs2[31 : 24];
+  assign execute_VectorPlugin_largest_elems_1 = (($signed(_zz_execute_VectorPlugin_largest_elems_1) <= $signed(_zz_execute_VectorPlugin_largest_elems_1_1)) ? execute_VectorPlugin_rs1_vec_0 : execute_VectorPlugin_rs2_vec_0);
+  assign execute_VectorPlugin_largest_elems_2 = (($signed(_zz_execute_VectorPlugin_largest_elems_2) <= $signed(_zz_execute_VectorPlugin_largest_elems_2_1)) ? execute_VectorPlugin_rs1_vec_1 : execute_VectorPlugin_rs2_vec_1);
+  assign execute_VectorPlugin_largest_elems_3 = (($signed(_zz_execute_VectorPlugin_largest_elems_3) <= $signed(_zz_execute_VectorPlugin_largest_elems_3_1)) ? execute_VectorPlugin_rs1_vec_2 : execute_VectorPlugin_rs2_vec_2);
+  assign execute_VectorPlugin_largest_elems_4 = (($signed(_zz_execute_VectorPlugin_largest_elems_4) <= $signed(_zz_execute_VectorPlugin_largest_elems_4_1)) ? execute_VectorPlugin_rs1_vec_3 : execute_VectorPlugin_rs2_vec_3);
+  assign execute_VectorPlugin_rd_3 = {execute_VectorPlugin_largest_elems_4,{execute_VectorPlugin_largest_elems_3,{execute_VectorPlugin_largest_elems_2,execute_VectorPlugin_largest_elems_1}}};
   assign IBusCachedPlugin_externalFlush = ({writeBack_arbitration_flushNext,{memory_arbitration_flushNext,{execute_arbitration_flushNext,decode_arbitration_flushNext}}} != 4'b0000);
   assign IBusCachedPlugin_jump_pcLoad_valid = ({BranchPlugin_jumpInterface_valid,{CsrPlugin_jumpInterface_valid,DBusCachedPlugin_redoBranch_valid}} != 3'b000);
   assign _zz_IBusCachedPlugin_jump_pcLoad_payload = {BranchPlugin_jumpInterface_valid,{CsrPlugin_jumpInterface_valid,DBusCachedPlugin_redoBranch_valid}};
