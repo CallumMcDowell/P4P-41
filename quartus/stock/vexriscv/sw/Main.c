@@ -30,6 +30,7 @@ DEALINGS IN THE SOFTWARE. */
 /* Part of above either or */
 #define CUSTOM_INSTRUCT
 // Optional test benches
+#define CUSTOM_INSTRUCT_VMUL
 #define CUSTOM_INSTRUCT_VACC
 #define CUSTOM_INSTRUCT_VMAXE_VMINE
 
@@ -40,9 +41,14 @@ uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
 // ---------------------------------------
 // Must Have
 // ---------------------------------------
+#ifdef CUSTOM_INSTRUCT_VMUL
+uint32_t _vmul(uint32_t rd, uint32_t r1, uint32_t r2);
+#endif
+
 #ifdef CUSTOM_INSTRUCT_VACC
 uint32_t _vacc(uint32_t rd, uint32_t r1);
 #endif
+
 #ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
 uint32_t _vmaxe(uint32_t rd, uint32_t r1);
 uint32_t _vmine(uint32_t rd, uint32_t r1);
@@ -155,6 +161,21 @@ int main() {
 
 
 #endif // CUSTOM_INSTRUCT_VMINE
+
+#ifdef CUSTOM_INSTRUCT_VMUL
+
+		uint32_t a;
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));				// 0x00000000
+		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));			// 0x00000000
+		a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));			// 0xfffcf7f0
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));			// 0xfffcf7f0
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));			// 0x04fcf710
+		a = _vmul(a, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));		// 0xfcf0e810
+
+		a = _vmul(a, build_vec32(15, 15, -15, 15), build_vec32(15, -15, -15, 15));	// 0x01020304
+		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(0, 0, 0, 0));
+
+#endif // CUSTOM_INSTRUCT_VMUL
 
 		// Included to test compatibility with other custom instructions.
 		z = _simd_add(z, x, y);

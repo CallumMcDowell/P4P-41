@@ -82,6 +82,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
 */
 
   //Define the concept of IS_VACC signals, which specify if the current instruction is destined for ths plugin
+  object IS_VMUL extends Stageable(Bool)
   object IS_VACC extends Stageable(Bool)
   object IS_VMAXE extends Stageable(Bool)
   object IS_VMINE extends Stageable(Bool)
@@ -93,6 +94,42 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
     //Retrieve the DecoderService instance
     val decoderService = pipeline.service(classOf[DecoderService])
+
+    /*
+    --------------------------------------------------------------
+      VMUL
+    --------------------------------------------------------------
+      RS1: regfile source, vector of 4*8-bit elements
+      RS2: regfile source, vector of 4*8-bit elements
+      Element-wise vector-vector multiplication, returning an vector of
+      (in 32-bit register) the results for each position at RD.
+
+      Overflow undertermined, expects valid range of inputs.
+
+      Instruction encoding :
+      -----------------111-----0001011
+        func7|RS2||RS1|   |RD |CUSTOM1_RS1
+    --------------------------------------------------------------
+    */
+
+    //Specify the default value when instruction are decoded
+    decoderService.addDefault(IS_VMUL, False)
+
+    //Specify the instruction decoding which should be applied when the instruction match the 'key' parttern
+    decoderService.add(
+      //Bit pattern of the new instruction
+      key = CUSTOM0_RD_RS1_RS2,
+
+      //Decoding specification when the 'key' pattern is recognized in the instruction
+      List(
+        IS_VMUL                -> True,
+        REGFILE_WRITE_VALID      -> True, //Enable the register file write
+        BYPASSABLE_EXECUTE_STAGE -> True, //Notify the hazard management unit that the instruction result is already accessible in the EXECUTE stage (Bypass ready)
+        BYPASSABLE_MEMORY_STAGE  -> True, //Same as above but for the memory stage
+        RS1_USE                  -> True, //Notify the hazard management unit that this instruction use the RS1 value
+        RS2_USE                  -> True  //Same than above but for RS2.
+      )
+    )
 
     /*
     --------------------------------------------------------------
@@ -215,7 +252,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       //Decoding specification when the 'key' pattern is recognized in the instruction
       List(
-        IS_VMAX_X                 -> True,
+        IS_VMAX_X                -> True,
         REGFILE_WRITE_VALID      -> True, //Enable the register file write
         BYPASSABLE_EXECUTE_STAGE -> True, //Notify the hazard management unit that the instruction result is already accessible in the EXECUTE stage (Bypass ready)
         BYPASSABLE_MEMORY_STAGE  -> True, //Same as above but for the memory stage
@@ -229,6 +266,40 @@ class VectorPlugin extends Plugin[VexRiscv]{
   override def build(pipeline: VexRiscv): Unit = {
     import pipeline._
     import pipeline.config._
+
+    /*
+    --------------------------------------------------------------
+    VMUL
+    --------------------------------------------------------------
+    */
+    //Add a new scope on the execute stage (used to give a name to signals)
+    execute plug new Area {
+      //Define some signals used internally to the plugin
+      val rs1 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
+      val rs2 = execute.input(RS2).asUInt //32 bits UInt value of the regfile[RS1]
+      val rd = UInt(32 bits)
+
+      val rs1_vec = rs1.subdivideIn(8 bits)
+      val rs2_vec = rs2.subdivideIn(8 bits)
+
+      val elem = ListBuffer(UInt(0 bits))
+
+      // Reviewed from here: https://stackoverflow.com/questions/61492744/scala-compare-elements-at-same-position-in-two-arrays
+      // Tuple of slice pair
+      rs1_vec.zip(rs2_vec).foreach {
+        case (rs1, rs2) =>
+          val result = rs1.resize(4 bits).asSInt * rs2(3 downto 0).resize(4 bits).asSInt
+          elem.append(result.asUInt)
+      }
+
+      // Concat over iterable
+      rd := Cat(elem).asUInt
+
+      // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
+      when(execute.input(IS_VMUL)) {
+        execute.output(REGFILE_WRITE_DATA) := rd.asBits
+      }
+    }
 
     /*
     --------------------------------------------------------------
@@ -326,7 +397,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
     }
     /*
     --------------------------------------------------------------
-    VMINE
+    VMAX.X
     --------------------------------------------------------------
     */
     //Add a new scope on the execute stage (used to give a name to signals)
