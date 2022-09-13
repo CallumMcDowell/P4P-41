@@ -1,0 +1,5 @@
+*.bin
+*.elf
+*.mif
+*.o
+*.dump

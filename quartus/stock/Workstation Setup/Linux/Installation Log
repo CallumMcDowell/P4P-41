@@ -1,0 +1,79 @@
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt update
+sudo apt upgrade
+
+sudo apt install git
+ 
+sudo apt-get install build_essentials
+sudo apt-get install verilator
+sudo apt install gtkwave
+
+sudo apt install minicom
+
+# Quartus linux install
+https://github.com/open-design/quartus-linux-install
+
+# github_desktop
+
+## Follow this link for further updates to Github Desktop for Ubuntu https://github.com/shiftkey/desktop/releases/latest
+# UPDATE (2021-10-18): Thanks to Amin Yahyaabadi's message, the updated code is as follows
+
+sudo wget https://github.com/shiftkey/desktop/releases/download/release-2.9.3-linux3/GitHubDesktop-linux-2.9.3-linux3.deb
+### Uncomment below line if you have not installed gdebi-core before
+sudo apt-get install gdebi-core 
+sudo gdebi GitHubDesktop-linux-2.9.3-linux3.deb
+
+# RISCV Toolchain
+
+sudo apt-get install python3-pip
+## run this to refreah path profile after pip install
+source ~/.profile
+
+sudo apt-get install autoconf automake autotools-dev curl python3 python-is-python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
+
+cd ~/Documents/GitHub
+
+git clone https://github.com/riscv/riscv-gnu-toolchain
+
+cd riscv-gnu-toolchain
+
+./configure --prefix=/opt/riscv --with-multilib-generator="rv32i-ilp32--;rv32im-ilp32-rv32ima-;rv32imc-ilp32-rv32imac-;rv32imafc-ilp32f--"
+
+sudo make
+
+## Add build tools to path
+
+export PATH="$PATH:/opt/riscv/bin"
+
+## Reload terminal
+
+nano ~/.bashrc # To add path at bottem of file permanently.
+source ~/.bashrc
+
+## Avaliable At
+
+riscv64-unknown-elf-(*)  
+
+
+# Vexriscv
+
+Ran the included `tools.sh`
+
+sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
+
+# openOCD
+
+## FDFI CS323HM DDHSL-0 Cable
+
+D2XX for Linux
+
+```
+sudo apt-get install libtool automake libusb-1.0.0-dev texinfo libusb-dev libyaml-dev pkg-config
+
+./bootstrap
+./configure --enable-ftdi --enable-dummy
+make
+#sudo make install
+```
+Alternatively, `--prefix=/opt/openocd_vex` argument can be used with `./configure` to specifiy an installation directory.
