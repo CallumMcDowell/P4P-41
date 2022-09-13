@@ -416,9 +416,28 @@ section .text
 // We have to export myFunc in the assembly file and declare myFunc as an extrnal function in the main.c file. In myFunc.asm we are also importing the printf function from stdlib so that we can output the message as simply as possible.
 ```
 
-# Custom Instruction Design
+# Custom Instruction Design (WIP, Complete when instructions are all implemented)
 
-- TBD
+32-bit or 4*8-bit segments vector elements.
+
+The `Vector Plugin` will add the following new instructions:
+
+- **R-Type**
+  - **VMUL:** Element-wise vector-vector multiplication
+    - Overflow undefined.
+    - ret: (32-bit) vector of 4*8-bit segments
+  - **VACC:** Accumulate (8-bit) vector contents
+    - ret: (32-bit) scalar
+  - **VMAXE:** Find largest element in vector
+    - ret: (32-bit) scalar
+  - **VMINE:** Find smallest element in vector
+    - ret: (32-bit) scalar
+  - **VMAX.X:** Element-wise vector-scalar comparision to find larger of the two for that position
+    - ret: (32-bit) vector of 4*8-bit segments
+
+- **I-Type**
+  - **VSRLI:** Element-wise vector-immediate logical shift right.
+    - ret: (32-bit) vector of 4*-*8-bit segments.
 
 # Quartus QNA:
 
