@@ -27,3 +27,15 @@ object playground {
   }
 }
 
+object ZipAllTest extends App {
+  val incomingUrl = List(1, 2, 3, 4)
+
+  val urlToCompare = List(1, 2, 3, 4)
+
+  val vec = incomingUrl.zip(urlToCompare).foreach {
+    case (a, b) =>
+      println(a)
+      println(b)
+  }
+}
+
