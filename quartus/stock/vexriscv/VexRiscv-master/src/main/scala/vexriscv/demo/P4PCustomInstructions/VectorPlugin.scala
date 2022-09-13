@@ -342,84 +342,15 @@ class VectorPlugin extends Plugin[VexRiscv]{
       val largest_elems = ListBuffer(UInt(0 bits))
 
       // Reviewed from here: https://stackoverflow.com/questions/61492744/scala-compare-elements-at-same-position-in-two-arrays
+      // Tuple of slice pair
       rs1_vec.zip(rs2_vec).foreach {
         case (rs1, rs2) =>
           val comp = rs1.asSInt >= rs2.asSInt
           largest_elems.append(comp ? rs1 | rs2)
       }
 
+      // Concat over iterable
       rd := Cat(largest_elems).asUInt
-
-      /*
-      --------------------------------------------------------------
-      Rudimentary Wiring
-      --------------------------------------------------------------
-      */
-//      val temp0, temp1, temp2, temp3 = SInt(8 bits)
-//      val temp10, temp11, temp12, temp13 = SInt(8 bits)
-//      val temp20, temp21, temp22, temp23 = SInt(8 bits)
-//      val comp0, comp1, comp2, comp3 = Bool
-//
-//      temp10 := rs1(7 downto 0).asSInt
-//      temp11 := rs1(15 downto 8).asSInt
-//      temp12 := rs1(23 downto 16).asSInt
-//      temp13 := rs1(31 downto 24).asSInt
-//
-//      temp20 := rs2(7 downto 0).asSInt
-//      temp21 := rs2(15 downto 8).asSInt
-//      temp22 := rs2(23 downto 16).asSInt
-//      temp23 := rs2(31 downto 24).asSInt
-//
-//      comp0 := temp10 >= temp20
-//      comp1 := temp11 >= temp21
-//      comp2 := temp12 >= temp22
-//      comp3 := temp13 >= temp23
-//
-//      temp0 := comp0 ? temp10 | temp20
-//      temp1 := comp1 ? temp11 | temp21
-//      temp2 := comp2 ? temp12 | temp22
-//      temp3 := comp3 ? temp13 | temp23
-//
-//      rd := Cat(temp3, temp2, temp1, temp0).asUInt
-      /*
-      -----------------------------------------------------------
-      */
-
-      // WIP size adaptable code.
-
-      //      var temp1, temp2 = ListBuffer[SInt()]()
-      //      val comp = ListBuffer[Bool]()
-      //      val largest_element = List(SInt(8 bits))
-      //
-      //      val temp0 = SInt(8 bits)
-      //
-      //      var i: Int = 0;
-      //
-      //      for (i <- 0 to (rd.getWidth/8)-1) {
-      //        temp1.prepend(rs1(7 downto 0).asSInt)
-      //        temp2.prepend(rs1(7 downto 0).asSInt)
-      //        comp.prepend(temp1.head >= temp2.head)
-      //      }
-      //
-      //      for (c <- comp) {
-      //        largest_element(i) := c ? temp1(i) | temp2(i)
-      //        i = i+1
-      //      }
-      //
-      //      rd := Cat(largest_element).asUInt
-
-      //
-      //      var comp = new Array[Bool](no_elem)
-      //      var temp = new Array[SInt(8 bits)](no_elem)
-      //
-      //        for (i <- 0 until no_elem-1) {
-      //          if ((rs1(7 downto 0).asSInt >= rs2(7 downto 0).asSInt).) {
-      //
-      //          } else {
-      //
-      //          }
-      //          temp(i) = comp(i) ? rs1(7 downto 0).asSInt | rs2(7 downto 0).asSInt
-      //        }
 
       // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
       when(execute.input(IS_VMAX_X)) {
