@@ -46,6 +46,7 @@ uint32_t _vacc(uint32_t rd, uint32_t r1);
 #ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
 uint32_t _vmaxe(uint32_t rd, uint32_t r1);
 uint32_t _vmine(uint32_t rd, uint32_t r1);
+uint32_t _vmax_x(uint32_t rd, uint32_t r1, uint32_t r2);
 #endif
 
 #endif
@@ -144,7 +145,15 @@ int main() {
 		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
 		z = _vmine(z, build_vec32(9, -8, -8, 8));	// -8
 		z = _vmine(z, build_vec32(-8, -8, -8, -8));	// -8
-		
+
+		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x01020304
+		z = _vmax_x(z, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
+		z = _vmax_x(z, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0x01020304
+		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0x01020304
+		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));		// 0x04020304
+		z = _vmax_x(z, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));	// 0x04fefd04
+
+
 #endif // CUSTOM_INSTRUCT_VMINE
 
 		// Included to test compatibility with other custom instructions.
