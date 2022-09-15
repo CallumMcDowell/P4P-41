@@ -106,6 +106,15 @@ r_type_insn(0b0000011, regnum_ ## _rs2, regnum_ ## _rs1, 0b000, regnum_ ## _rd, 
 
 //-------------------------------------------------------------------------------------------
 
+// Custom VMUL
+//Instruction encoding :
+//-----------------111-----0001011
+//  func7|RS2||RS1|   |RD |CUSTOM1_RS1
+//
+
+#define VMUL(_rd, _rs1, _rs2) \
+r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b111, regnum_ ## _rd, 0b0001011)
+
 // Custom VACC
 //Instruction encoding :
 //000000000000-----010-----0001011
@@ -152,6 +161,11 @@ _simd_add:
     SIMD_ADD(a0, a1, a2)
     ret
 
+.global _vmul // void _vmax_x(uint32_t rd, uint32_t r1, uint32_t r2);
+_vmul:
+    VMUL(a0, a1, a2)
+    ret
+
 .global _vacc // void _vacc(uint32_t rd, uint32_t r1);
 _vacc:
     VACC(a0, a1, zero)
@@ -167,7 +181,7 @@ _vmine:
     VMINE(a0, a1, zero)
     ret
 
-.global _vmax_x // void _vmax_x(uint32_t rd, uint32_t r1);
+.global _vmax_x // void _vmax_x(uint32_t rd, uint32_t r1, uint32_t r2);
 _vmax_x:
     VMAX_X(a0, a1, a2)
     ret
