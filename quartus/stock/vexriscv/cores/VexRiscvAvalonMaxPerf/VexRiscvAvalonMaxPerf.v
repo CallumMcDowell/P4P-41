@@ -1,6 +1,6 @@
 // Generator : SpinalHDL v1.7.0a    git head : 150a9b9067020722818dfb17df4a23ac712a7af8
 // Component : VexRiscvAvalonMaxPerf
-// Git hash  : 93cb4af354e998b68504381a8971883e80c2d5d7
+// Git hash  : f560cb7ee6494925f069a11881be1261e42e86e3
 
 `timescale 1ns/1ps
 
@@ -179,27 +179,27 @@ module VexRiscvAvalonMaxPerf (
   wire       [31:0]   _zz_decode_LEGAL_INSTRUCTION_21;
   wire       [31:0]   _zz_decode_LEGAL_INSTRUCTION_22;
   wire       [7:0]    _zz_execute_VectorPlugin_elem_1;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_1_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_1_1;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_1_2;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_1_3;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_1_3;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_1_4;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_1_5;
   wire       [7:0]    _zz_execute_VectorPlugin_elem_2;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_2_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_2_1;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_2_2;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_2_3;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_2_3;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_2_4;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_2_5;
   wire       [7:0]    _zz_execute_VectorPlugin_elem_3;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_3_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_3_1;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_3_2;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_3_3;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_3_3;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_3_4;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_3_5;
   wire       [7:0]    _zz_execute_VectorPlugin_elem_4;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_4_1;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_4_1;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_4_2;
-  wire       [3:0]    _zz_execute_VectorPlugin_elem_4_3;
+  wire       [7:0]    _zz_execute_VectorPlugin_elem_4_3;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_4_4;
   wire       [3:0]    _zz_execute_VectorPlugin_elem_4_5;
   wire       [7:0]    _zz_execute_VectorPlugin_temp0;
@@ -1508,28 +1508,28 @@ module VexRiscvAvalonMaxPerf (
   assign _zz_execute_SHIFT_RIGHT_1 = ($signed(_zz_execute_SHIFT_RIGHT_2) >>> execute_FullBarrelShifterPlugin_amplitude);
   assign _zz_execute_SHIFT_RIGHT = _zz_execute_SHIFT_RIGHT_1[31 : 0];
   assign _zz_execute_SHIFT_RIGHT_2 = {((execute_SHIFT_CTRL == ShiftCtrlEnum_SRA_1) && execute_FullBarrelShifterPlugin_reversed[31]),execute_FullBarrelShifterPlugin_reversed};
-  assign _zz_execute_VectorPlugin_elem_1 = ($signed(_zz_execute_VectorPlugin_elem_1_1) * $signed(_zz_execute_VectorPlugin_elem_1_3));
-  assign _zz_execute_VectorPlugin_elem_1_1 = _zz_execute_VectorPlugin_elem_1_2;
-  assign _zz_execute_VectorPlugin_elem_1_2 = execute_VectorPlugin_rs1_vec_0[3:0];
-  assign _zz_execute_VectorPlugin_elem_1_3 = _zz_execute_VectorPlugin_elem_1_4;
+  assign _zz_execute_VectorPlugin_elem_1_1 = ($signed(_zz_execute_VectorPlugin_elem_1_2) * $signed(_zz_execute_VectorPlugin_elem_1_4));
+  assign _zz_execute_VectorPlugin_elem_1 = _zz_execute_VectorPlugin_elem_1_1;
+  assign _zz_execute_VectorPlugin_elem_1_3 = execute_VectorPlugin_rs1_vec_0;
+  assign _zz_execute_VectorPlugin_elem_1_2 = _zz_execute_VectorPlugin_elem_1_3[3:0];
   assign _zz_execute_VectorPlugin_elem_1_5 = execute_VectorPlugin_rs2_vec_0[3 : 0];
   assign _zz_execute_VectorPlugin_elem_1_4 = _zz_execute_VectorPlugin_elem_1_5;
-  assign _zz_execute_VectorPlugin_elem_2 = ($signed(_zz_execute_VectorPlugin_elem_2_1) * $signed(_zz_execute_VectorPlugin_elem_2_3));
-  assign _zz_execute_VectorPlugin_elem_2_1 = _zz_execute_VectorPlugin_elem_2_2;
-  assign _zz_execute_VectorPlugin_elem_2_2 = execute_VectorPlugin_rs1_vec_1[3:0];
-  assign _zz_execute_VectorPlugin_elem_2_3 = _zz_execute_VectorPlugin_elem_2_4;
+  assign _zz_execute_VectorPlugin_elem_2_1 = ($signed(_zz_execute_VectorPlugin_elem_2_2) * $signed(_zz_execute_VectorPlugin_elem_2_4));
+  assign _zz_execute_VectorPlugin_elem_2 = _zz_execute_VectorPlugin_elem_2_1;
+  assign _zz_execute_VectorPlugin_elem_2_3 = execute_VectorPlugin_rs1_vec_1;
+  assign _zz_execute_VectorPlugin_elem_2_2 = _zz_execute_VectorPlugin_elem_2_3[3:0];
   assign _zz_execute_VectorPlugin_elem_2_5 = execute_VectorPlugin_rs2_vec_1[3 : 0];
   assign _zz_execute_VectorPlugin_elem_2_4 = _zz_execute_VectorPlugin_elem_2_5;
-  assign _zz_execute_VectorPlugin_elem_3 = ($signed(_zz_execute_VectorPlugin_elem_3_1) * $signed(_zz_execute_VectorPlugin_elem_3_3));
-  assign _zz_execute_VectorPlugin_elem_3_1 = _zz_execute_VectorPlugin_elem_3_2;
-  assign _zz_execute_VectorPlugin_elem_3_2 = execute_VectorPlugin_rs1_vec_2[3:0];
-  assign _zz_execute_VectorPlugin_elem_3_3 = _zz_execute_VectorPlugin_elem_3_4;
+  assign _zz_execute_VectorPlugin_elem_3_1 = ($signed(_zz_execute_VectorPlugin_elem_3_2) * $signed(_zz_execute_VectorPlugin_elem_3_4));
+  assign _zz_execute_VectorPlugin_elem_3 = _zz_execute_VectorPlugin_elem_3_1;
+  assign _zz_execute_VectorPlugin_elem_3_3 = execute_VectorPlugin_rs1_vec_2;
+  assign _zz_execute_VectorPlugin_elem_3_2 = _zz_execute_VectorPlugin_elem_3_3[3:0];
   assign _zz_execute_VectorPlugin_elem_3_5 = execute_VectorPlugin_rs2_vec_2[3 : 0];
   assign _zz_execute_VectorPlugin_elem_3_4 = _zz_execute_VectorPlugin_elem_3_5;
-  assign _zz_execute_VectorPlugin_elem_4 = ($signed(_zz_execute_VectorPlugin_elem_4_1) * $signed(_zz_execute_VectorPlugin_elem_4_3));
-  assign _zz_execute_VectorPlugin_elem_4_1 = _zz_execute_VectorPlugin_elem_4_2;
-  assign _zz_execute_VectorPlugin_elem_4_2 = execute_VectorPlugin_rs1_vec_3[3:0];
-  assign _zz_execute_VectorPlugin_elem_4_3 = _zz_execute_VectorPlugin_elem_4_4;
+  assign _zz_execute_VectorPlugin_elem_4_1 = ($signed(_zz_execute_VectorPlugin_elem_4_2) * $signed(_zz_execute_VectorPlugin_elem_4_4));
+  assign _zz_execute_VectorPlugin_elem_4 = _zz_execute_VectorPlugin_elem_4_1;
+  assign _zz_execute_VectorPlugin_elem_4_3 = execute_VectorPlugin_rs1_vec_3;
+  assign _zz_execute_VectorPlugin_elem_4_2 = _zz_execute_VectorPlugin_elem_4_3[3:0];
   assign _zz_execute_VectorPlugin_elem_4_5 = execute_VectorPlugin_rs2_vec_3[3 : 0];
   assign _zz_execute_VectorPlugin_elem_4_4 = _zz_execute_VectorPlugin_elem_4_5;
   assign _zz_execute_VectorPlugin_temp0 = execute_VectorPlugin_rs1_1[7 : 0];

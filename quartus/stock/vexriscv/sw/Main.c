@@ -165,20 +165,23 @@ int main() {
 #ifdef CUSTOM_INSTRUCT_VMUL
 
 		uint32_t a;
-		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));				// 0x00000000
-		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));			// 0x00000000
-		a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));			// 0xfffcf7f0
-		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));			// 0xfffcf7f0
-		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));			// 0x04fcf710
-		a = _vmul(a, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));		// 0xfcf0e810
+		// Range -8 to 7
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x00000000
+		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
+		a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0xfffcf7f0
+		a = _vmul(a, build_vec32(1, 2, 2, 2), build_vec32(1, 2, 2, 3));		// 0x01040406
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0xfffcf7f0
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));	// 0x04fcf710
+		a = _vmul(a, build_vec32(-1, -8, -8, 4), build_vec32(4, -2, -3, 4));// 0xfc101810
 
-		a = _vmul(a, build_vec32(15, 15, -15, 15), build_vec32(15, -15, -15, 15));	// 0x01020304
+		a = _vmul(a, build_vec32(7, 8, -8, -7), build_vec32(8, -7, 7, -8));	// 0xc838c838
 		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(0, 0, 0, 0));
 
 #endif // CUSTOM_INSTRUCT_VMUL
 
 		// Included to test compatibility with other custom instructions.
 		z = _simd_add(z, x, y);
+		z = Hal_ReadTime32();
 	}
 #endif
 

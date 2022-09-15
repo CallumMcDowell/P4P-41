@@ -288,8 +288,8 @@ class VectorPlugin extends Plugin[VexRiscv]{
       // Tuple of slice pair
       rs1_vec.zip(rs2_vec).foreach {
         case (rs1, rs2) =>
-          val result = rs1.resize(4 bits).asSInt * rs2(3 downto 0).resize(4 bits).asSInt
-          elem.append(result.asUInt)
+          val result = rs1.asSInt.resize(4 bits) * rs2(3 downto 0).asSInt.resize(4 bits)
+          elem.append(result.resize(8 bits).asUInt)
       }
 
       // Concat over iterable
