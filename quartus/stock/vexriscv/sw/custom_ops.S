@@ -94,6 +94,9 @@
 //-------------------------------------------------------------------------------------------
 #define r_type_insn(_f7, _rs2, _rs1, _f3, _rd, _opc) \
 .word (((_f7) << 25) | ((_rs2) << 20) | ((_rs1) << 15) | ((_f3) << 12) | ((_rd) << 7) | ((_opc) << 0))
+
+#define i_type_insn(_imm, _rs1, _f3, _rd, _opc) \
+.word (((_imm) << 20) | ((_rs1) << 15) | ((_f3) << 12) | ((_rd) << 7) | ((_opc) << 0))
 //-------------------------------------------------------------------------------------------
 
 // Stock SIMD_ADD
@@ -151,6 +154,15 @@ r_type_insn(0b0000001, regnum_ ## _rs2, regnum_ ## _rs1, 0b010, regnum_ ## _rd, 
 #define VMAX_X(_rd, _rs1, _rs2) \
 r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b111, regnum_ ## _rd, 0b0101011)
 
+// Custom VMAX_X
+//Instruction encoding :
+//-----------------110-----0001011
+//  Immediate||RS1|   |RD |CUSTOM1_RS1
+//
+
+#define VSLRI(_rd, _rs1, _imm) \
+i_type_insn(_imm, regnum_ ## _rs1, 0b110, regnum_ ## _rd, 0b0001011)
+
 //-------------------------------------------------------------------------------------------
 // Macro Definitions
 //-------------------------------------------------------------------------------------------
@@ -184,4 +196,9 @@ _vmine:
 .global _vmax_x // void _vmax_x(uint32_t rd, uint32_t r1, uint32_t r2);
 _vmax_x:
     VMAX_X(a0, a1, a2)
+    ret
+
+.global _vslri // void _vslri(uint32_t rd, uint32_t r1);
+_vslri:
+    VSLRI(a0, a1, 0x1)
     ret

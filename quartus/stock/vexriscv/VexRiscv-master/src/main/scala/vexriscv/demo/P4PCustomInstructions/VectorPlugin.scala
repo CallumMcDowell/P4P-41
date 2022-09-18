@@ -1,6 +1,7 @@
 package vexriscv.demo.P4PCustomInstructions
 
 import spinal.core._
+import vexriscv.Riscv.IMM
 import vexriscv.plugin.Plugin
 import vexriscv.{DecoderService, Stageable, VexRiscv}
 
@@ -27,7 +28,7 @@ This plugin will add the following new instructions:
 
 - I-Type
   - VSRLI: Element-wise vector-immediate logical shift right.
-    - ret: (32-bit) vector of 4*-*8-bit segments.
+    - ret: (32-bit) vector of 4*8-bit segments.
 */
 
 // Note :  RS1, RS2, RD positions follow the RISC-V spec and are common for all instruction of the ISA
@@ -87,6 +88,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
   object IS_VMAXE extends Stageable(Bool)
   object IS_VMINE extends Stageable(Bool)
   object IS_VMAX_X extends Stageable(Bool)
+  object IS_VSLRI extends  Stageable(Bool)
 
   //Callback to setup the plugin and ask for different services
   override def setup(pipeline: VexRiscv): Unit = {
@@ -238,7 +240,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       Instruction encoding :
       -----------------111-----0101011
-        func7|RS2||RS1|   |RD |CUSTOM1_RS1
+        func7|RS2||RS1|   |RD |CUSTOM1_RD_RS1_RS2
     --------------------------------------------------------------
     */
 
@@ -257,12 +259,45 @@ class VectorPlugin extends Plugin[VexRiscv]{
         BYPASSABLE_EXECUTE_STAGE -> True, //Notify the hazard management unit that the instruction result is already accessible in the EXECUTE stage (Bypass ready)
         BYPASSABLE_MEMORY_STAGE  -> True, //Same as above but for the memory stage
         RS1_USE                  -> True, //Notify the hazard management unit that this instruction use the RS1 value
-        RS2_USE                  -> False  //Same than above but for RS2.
+        RS2_USE                  -> False //Same than above but for RS2.
       )
     )
 
-  }
+    /*
+    --------------------------------------------------------------
+      VSLRI
+    --------------------------------------------------------------
+      RS1: regfile source, vector of 4*8-bit elements
+      RS2: not used
+      Imm[11:0]: Left shift amount (0 to 4)
+      Performs element-wise logical shift left, returning an vector of
+      (in 32-bit register) the results for each position at RD.
 
+      Instruction encoding :
+      -----------------110-----0001011
+        Immediate||RS1|   |RD |CUSTOM0_RD_RS1
+    --------------------------------------------------------------
+    */
+
+    //Specify the default value when instruction are decoded
+    decoderService.addDefault(IS_VSLRI, False)
+
+    //Specify the instruction decoding which should be applied when the instruction match the 'key' parttern
+    decoderService.add(
+      //Bit pattern of the new instruction
+      key = CUSTOM0_RD_RS1,
+
+      //Decoding specification when the 'key' pattern is recognized in the instruction
+      List(
+        IS_VSLRI                 -> True,
+        REGFILE_WRITE_VALID      -> True, //Enable the register file write
+        BYPASSABLE_EXECUTE_STAGE -> True, //Notify the hazard management unit that the instruction result is already accessible in the EXECUTE stage (Bypass ready)
+        BYPASSABLE_MEMORY_STAGE  -> True, //Same as above but for the memory stage
+        RS1_USE                  -> True, //Notify the hazard management unit that this instruction use the RS1 value
+        RS2_USE                  -> False  //Same than above but for RS2.
+      )
+    )
+  }
   override def build(pipeline: VexRiscv): Unit = {
     import pipeline._
     import pipeline.config._
@@ -314,11 +349,21 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       val temp0, temp1, temp2, temp3 = SInt(32 bits)
 
-      temp0 := rs1(7 downto 0).asSInt.resized
-      temp1 := rs1(15 downto 8).asSInt.resized
-      temp2 := rs1(23 downto 16).asSInt.resized
-      temp3 := rs1(31 downto 24).asSInt.resized
-      rd := temp0 + temp1 + temp2 + temp3
+      val rs1_vec = rs1.subdivideIn(8 bits)
+      val elems = ListBuffer(UInt(0 bits))
+
+      var sum = S(0, 32 bits)
+
+      // Element-wise shift
+      rs1_vec.foreach {
+        case (rs1) =>
+          sum = sum + rs1.asSInt.resized
+      }
+//      temp0 := rs1(7 downto 0).asSInt.resized
+//      temp1 := rs1(15 downto 8).asSInt.resized
+//      temp2 := rs1(23 downto 16).asSInt.resized
+//      temp3 := rs1(31 downto 24).asSInt.resized
+      rd := sum
 
       //When the instruction is a SIMD_ADD one, then write the result into the register file data path.
       when(execute.input(IS_VACC)) {
@@ -425,6 +470,34 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
       when(execute.input(IS_VMAX_X)) {
+        execute.output(REGFILE_WRITE_DATA) := rd.asBits
+      }
+    }
+    /*
+    --------------------------------------------------------------
+    VSLRI
+    --------------------------------------------------------------
+    */
+    //Add a new scope on the execute stage (used to give a name to signals)
+    execute plug new Area {
+      //Define some signals used internally to the plugin
+      val rs1 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
+      val imm = IMM(execute.input(INSTRUCTION)).i.asUInt //11-bits UInt immediate value
+      val rd = UInt(32 bits)
+
+      val rs1_vec = rs1.subdivideIn(8 bits)
+      val elems = ListBuffer(UInt(0 bits))
+
+      // Element-wise shift
+      rs1_vec.foreach {
+        case (rs1) =>
+          elems.append(rs1 |<< imm)
+      }
+
+      rd := Cat(elems).asUInt
+
+      // When the instruction is a SIMD_ADD one, then write the result into the register file data path.
+      when(execute.input(IS_VSLRI)) {
         execute.output(REGFILE_WRITE_DATA) := rd.asBits
       }
     }
