@@ -32,28 +32,34 @@ DEALINGS IN THE SOFTWARE. */
 // Optional test benches
 #define CUSTOM_INSTRUCT_VMUL
 #define CUSTOM_INSTRUCT_VACC
-#define CUSTOM_INSTRUCT_VMAXE_VMINE
+#define CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
+#define CUSTOM_INSTRUCT_VSLRI
 
 #ifdef CUSTOM_INSTRUCT
-uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
 
-// P4P Custom Instructions
-// ---------------------------------------
-// Must Have
-// ---------------------------------------
-#ifdef CUSTOM_INSTRUCT_VMUL
-uint32_t _vmul(uint32_t rd, uint32_t r1, uint32_t r2);
-#endif
+	uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
 
-#ifdef CUSTOM_INSTRUCT_VACC
-uint32_t _vacc(uint32_t rd, uint32_t r1);
-#endif
+	// P4P Custom Instructions
+	// ---------------------------------------
+	// Must Have
+	// ---------------------------------------
+	#ifdef CUSTOM_INSTRUCT_VMUL
+	uint32_t _vmul(uint32_t rd, uint32_t r1, uint32_t r2);
+	#endif
 
-#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
-uint32_t _vmaxe(uint32_t rd, uint32_t r1);
-uint32_t _vmine(uint32_t rd, uint32_t r1);
-uint32_t _vmax_x(uint32_t rd, uint32_t r1, uint32_t r2);
-#endif
+	#ifdef CUSTOM_INSTRUCT_VACC
+	uint32_t _vacc(uint32_t rd, uint32_t r1);
+	#endif
+
+	#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
+	uint32_t _vmaxe(uint32_t rd, uint32_t r1);
+	uint32_t _vmine(uint32_t rd, uint32_t r1);
+	uint32_t _vmax_x(uint32_t rd, uint32_t r1, uint32_t r2);
+	#endif
+
+	#ifdef CUSTOM_INSTRUCT_VSLRI
+	uint32_t _vslri(uint32_t rd, uint32_t r1);
+	#endif
 
 #endif
 
@@ -134,7 +140,7 @@ int main() {
 		z = _vacc(z, build_vec32(-128,-128,-128,-128));		// -512 (signed) 512 (unsigned)
 #endif // CUSTOM_INSTRUCT_VACC
 
-#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
+#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
 
 		z = _vmaxe(z, build_vec32(-1, -2, -3, -4)); // -1
 		z = _vmaxe(z, build_vec32(1, 2, 3, 4));		// 4
@@ -178,6 +184,12 @@ int main() {
 		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(0, 0, 0, 0));
 
 #endif // CUSTOM_INSTRUCT_VMUL
+
+#ifdef CUSTOM_INSTRUCT_VSLRI
+		a = _vslri(a, build_vec32(0x01, 0x01, 0x01, 0x01)); //0x02020202
+		a = _vslri(a, build_vec32(0x80 ,0x80 ,0x80 ,0x80)); //0x00000000
+		a = _vslri(a, build_vec32(0xFF, 0xFF, 0x0F, 0xF0)); //0x02030400
+#endif // CUSTOM_INSTRUCT_VSLRI
 
 		// Included to test compatibility with other custom instructions.
 		z = _simd_add(z, x, y);
