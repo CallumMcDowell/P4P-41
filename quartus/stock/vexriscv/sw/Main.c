@@ -29,6 +29,7 @@ DEALINGS IN THE SOFTWARE. */
 
 /* Part of above either or */
 #define CUSTOM_INSTRUCT
+
 // Optional test benches
 #define CUSTOM_INSTRUCT_VMUL
 #define CUSTOM_INSTRUCT_VACC
@@ -188,14 +189,14 @@ int main() {
 #ifdef CUSTOM_INSTRUCT_VSLRI
 		a = _vslri(a, build_vec32(0x01, 0x01, 0x01, 0x01)); //0x02020202
 		a = _vslri(a, build_vec32(0x80 ,0x80 ,0x80 ,0x80)); //0x00000000
-		a = _vslri(a, build_vec32(0xFF, 0xFF, 0x0F, 0xF0)); //0x02030400
+		a = _vslri(a, build_vec32(0xFF, 0xFF, 0x0F, 0xF0)); //0xfefe1ee0
 #endif // CUSTOM_INSTRUCT_VSLRI
 
 		// Included to test compatibility with other custom instructions.
 		z = _simd_add(z, x, y);
 		z = Hal_ReadTime32();
 	}
-#endif
+#endif // CUSTOM_INSTRUCT
 
 #ifdef ARIES_EMBEDDED_CORE
 	uint32_t x, y, z;

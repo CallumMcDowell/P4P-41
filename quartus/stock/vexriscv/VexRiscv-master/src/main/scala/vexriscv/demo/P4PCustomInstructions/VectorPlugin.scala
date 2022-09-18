@@ -1,6 +1,7 @@
 package vexriscv.demo.P4PCustomInstructions
 
 import spinal.core._
+import vexriscv.Riscv.IMM
 import vexriscv.plugin.Plugin
 import vexriscv.{DecoderService, Stageable, VexRiscv}
 
@@ -348,11 +349,21 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       val temp0, temp1, temp2, temp3 = SInt(32 bits)
 
-      temp0 := rs1(7 downto 0).asSInt.resized
-      temp1 := rs1(15 downto 8).asSInt.resized
-      temp2 := rs1(23 downto 16).asSInt.resized
-      temp3 := rs1(31 downto 24).asSInt.resized
-      rd := temp0 + temp1 + temp2 + temp3
+      val rs1_vec = rs1.subdivideIn(8 bits)
+      val elems = ListBuffer(UInt(0 bits))
+
+      var sum = S(0, 32 bits)
+
+      // Element-wise shift
+      rs1_vec.foreach {
+        case (rs1) =>
+          sum = sum + rs1.asSInt.resized
+      }
+//      temp0 := rs1(7 downto 0).asSInt.resized
+//      temp1 := rs1(15 downto 8).asSInt.resized
+//      temp2 := rs1(23 downto 16).asSInt.resized
+//      temp3 := rs1(31 downto 24).asSInt.resized
+      rd := sum
 
       //When the instruction is a SIMD_ADD one, then write the result into the register file data path.
       when(execute.input(IS_VACC)) {
@@ -471,8 +482,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
     execute plug new Area {
       //Define some signals used internally to the plugin
       val rs1 = execute.input(RS1).asUInt //32 bits UInt value of the regfile[RS1]
-      val instruct = execute.input(INSTRUCTION).asUInt //32 bits UInt representation of the instruction
-      val imm = instruct(31 downto 20) // 11-bits UInt immediate value
+      val imm = IMM(execute.input(INSTRUCTION)).i.asUInt //11-bits UInt immediate value
       val rd = UInt(32 bits)
 
       val rs1_vec = rs1.subdivideIn(8 bits)
