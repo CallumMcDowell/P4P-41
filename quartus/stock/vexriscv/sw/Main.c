@@ -37,11 +37,9 @@ DEALINGS IN THE SOFTWARE. */
 // #define CUSTOM_INSTRUCT_VSLRI
 
 #define TEST_CYCLE_COUNT
-
-uint32_t Hal_ReadUCycle32();
-uint32_t Hal_ReadMCycle32();
-uint32_t Hal_ReadUTime32();
+#ifdef TEST_CYCLE_COUNT
 uint64_t Hal_ReadMCycle64();
+#endif // TEST_CYCLE_COUNT
 
 #ifdef CUSTOM_INSTRUCT
 
@@ -135,7 +133,10 @@ int main() {
 	g_Pio->direction = 0xffffffff;
 
 #ifdef TEST_CYCLE_COUNT
-
+	// !!!
+	// Note: order of execution seems to influence cycle count measured.
+	// !!!
+	
 	volatile uint32_t Mcycle0, Mcycle1;
 
 	volatile uint32_t rdcycle0, rdcycle1;
@@ -146,109 +147,97 @@ int main() {
 	uint32_t x, y, z;
 
 	while(1) {
-		// uint32_t timeNow = Hal_ReadTime32();
-		// Mcycle0 = Hal_ReadMCycle32();
-		// Mcycle1 = Hal_ReadMCycle32();
-		// uint32_t myCycleOverhead = Mcycle1 - Mcycle0;
+		// 64-bit Cycle read tests
+		Mcycle2 = Hal_ReadMCycle64();
+		Mcycle4 = Hal_ReadMCycle64();
+		uint64_t myCycleOverhead64 = Mcycle4 - Mcycle2;
 
 		Mcycle2 = Hal_ReadMCycle64();
 		x = x+1;
 		Mcycle4 = Hal_ReadMCycle64();
-		uint64_t myCycleOverhead64_0 = Mcycle4 - Mcycle2;
-
-		// Mcycle0 = Hal_ReadMCycle32();
-		// rdcycle0 = rdcycle();
-		// uint32_t myAndrdCycleOverhead = rdcycle0 - Mcycle0;
-
-		rdcycle0 = rdcycle();
-		rdcycle1 = rdcycle();
-		uint32_t rdCycleOverhead = rdcycle1 - rdcycle0;
+		uint64_t myCycleElapsed64_0 = Mcycle4 - Mcycle2 - myCycleOverhead64;
 
 		Mcycle2 = Hal_ReadMCycle64();
 		x = 1;
 		Mcycle4 = Hal_ReadMCycle64();
-		uint64_t myCycleOverhead64_1 = Mcycle4 - Mcycle2;
+		uint64_t myCycleElapsed64_1 = Mcycle4 - Mcycle2 - myCycleOverhead64;
 
+		// ----------------------------------------------
+		// rdCycle tests
 		rdcycle0 = rdcycle();
-		x = 1;
 		rdcycle1 = rdcycle();
-		uint32_t cycleElapsed1 = rdcycle1 - rdcycle0;
+		uint32_t rdCycleOverhead = rdcycle1 - rdcycle0;
 
-		rdcycle0 = rdcycle();
-		x = 1;
-		x = 2;
-		rdcycle1 = rdcycle();
-		uint32_t cycleElapsed2 = rdcycle1 - rdcycle0;
-
+		// Is this cached? Whopping 15 cycles, but the following two are the expected
+		// 2 cycles instead??
 		rdcycle0 = rdcycle();
 		x = 1;
 		x = 2;
 		x = 3;
 		rdcycle1 = rdcycle();
-		uint32_t cycleElapsed3 = rdcycle1 - rdcycle0;	
+		uint32_t cycleElapsed3 = rdcycle1 - rdcycle0 - rdCycleOverhead;	
 
+		rdcycle0 = rdcycle();
+		x = 1;
+		rdcycle1 = rdcycle();
+		uint32_t cycleElapsed1 = rdcycle1 - rdcycle0 - rdCycleOverhead;
+
+		rdcycle0 = rdcycle();
+		x = 1;
+		x = 2;
+		rdcycle1 = rdcycle();
+		uint32_t cycleElapsed2 = rdcycle1 - rdcycle0 - rdCycleOverhead;
+		// ----------------------------------------------
+		// instret tests
 		rdinstret0 = rdinstret();
 		rdinstret1 = rdinstret();
 		uint32_t instretOverhead = rdinstret1 - rdinstret0;	
 
 		rdinstret0 = rdinstret();
-		asm("nop");
-		rdinstret1 = rdinstret();
-		uint32_t instretElapsedNop = rdinstret1 - rdinstret0;
-
-		rdcycle0 = rdcycle();
-		asm("addi t0, a0, 1");
-		rdcycle1 = rdcycle();
-		uint32_t cycleElapsedSW = rdcycle1 - rdcycle0;
-
-		rdinstret0 = rdinstret();
-		asm("addi t0, a0, 1");
-		rdinstret1 = rdinstret();
-		uint32_t instretElapsedSW = rdinstret1 - rdinstret0;
-
-		rdinstret0 = rdinstret();
 		x = 1;
 		rdinstret1 = rdinstret();
-		uint32_t instretElapsed1 = rdinstret1 - rdinstret0;	
+		uint32_t instretElapsed1 = rdinstret1 - rdinstret0 - instretOverhead;	
 
 		rdinstret0 = rdinstret();
 		x = 1;
 		x = 2;
 		rdinstret1 = rdinstret();
-		uint32_t instretElapsed2 = rdinstret1 - rdinstret0;	
+		uint32_t instretElapsed2 = rdinstret1 - rdinstret0 - instretOverhead;	
 
 		rdinstret0 = rdinstret();
 		x = 1;
 		x = 2;
 		x = 3;
 		rdinstret1 = rdinstret();
-		uint32_t instretElapsed3 = rdinstret1 - rdinstret0;		
+		uint32_t instretElapsed3 = rdinstret1 - rdinstret0 - instretOverhead;		
+		// ----------------------------------------------
+		// Inline assembly tests
+		rdinstret0 = rdinstret();
+		asm("nop");
+		rdinstret1 = rdinstret();
+		uint32_t instretElapsedNop = rdinstret1 - rdinstret0 - instretOverhead;
+
+		rdcycle0 = rdcycle();
+		asm("addi t0, a0, 1");
+		rdcycle1 = rdcycle();
+		uint32_t cycleElapsedSW = rdcycle1 - rdcycle0 - rdCycleOverhead;
+
+		rdinstret0 = rdinstret();
+		asm("addi t0, a0, 1");
+		rdinstret1 = rdinstret();
+		uint32_t instretElapsedSW = rdinstret1 - rdinstret0 - instretOverhead;
 
 		z = 0;
 	}	
 
-#endif TEST_CYCLE_COUNT
-
-
-	// uint32_t timeLast = Hal_ReadMCycle32();
-	// while (1) {
-	// 	uint32_t timeNow = Hal_ReadMCycle32();
-	// 	uint32_t tdiff = (timeNow - timeLast);
-	// 	uint32_t truet = (CLK_FREQ / 32);
-
-	// 	if (tdiff > truet) {
-	// 		timeLast = timeNow;
-	// 		x += 1;
-	// 		write_to_port(x);
-	// 	}
-	// }
+#endif // TEST_CYCLE_COUNT
 
 #ifdef CUSTOM_INSTRUCT
 
-	// int32_t x, y, z;
-	// x = 0x01010000;
-	// y = 0x00000101;
-	// z = 0x10000000;
+	int32_t x, y, z;
+	x = 0x01010000;
+	y = 0x00000101;
+	z = 0x10000000;
 
 	while(1) {
 #ifdef CUSTOM_INSTRUCT_VACC
