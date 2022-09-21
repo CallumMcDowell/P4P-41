@@ -95,7 +95,7 @@ object GenAvalonFullNoMmuMaxPerf {
           ),
           new MulPlugin,
           new DivPlugin,
-          new CsrPlugin(CsrPluginConfig.small),
+          new CsrPlugin(CsrPluginConfig.all),
           new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
           new BranchPlugin(
             earlyBranch = false,

@@ -37,3 +37,18 @@ Hal_ReadTime64:
 	csrr t0, timeh
 	bne a1, t0, Hal_ReadTime64
 	ret
+
+//-------------------------------------------------------------------------------------------
+// 64-bit read of machine cycle CSR
+//-------------------------------------------------------------------------------------------
+#define MCYCLE  0xB00
+#define MCYCLEH 0xB80
+
+.global Hal_ReadMCycle64
+
+Hal_ReadMCycle64:
+	csrr a1, MCYCLEH
+	csrr a0, MCYCLE
+	csrr t0, MCYCLEH
+	bne a1, t0, Hal_ReadMCycle64 // Checks for overflow in top 32-bits
+	ret
