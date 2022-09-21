@@ -217,6 +217,8 @@ To do.
 
 - Power off both target board and cable before plugging.
 - **de1-SoC I/O Interface:** 3.3V TTL
+- `debug.sh` is provided to run the debugging process (after it is setup).
+  - **Tip:** Reload the gdbgui when loading new binaries to avoid any potnetial unexpected error.
 
 ## Setup
 
@@ -310,7 +312,7 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 **Notes:**
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
 - The GUI is greate of looking, not so great for issuing commands (such as breaking the program).
-- Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
+- Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more. 
 - You can `load` an `.elf` into OCRAM. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
 - `monitor reset halt` will halt the CPU.
 - `target extended-remote localhost:3333`
@@ -458,7 +460,7 @@ The `Vector Plugin` will add the following new instructions:
 
 - Notes when using with gdbgui debugging:
   - On startup, garbage value may be stored in browser cache, run whatever test at least three times to clear the value (either in program or when debugging)
-  - Running in dubugger and free-running produces different cycle counts (as clock is not halted when CPU is). The most accurate measuements are taken when the core is left-free running and then commanding `interrupt` in the terminal to resume the debugger to inspect the logged infomation. 
+  - Running in dubugger and free-running produces different cycle counts (as clock is not halted when CPU is). The most accurate measuements are taken when the core is left-free running and then commanding `interrupt` in the terminal to resume the debugger to inspect the logged infomation.
 
 # Quartus QNA:
 
