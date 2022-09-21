@@ -64,6 +64,8 @@ $(ELF): $(C_OUT) $(A_OUT) $(LD_SCRIPT)
 	$(CC) -T $(LD_SCRIPT) $(A_OUT) $(C_OUT) -o $@ $(LDFLAGS)
 	$(OBJDUMP) -D $@ > $(DUMP)
 
+# If needed to inspect raw instructions: -Mnumeric,no-aliases
+
 $(SREC): $(ELF)
 	$(OBJCOPY) -I elf32-littleriscv -O srec --srec-forceS3 $< $@
 
