@@ -101,24 +101,24 @@ int main() {
 
 	volatile int32_t z = 0;
 	volatile int32_t x;
-	volatile int8_t a[ELEMENTS] = {0};
-	volatile int8_t b[ELEMENTS] = {0};
+	volatile int8_t a_array[ELEMENTS] = {0};
+	volatile int8_t b_array[ELEMENTS] = {0};
 
 	while(1) {
 		
-		// soft_vmul(uint32_t arr[ELEMENTS], uint32_t a[ELEMENTS], uint32_t b[ELEMENTS]);
+		
 		// VACC
-		// soft_vmaxe(uint32_t a[ELEMENTS]);
-		// soft_vmine(uint32_t a[ELEMENTS]);
-		// soft_vmax_x(uint32_t arr[ELEMENTS], uint32_t a[ELEMENTS], uint32_t s);
-		// soft_vsrli(uint32_t arr[ELEMENTS], uint32_t a[ELEMENTS], uint32_t s);
+		// VMAXE
+		// VMINE
+		// VMAX.X
+		// VMUL
+		// VSRLI
 
 		#ifdef CUSTOM_INSTRUCT_VACC
 
-			
-		x = soft_vacc(fill_array(a,-1,-1,-1,-1));
-		x = soft_vacc(fill_array(a,15,15,15,15));
-		x = soft_vacc(fill_array(a,-128,-128,-128,-128));
+		x = soft_vacc(fill_array(a_array,-1,-1,-1,-1));
+		x = soft_vacc(fill_array(a_array,15,15,15,15));
+		x = soft_vacc(fill_array(a_array,-128,-128,-128,-128));
 
 		z = _vacc(z, build_vec32(-1,-1,-1,-1));				// -4(signed) 1020 (unsigned)
 		z = _vacc(z, build_vec32(15,15,15,15));				// 60 (signed) 60 (unsigned)
@@ -127,69 +127,78 @@ int main() {
 
 		#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
 
-		x = soft_vmaxe(fill_array(a,-1, -2, -3, -4));
-		x = soft_vmaxe(fill_array(a,1, 2, 3, 4));
-		x = soft_vmaxe(fill_array(a,-8, 8, 9, -8));
-		x = soft_vmaxe(fill_array(a,0, 0, 0, 0));
+		x = soft_vmaxe(fill_array(a_array,-1, -2, -3, -4));
+		x = soft_vmaxe(fill_array(a_array,1, 2, 3, 4));
+		x = soft_vmaxe(fill_array(a_array,-8, 8, 9, -8));
+		x = soft_vmaxe(fill_array(a_array,0, 0, 0, 0));
 		
-		x = soft_vmine(fill_array(a,-1, -2, -3, -4));
-		x = soft_vmine(fill_array(a,1, 2, 3, 4));
-		x = soft_vmine(fill_array(a,-8, 8, 9, -8));
-		x = soft_vmine(fill_array(a,0, 0, 0, 0));
+		x = soft_vmine(fill_array(a_array,-1, -2, -3, -4));
+		x = soft_vmine(fill_array(a_array,1, 2, 3, 4));
+		x = soft_vmine(fill_array(a_array,-8, 8, 9, -8));
+		x = soft_vmine(fill_array(a_array,0, 0, 0, 0));
 
-		int8_t vmax_x_result[ELEMENTS];
-		soft_vmax_x(vmax_x_result, fill_array(a, 1, 2, 3, 4), fill_array(b, 0, 0, 0, 0));
-		soft_vmax_x(vmax_x_result, fill_array(a, 0, 0, 0, 0), fill_array(b, -1, -2, -3, -4));
-		soft_vmax_x(vmax_x_result, fill_array(a, -1, -2, -3, -4), fill_array(b, 1, 2, 3, 4));
-		soft_vmax_x(vmax_x_result, fill_array(a, -1, -9, -8, 4), fill_array(b, 4, -2, -3, 4));
+		int8_t soft_array_result[ELEMENTS];
+		soft_vmax_x(soft_array_result, fill_array(a_array, 1, 2, 3, 4), fill_array(b_array, 0, 0, 0, 0));
+		soft_vmax_x(soft_array_result, fill_array(a_array, 0, 0, 0, 0), fill_array(b_array, -1, -2, -3, -4));
+		soft_vmax_x(soft_array_result, fill_array(a_array, -1, -2, -3, -4), fill_array(b_array, 1, 2, 3, 4));
+		soft_vmax_x(soft_array_result, fill_array(a_array, -1, -9, -8, 4), fill_array(b_array, 4, -2, -3, 4));
 
-			z = _vmaxe(z, build_vec32(-1, -2, -3, -4)); // -1
-			z = _vmaxe(z, build_vec32(1, 2, 3, 4));		// 4
-			z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
-			z = _vmaxe(z, build_vec32(0, 0, 0, 0));		// 0
-			z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
-			z = _vmaxe(z, build_vec32(9, -8, -8, 8));	// 9
-			z = _vmaxe(z, build_vec32(-8, -8, -8, -8));	// -8
+		z = _vmaxe(z, build_vec32(-1, -2, -3, -4)); // -1
+		z = _vmaxe(z, build_vec32(1, 2, 3, 4));		// 4
+		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
+		z = _vmaxe(z, build_vec32(0, 0, 0, 0));		// 0
+		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
+		z = _vmaxe(z, build_vec32(9, -8, -8, 8));	// 9
+		z = _vmaxe(z, build_vec32(-8, -8, -8, -8));	// -8
 
-			z = _vmine(z, build_vec32(-1, -2, -3, -4)); // -4
-			z = _vmine(z, build_vec32(1, 2, 3, 4));		// 1
-			z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
-			z = _vmine(z, build_vec32(0, 0, 0, 0));		// 0
-			z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
-			z = _vmine(z, build_vec32(9, -8, -8, 8));	// -8
-			z = _vmine(z, build_vec32(-8, -8, -8, -8));	// -8
+		z = _vmine(z, build_vec32(-1, -2, -3, -4)); // -4
+		z = _vmine(z, build_vec32(1, 2, 3, 4));		// 1
+		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
+		z = _vmine(z, build_vec32(0, 0, 0, 0));		// 0
+		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
+		z = _vmine(z, build_vec32(9, -8, -8, 8));	// -8
+		z = _vmine(z, build_vec32(-8, -8, -8, -8));	// -8
 
-			z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x01020304
-			z = _vmax_x(z, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
-			z = _vmax_x(z, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0x01020304
-			z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0x01020304
-			z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));		// 0x04020304
-			z = _vmax_x(z, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));	// 0x04fefd04
+		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x01020304
+		z = _vmax_x(z, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
+		z = _vmax_x(z, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0x01020304
+		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0x01020304
+		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));		// 0x04020304
+		z = _vmax_x(z, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));	// 0x04fefd04
 
 
 		#endif // CUSTOM_INSTRUCT_VMINE
 
 		#ifdef CUSTOM_INSTRUCT_VMUL
 
-			uint32_t a;
-			// Range -8 to 7
-			a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x00000000
-			a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
-			a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0xfffcf7f0
-			a = _vmul(a, build_vec32(1, 2, 2, 2), build_vec32(1, 2, 2, 3));		// 0x01040406
-			a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0xfffcf7f0
-			a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));	// 0x04fcf710
-			a = _vmul(a, build_vec32(-1, -8, -8, 4), build_vec32(4, -2, -3, 4));// 0xfc101810
+		soft_vmul(soft_array_result, fill_array(a_array, 1, 2, 3, 4), fill_array(b_array, 0, 0, 0, 0));
+		soft_vmul(soft_array_result, fill_array(a_array, 1, 2, 3, 4), fill_array(b_array, -1, -2, -3, -4));
+		soft_vmul(soft_array_result, fill_array(a_array, -1, -2, -3, -4), fill_array(b_array, -1, -2, -3, -4));
 
-			a = _vmul(a, build_vec32(7, 8, -8, -7), build_vec32(8, -7, 7, -8));	// 0xc838c838
-			a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(0, 0, 0, 0));
+		uint32_t a;
+		// Range -8 to 7
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x00000000
+		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
+		a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0xfffcf7f0
+		a = _vmul(a, build_vec32(1, 2, 2, 2), build_vec32(1, 2, 2, 3));		// 0x01040406
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0xfffcf7f0
+		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));	// 0x04fcf710
+		a = _vmul(a, build_vec32(-1, -8, -8, 4), build_vec32(4, -2, -3, 4));// 0xfc101810
+
+		a = _vmul(a, build_vec32(7, 8, -8, -7), build_vec32(8, -7, 7, -8));	// 0xc838c838
+		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(0, 0, 0, 0));
 
 		#endif // CUSTOM_INSTRUCT_VMUL
 
 		#ifdef CUSTOM_INSTRUCT_VSLRI
-			a = _vslri(a, build_vec32(0x01, 0x01, 0x01, 0x01)); //0x02020202
-			a = _vslri(a, build_vec32(0x80 ,0x80 ,0x80 ,0x80)); //0x00000000
-			a = _vslri(a, build_vec32(0xFF, 0xFF, 0x0F, 0xF0)); //0xfefe1ee0
+		soft_vsrli(soft_array_result, fill_array(a_array, 1, 2, 3, 4), 1);
+		soft_vsrli(soft_array_result, fill_array(a_array, 1, 2, 3, 4), 2);
+		soft_vsrli(soft_array_result, fill_array(a_array, 1, 2, 3, 4), 3);
+		soft_vsrli(soft_array_result, fill_array(a_array, 1, 2, 3, 4), 4);
+
+		a = _vslri(a, build_vec32(0x01, 0x01, 0x01, 0x01)); //0x02020202
+		a = _vslri(a, build_vec32(0x80 ,0x80 ,0x80 ,0x80)); //0x00000000
+		a = _vslri(a, build_vec32(0xFF, 0xFF, 0x0F, 0xF0)); //0xfefe1ee0
 		#endif // CUSTOM_INSTRUCT_VSLRI
 
 
