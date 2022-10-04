@@ -23,28 +23,18 @@ DEALINGS IN THE SOFTWARE. */
 #include "FpgaConfig.h"
 #include "Hal.h"
 
-/* Define either or*/
-// #define ARIES_EMBEDDED_CORE
-// #define TEST_GPIO_LED
+#include "benchmark.h"
 
 /* Part of above either or */
-// #define CUSTOM_INSTRUCT
+#define CUSTOM_INSTRUCT
 
 // Optional test benches
-// #define CUSTOM_INSTRUCT_VMUL
-// #define CUSTOM_INSTRUCT_VACC
-// #define CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
-// #define CUSTOM_INSTRUCT_VSLRI
-
-#define TEST_CYCLE_COUNT
-#ifdef TEST_CYCLE_COUNT
-uint64_t Hal_ReadMCycle64();
-#endif // TEST_CYCLE_COUNT
+#define CUSTOM_INSTRUCT_VMUL
+#define CUSTOM_INSTRUCT_VACC
+#define CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
+#define CUSTOM_INSTRUCT_VSLRI
 
 #ifdef CUSTOM_INSTRUCT
-
-	uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
-
 	// P4P Custom Instructions
 	// ---------------------------------------
 	// Must Have
@@ -69,31 +59,7 @@ uint64_t Hal_ReadMCycle64();
 
 #endif
 
-#ifdef ARIES_EMBEDDED_CORE
-static int counterMod = 1;
-
-void IRQHandlerTimer(void) {
-	// Invert direction of counter
-	counterMod = -counterMod;
-	// Rearm timer
-	Hal_TimerStart(2 * CLK_FREQ); // 2 seconds
-}
-
-void IRQHandlerUart() {
-	char c;
-	if (g_Uart->status & UART_RRDY) {
-		c = UartGet(g_Uart);
-		UartPut(g_Uart, c);
-	}
-	g_Uart->status = 0;
-}
-#endif
-
-// Test Functions
-uint32_t add(uint32_t a, uint32_t b) {
-	return a+b;
-}
-
+// Helper Funcs
 void write_to_port(uint32_t x) {
 	g_Pio->port = x;
 }
@@ -106,232 +72,174 @@ uint32_t build_vec32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
 	return ret;
 }
 
+void fill_array(int8_t array[], int8_t a, int8_t b, int8_t c, int8_t d) {
+
+	int8_t vals[ELEMENTS] = {a, b, c, d};
+
+	for(int8_t i=0;i<ELEMENTS;i++) {
+		array[i] = vals[i];
+	}
+}
+
 int main() {
-
-#ifdef ARIES_EMBEDDED_CORE
-	// // Greetings
-	// UartWrite(g_Uart, "\n\n* * * VexRiscv Demo  -  ");
-	// UartWrite(g_Uart, DBUILD_VERSION);
-	// UartWrite(g_Uart, "  - ");
-	// UartWrite(g_Uart, DBUILD_DATE);
-	// UartWrite(g_Uart, "  * * *\n");
-
-	// // Enable interrupt on timer and uart receive.
-	// Hal_SetExtIrqHandler(IRQ_UART, IRQHandlerUart);
-	// Hal_EnableInterrupt(IRQ_UART);
-	// g_Uart->control |= UART_RRDY;
-	// Hal_EnableMachineInterrupt(IRQ_M_EXT);
-	// Hal_SetTimerIrqHandler(IRQHandlerTimer);
-	// Hal_TimerStart(3 * CLK_FREQ); // 3 seconds
-	// Hal_GlobalEnableInterrupts();
-
-	// Binary counter that ticks 32 times per second
-	uint32_t timeLast = Hal_ReadTime32();
-#endif
 
 	// Set GPIO to output.
 	g_Pio->direction = 0xffffffff;
 
-#ifdef TEST_CYCLE_COUNT
 	// !!!
 	// Note: order of execution seems to influence cycle count measured.
 	// !!!
 	
-	volatile uint32_t Mcycle0, Mcycle1;
+	// volatile uint32_t Mcycle0, Mcycle1;
 
-	volatile uint32_t rdcycle0, rdcycle1;
-	volatile uint32_t rdinstret0, rdinstret1;
+	// volatile uint32_t rdcycle0, rdcycle1;
+	// volatile uint32_t rdinstret0, rdinstret1;
 
-	volatile uint64_t Mcycle2, Mcycle4;
+	// volatile uint64_t Mcycle2, Mcycle4;
 
-	uint32_t x, y, z;
+	volatile int32_t z = 0;
+	volatile int32_t x;
+	volatile int8_t a[ELEMENTS] = {0};
 
 	while(1) {
-		// 64-bit Cycle read tests
-		Mcycle2 = Hal_ReadMCycle64();
-		Mcycle4 = Hal_ReadMCycle64();
-		uint64_t myCycleOverhead64 = Mcycle4 - Mcycle2;
+		
+		// soft_vmul(uint32_t arr[ELEMENTS], uint32_t a[ELEMENTS], uint32_t b[ELEMENTS]);
+		// soft_vacc(uint32_t a[ELEMENTS]);
+		// soft_vmaxe(uint32_t a[ELEMENTS]);
+		// soft_vmine(uint32_t a[ELEMENTS]);
+		// soft_vmaxx(uint32_t arr[ELEMENTS], uint32_t a[ELEMENTS], uint32_t s);
+		// soft_vsrli(uint32_t arr[ELEMENTS], uint32_t a[ELEMENTS], uint32_t s);
 
-		Mcycle2 = Hal_ReadMCycle64();
-		x = x+1;
-		Mcycle4 = Hal_ReadMCycle64();
-		uint64_t myCycleElapsed64_0 = Mcycle4 - Mcycle2 - myCycleOverhead64;
+		fill_array(a,-1,-1,-1,-1);
+		x = soft_vacc(a);
+		fill_array(a,15,15,15,15);
+		x = soft_vacc(a);
+		fill_array(a,-128,-128,-128,-128);
+		x = soft_vacc(a);
 
-		Mcycle2 = Hal_ReadMCycle64();
-		x = 1;
-		Mcycle4 = Hal_ReadMCycle64();
-		uint64_t myCycleElapsed64_1 = Mcycle4 - Mcycle2 - myCycleOverhead64;
+		#ifdef CUSTOM_INSTRUCT_VACC
+			z = _vacc(z, build_vec32(-1,-1,-1,-1));				// -4(signed) 1020 (unsigned)
+			z = _vacc(z, build_vec32(15,15,15,15));				// 60 (signed) 60 (unsigned)
+			z = _vacc(z, build_vec32(-128,-128,-128,-128));		// -512 (signed) 512 (unsigned)
+		#endif // CUSTOM_INSTRUCT_VACC
 
-		// ----------------------------------------------
-		// rdCycle tests
-		rdcycle0 = rdcycle();
-		rdcycle1 = rdcycle();
-		uint32_t rdCycleOverhead = rdcycle1 - rdcycle0;
+		#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
 
-		// Is this cached? Whopping 15 cycles, but the following two are the expected
-		// 2 cycles instead??
-		rdcycle0 = rdcycle();
-		x = 1;
-		x = 2;
-		x = 3;
-		rdcycle1 = rdcycle();
-		uint32_t cycleElapsed3 = rdcycle1 - rdcycle0 - rdCycleOverhead;	
+			z = _vmaxe(z, build_vec32(-1, -2, -3, -4)); // -1
+			z = _vmaxe(z, build_vec32(1, 2, 3, 4));		// 4
+			z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
+			z = _vmaxe(z, build_vec32(0, 0, 0, 0));		// 0
+			z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
+			z = _vmaxe(z, build_vec32(9, -8, -8, 8));	// 9
+			z = _vmaxe(z, build_vec32(-8, -8, -8, -8));	// -8
 
-		rdcycle0 = rdcycle();
-		x = 1;
-		rdcycle1 = rdcycle();
-		uint32_t cycleElapsed1 = rdcycle1 - rdcycle0 - rdCycleOverhead;
+			z = _vmine(z, build_vec32(-1, -2, -3, -4)); // -4
+			z = _vmine(z, build_vec32(1, 2, 3, 4));		// 1
+			z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
+			z = _vmine(z, build_vec32(0, 0, 0, 0));		// 0
+			z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
+			z = _vmine(z, build_vec32(9, -8, -8, 8));	// -8
+			z = _vmine(z, build_vec32(-8, -8, -8, -8));	// -8
 
-		rdcycle0 = rdcycle();
-		x = 1;
-		x = 2;
-		rdcycle1 = rdcycle();
-		uint32_t cycleElapsed2 = rdcycle1 - rdcycle0 - rdCycleOverhead;
-		// ----------------------------------------------
-		// instret tests
-		rdinstret0 = rdinstret();
-		rdinstret1 = rdinstret();
-		uint32_t instretOverhead = rdinstret1 - rdinstret0;	
+			z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x01020304
+			z = _vmax_x(z, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
+			z = _vmax_x(z, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0x01020304
+			z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0x01020304
+			z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));		// 0x04020304
+			z = _vmax_x(z, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));	// 0x04fefd04
 
-		rdinstret0 = rdinstret();
-		x = 1;
-		rdinstret1 = rdinstret();
-		uint32_t instretElapsed1 = rdinstret1 - rdinstret0 - instretOverhead;	
 
-		rdinstret0 = rdinstret();
-		x = 1;
-		x = 2;
-		rdinstret1 = rdinstret();
-		uint32_t instretElapsed2 = rdinstret1 - rdinstret0 - instretOverhead;	
+		#endif // CUSTOM_INSTRUCT_VMINE
 
-		rdinstret0 = rdinstret();
-		x = 1;
-		x = 2;
-		x = 3;
-		rdinstret1 = rdinstret();
-		uint32_t instretElapsed3 = rdinstret1 - rdinstret0 - instretOverhead;		
-		// ----------------------------------------------
-		// Inline assembly tests
-		rdinstret0 = rdinstret();
-		asm("nop");
-		rdinstret1 = rdinstret();
-		uint32_t instretElapsedNop = rdinstret1 - rdinstret0 - instretOverhead;
+		#ifdef CUSTOM_INSTRUCT_VMUL
 
-		rdcycle0 = rdcycle();
-		asm("addi t0, a0, 1");
-		rdcycle1 = rdcycle();
-		uint32_t cycleElapsedSW = rdcycle1 - rdcycle0 - rdCycleOverhead;
+			uint32_t a;
+			// Range -8 to 7
+			a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x00000000
+			a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
+			a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0xfffcf7f0
+			a = _vmul(a, build_vec32(1, 2, 2, 2), build_vec32(1, 2, 2, 3));		// 0x01040406
+			a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0xfffcf7f0
+			a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));	// 0x04fcf710
+			a = _vmul(a, build_vec32(-1, -8, -8, 4), build_vec32(4, -2, -3, 4));// 0xfc101810
 
-		rdinstret0 = rdinstret();
-		asm("addi t0, a0, 1");
-		rdinstret1 = rdinstret();
-		uint32_t instretElapsedSW = rdinstret1 - rdinstret0 - instretOverhead;
+			a = _vmul(a, build_vec32(7, 8, -8, -7), build_vec32(8, -7, 7, -8));	// 0xc838c838
+			a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(0, 0, 0, 0));
 
-		z = 0;
+		#endif // CUSTOM_INSTRUCT_VMUL
+
+		#ifdef CUSTOM_INSTRUCT_VSLRI
+			a = _vslri(a, build_vec32(0x01, 0x01, 0x01, 0x01)); //0x02020202
+			a = _vslri(a, build_vec32(0x80 ,0x80 ,0x80 ,0x80)); //0x00000000
+			a = _vslri(a, build_vec32(0xFF, 0xFF, 0x0F, 0xF0)); //0xfefe1ee0
+		#endif // CUSTOM_INSTRUCT_VSLRI
+
+
+		// // ----------------------------------------------
+		// // rdCycle tests
+		// rdcycle0 = rdcycle();
+		// rdcycle1 = rdcycle();
+		// uint32_t rdCycleOverhead = rdcycle1 - rdcycle0;
+
+		// // Is this cached? Whopping 15 cycles, but the following two are the expected
+		// // 2 cycles instead??
+		// rdcycle0 = rdcycle();
+		// x = 1;
+		// x = 2;
+		// x = 3;
+		// rdcycle1 = rdcycle();
+		// uint32_t cycleElapsed3 = rdcycle1 - rdcycle0 - rdCycleOverhead;	
+
+		// rdcycle0 = rdcycle();
+		// x = 1;
+		// rdcycle1 = rdcycle();
+		// uint32_t cycleElapsed1 = rdcycle1 - rdcycle0 - rdCycleOverhead;
+
+		// rdcycle0 = rdcycle();
+		// x = 1;
+		// x = 2;
+		// rdcycle1 = rdcycle();
+		// uint32_t cycleElapsed2 = rdcycle1 - rdcycle0 - rdCycleOverhead;
+		// // ----------------------------------------------
+		// // instret tests
+		// rdinstret0 = rdinstret();
+		// rdinstret1 = rdinstret();
+		// uint32_t instretOverhead = rdinstret1 - rdinstret0;	
+
+		// rdinstret0 = rdinstret();
+		// x = 1;
+		// rdinstret1 = rdinstret();
+		// uint32_t instretElapsed1 = rdinstret1 - rdinstret0 - instretOverhead;	
+
+		// rdinstret0 = rdinstret();
+		// x = 1;
+		// x = 2;
+		// rdinstret1 = rdinstret();
+		// uint32_t instretElapsed2 = rdinstret1 - rdinstret0 - instretOverhead;	
+
+		// rdinstret0 = rdinstret();
+		// x = 1;
+		// x = 2;
+		// x = 3;
+		// rdinstret1 = rdinstret();
+		// uint32_t instretElapsed3 = rdinstret1 - rdinstret0 - instretOverhead;		
+		// // ----------------------------------------------
+		// // Inline assembly tests
+		// rdinstret0 = rdinstret();
+		// asm("nop");
+		// rdinstret1 = rdinstret();
+		// uint32_t instretElapsedNop = rdinstret1 - rdinstret0 - instretOverhead;
+
+		// rdcycle0 = rdcycle();
+		// asm("addi t0, a0, 1");
+		// rdcycle1 = rdcycle();
+		// uint32_t cycleElapsedSW = rdcycle1 - rdcycle0 - rdCycleOverhead;
+
+		// rdinstret0 = rdinstret();
+		// asm("addi t0, a0, 1");
+		// rdinstret1 = rdinstret();
+		// uint32_t instretElapsedSW = rdinstret1 - rdinstret0 - instretOverhead;
+
+		// z = 0;
 	}	
-
-#endif // TEST_CYCLE_COUNT
-
-#ifdef CUSTOM_INSTRUCT
-
-	int32_t x, y, z;
-	x = 0x01010000;
-	y = 0x00000101;
-	z = 0x10000000;
-
-	while(1) {
-#ifdef CUSTOM_INSTRUCT_VACC
-		z = _vacc(z, build_vec32(-1,-1,-1,-1));				// -4(signed) 1020 (unsigned)
-		z = _vacc(z, build_vec32(15,15,15,15));				// 60 (signed) 60 (unsigned)
-		z = _vacc(z, build_vec32(-128,-128,-128,-128));		// -512 (signed) 512 (unsigned)
-#endif // CUSTOM_INSTRUCT_VACC
-
-#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
-
-		z = _vmaxe(z, build_vec32(-1, -2, -3, -4)); // -1
-		z = _vmaxe(z, build_vec32(1, 2, 3, 4));		// 4
-		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
-		z = _vmaxe(z, build_vec32(0, 0, 0, 0));		// 0
-		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
-		z = _vmaxe(z, build_vec32(9, -8, -8, 8));	// 9
-		z = _vmaxe(z, build_vec32(-8, -8, -8, -8));	// -8
-
-		z = _vmine(z, build_vec32(-1, -2, -3, -4)); // -4
-		z = _vmine(z, build_vec32(1, 2, 3, 4));		// 1
-		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
-		z = _vmine(z, build_vec32(0, 0, 0, 0));		// 0
-		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
-		z = _vmine(z, build_vec32(9, -8, -8, 8));	// -8
-		z = _vmine(z, build_vec32(-8, -8, -8, -8));	// -8
-
-		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x01020304
-		z = _vmax_x(z, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
-		z = _vmax_x(z, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0x01020304
-		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0x01020304
-		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));		// 0x04020304
-		z = _vmax_x(z, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));	// 0x04fefd04
-
-
-#endif // CUSTOM_INSTRUCT_VMINE
-
-#ifdef CUSTOM_INSTRUCT_VMUL
-
-		uint32_t a;
-		// Range -8 to 7
-		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x00000000
-		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
-		a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0xfffcf7f0
-		a = _vmul(a, build_vec32(1, 2, 2, 2), build_vec32(1, 2, 2, 3));		// 0x01040406
-		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0xfffcf7f0
-		a = _vmul(a, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));	// 0x04fcf710
-		a = _vmul(a, build_vec32(-1, -8, -8, 4), build_vec32(4, -2, -3, 4));// 0xfc101810
-
-		a = _vmul(a, build_vec32(7, 8, -8, -7), build_vec32(8, -7, 7, -8));	// 0xc838c838
-		a = _vmul(a, build_vec32(0, 0, 0, 0), build_vec32(0, 0, 0, 0));
-
-#endif // CUSTOM_INSTRUCT_VMUL
-
-#ifdef CUSTOM_INSTRUCT_VSLRI
-		a = _vslri(a, build_vec32(0x01, 0x01, 0x01, 0x01)); //0x02020202
-		a = _vslri(a, build_vec32(0x80 ,0x80 ,0x80 ,0x80)); //0x00000000
-		a = _vslri(a, build_vec32(0xFF, 0xFF, 0x0F, 0xF0)); //0xfefe1ee0
-#endif // CUSTOM_INSTRUCT_VSLRI
-
-		// Included to test compatibility with other custom instructions.
-		z = _simd_add(z, x, y);
-		z = Hal_ReadTime32();
-	}
-#endif // CUSTOM_INSTRUCT
-
-#ifdef ARIES_EMBEDDED_CORE
-	uint32_t x, y, z;
-	x = 1;
-	while (1) {
-		uint32_t timeNow = Hal_ReadTime32();
-		uint32_t cycleNow = Hal_ReadMCycle32();
-		uint32_t rdtime = rdtime();
-		uint32_t rdcycle = rdcycle();
-
-		uint32_t timediff = (timeNow - timeLast);
-		if (timediff > (CLK_FREQ / 32)) {
-			timeLast = timeNow;
-			x += 1;
-			write_to_port(x);
-		}
-	}
-#endif
-
-#ifdef TEST_GPIO_LED
-	uint32_t x, y, z;
-	x = 2;
-	y = 3;
-	z = 4;
-
-	while(1) {
-		write_to_port(add(x, 1));
-		write_to_port(x);
-		write_to_port(y);
-		write_to_port(z);
-	}
-#endif
 }

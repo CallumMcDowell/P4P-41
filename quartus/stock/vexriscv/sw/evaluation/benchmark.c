@@ -1,22 +1,22 @@
 #include "benchmark.h"
 
-void soft_vmul(int arr[ELEMENTS], int a[ELEMENTS], int b[ELEMENTS]) {
-    for (int i = 0; i < ELEMENTS; ++i) {
+void soft_vmul(int8_t arr[ELEMENTS], int8_t a[ELEMENTS], int8_t b[ELEMENTS]) {
+    for (int8_t i = 0; i < ELEMENTS; ++i) {
         arr[i] = a[i] * b[i];
     }
 }
 
-int soft_vacc(int a[ELEMENTS]) {
-    int acc = 0;
-    for (int i = 0; i < ELEMENTS; ++i) {
+int32_t soft_vacc(int8_t a[ELEMENTS]) {
+    int32_t acc = 0;
+    for (int8_t i = 0; i < ELEMENTS; ++i) {
         acc += a[i];
     }
     return acc;
 }
 
-int soft_vmaxe(int a[ELEMENTS]) {
-    int max = a[0];
-    for (int i = 1; i < ELEMENTS; ++i) {
+int8_t soft_vmaxe(int8_t a[ELEMENTS]) {
+    int8_t max = a[0];
+    for (int8_t i = 1; i < ELEMENTS; ++i) {
         if (a[i] > max) {
             max = a[i];
         }
@@ -24,9 +24,9 @@ int soft_vmaxe(int a[ELEMENTS]) {
     return max;
 }
 
-int soft_vmine(int a[ELEMENTS]) {
-    int min = a[0];
-    for (int i = 1; i < ELEMENTS; ++i) {
+int8_t soft_vmine(int8_t a[ELEMENTS]) {
+    int8_t min = a[0];
+    for (int8_t i = 1; i < ELEMENTS; ++i) {
         if (a[i] < min) {
             min = a[i];
         }
@@ -34,8 +34,8 @@ int soft_vmine(int a[ELEMENTS]) {
     return min;
 }
 
-void soft_vmaxx(int arr[ELEMENTS], int a[ELEMENTS], int s) {
-    for (int i = 1; i < ELEMENTS; ++i) {
+void soft_vmaxx(int8_t arr[ELEMENTS], int8_t a[ELEMENTS], int8_t s) {
+    for (int8_t i = 1; i < ELEMENTS; ++i) {
         if (a[i] > s) {
             arr[i] = a[i];
         } else {
@@ -44,8 +44,8 @@ void soft_vmaxx(int arr[ELEMENTS], int a[ELEMENTS], int s) {
     }
 }
 
-void soft_vsrli(int arr[ELEMENTS], int a[ELEMENTS], int s) {
-    for (int i = 0; i < ELEMENTS; ++i) {
+void soft_vsrli(int8_t arr[ELEMENTS], int8_t a[ELEMENTS], int8_t s) {
+    for (int8_t i = 0; i < ELEMENTS; ++i) {
         arr[i] = a[i] >> s;
     }
 }
