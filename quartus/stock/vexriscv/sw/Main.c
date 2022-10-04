@@ -28,13 +28,18 @@ DEALINGS IN THE SOFTWARE. */
 // #define TEST_GPIO_LED
 
 /* Part of above either or */
-#define CUSTOM_INSTRUCT
+// #define CUSTOM_INSTRUCT
 
 // Optional test benches
-#define CUSTOM_INSTRUCT_VMUL
-#define CUSTOM_INSTRUCT_VACC
-#define CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
-#define CUSTOM_INSTRUCT_VSLRI
+// #define CUSTOM_INSTRUCT_VMUL
+// #define CUSTOM_INSTRUCT_VACC
+// #define CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
+// #define CUSTOM_INSTRUCT_VSLRI
+
+#define TEST_CYCLE_COUNT
+#ifdef TEST_CYCLE_COUNT
+uint64_t Hal_ReadMCycle64();
+#endif // TEST_CYCLE_COUNT
 
 #ifdef CUSTOM_INSTRUCT
 
@@ -104,21 +109,21 @@ uint32_t build_vec32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
 int main() {
 
 #ifdef ARIES_EMBEDDED_CORE
-	// Greetings
-	UartWrite(g_Uart, "\n\n* * * VexRiscv Demo  -  ");
-	UartWrite(g_Uart, DBUILD_VERSION);
-	UartWrite(g_Uart, "  - ");
-	UartWrite(g_Uart, DBUILD_DATE);
-	UartWrite(g_Uart, "  * * *\n");
+	// // Greetings
+	// UartWrite(g_Uart, "\n\n* * * VexRiscv Demo  -  ");
+	// UartWrite(g_Uart, DBUILD_VERSION);
+	// UartWrite(g_Uart, "  - ");
+	// UartWrite(g_Uart, DBUILD_DATE);
+	// UartWrite(g_Uart, "  * * *\n");
 
-	// Enable interrupt on timer and uart receive.
-	Hal_SetExtIrqHandler(IRQ_UART, IRQHandlerUart);
-	Hal_EnableInterrupt(IRQ_UART);
-	g_Uart->control |= UART_RRDY;
-	Hal_EnableMachineInterrupt(IRQ_M_EXT);
-	Hal_SetTimerIrqHandler(IRQHandlerTimer);
-	Hal_TimerStart(3 * CLK_FREQ); // 3 seconds
-	Hal_GlobalEnableInterrupts();
+	// // Enable interrupt on timer and uart receive.
+	// Hal_SetExtIrqHandler(IRQ_UART, IRQHandlerUart);
+	// Hal_EnableInterrupt(IRQ_UART);
+	// g_Uart->control |= UART_RRDY;
+	// Hal_EnableMachineInterrupt(IRQ_M_EXT);
+	// Hal_SetTimerIrqHandler(IRQHandlerTimer);
+	// Hal_TimerStart(3 * CLK_FREQ); // 3 seconds
+	// Hal_GlobalEnableInterrupts();
 
 	// Binary counter that ticks 32 times per second
 	uint32_t timeLast = Hal_ReadTime32();
@@ -126,6 +131,106 @@ int main() {
 
 	// Set GPIO to output.
 	g_Pio->direction = 0xffffffff;
+
+#ifdef TEST_CYCLE_COUNT
+	// !!!
+	// Note: order of execution seems to influence cycle count measured.
+	// !!!
+	
+	volatile uint32_t Mcycle0, Mcycle1;
+
+	volatile uint32_t rdcycle0, rdcycle1;
+	volatile uint32_t rdinstret0, rdinstret1;
+
+	volatile uint64_t Mcycle2, Mcycle4;
+
+	uint32_t x, y, z;
+
+	while(1) {
+		// 64-bit Cycle read tests
+		Mcycle2 = Hal_ReadMCycle64();
+		Mcycle4 = Hal_ReadMCycle64();
+		uint64_t myCycleOverhead64 = Mcycle4 - Mcycle2;
+
+		Mcycle2 = Hal_ReadMCycle64();
+		x = x+1;
+		Mcycle4 = Hal_ReadMCycle64();
+		uint64_t myCycleElapsed64_0 = Mcycle4 - Mcycle2 - myCycleOverhead64;
+
+		Mcycle2 = Hal_ReadMCycle64();
+		x = 1;
+		Mcycle4 = Hal_ReadMCycle64();
+		uint64_t myCycleElapsed64_1 = Mcycle4 - Mcycle2 - myCycleOverhead64;
+
+		// ----------------------------------------------
+		// rdCycle tests
+		rdcycle0 = rdcycle();
+		rdcycle1 = rdcycle();
+		uint32_t rdCycleOverhead = rdcycle1 - rdcycle0;
+
+		// Is this cached? Whopping 15 cycles, but the following two are the expected
+		// 2 cycles instead??
+		rdcycle0 = rdcycle();
+		x = 1;
+		x = 2;
+		x = 3;
+		rdcycle1 = rdcycle();
+		uint32_t cycleElapsed3 = rdcycle1 - rdcycle0 - rdCycleOverhead;	
+
+		rdcycle0 = rdcycle();
+		x = 1;
+		rdcycle1 = rdcycle();
+		uint32_t cycleElapsed1 = rdcycle1 - rdcycle0 - rdCycleOverhead;
+
+		rdcycle0 = rdcycle();
+		x = 1;
+		x = 2;
+		rdcycle1 = rdcycle();
+		uint32_t cycleElapsed2 = rdcycle1 - rdcycle0 - rdCycleOverhead;
+		// ----------------------------------------------
+		// instret tests
+		rdinstret0 = rdinstret();
+		rdinstret1 = rdinstret();
+		uint32_t instretOverhead = rdinstret1 - rdinstret0;	
+
+		rdinstret0 = rdinstret();
+		x = 1;
+		rdinstret1 = rdinstret();
+		uint32_t instretElapsed1 = rdinstret1 - rdinstret0 - instretOverhead;	
+
+		rdinstret0 = rdinstret();
+		x = 1;
+		x = 2;
+		rdinstret1 = rdinstret();
+		uint32_t instretElapsed2 = rdinstret1 - rdinstret0 - instretOverhead;	
+
+		rdinstret0 = rdinstret();
+		x = 1;
+		x = 2;
+		x = 3;
+		rdinstret1 = rdinstret();
+		uint32_t instretElapsed3 = rdinstret1 - rdinstret0 - instretOverhead;		
+		// ----------------------------------------------
+		// Inline assembly tests
+		rdinstret0 = rdinstret();
+		asm("nop");
+		rdinstret1 = rdinstret();
+		uint32_t instretElapsedNop = rdinstret1 - rdinstret0 - instretOverhead;
+
+		rdcycle0 = rdcycle();
+		asm("addi t0, a0, 1");
+		rdcycle1 = rdcycle();
+		uint32_t cycleElapsedSW = rdcycle1 - rdcycle0 - rdCycleOverhead;
+
+		rdinstret0 = rdinstret();
+		asm("addi t0, a0, 1");
+		rdinstret1 = rdinstret();
+		uint32_t instretElapsedSW = rdinstret1 - rdinstret0 - instretOverhead;
+
+		z = 0;
+	}	
+
+#endif // TEST_CYCLE_COUNT
 
 #ifdef CUSTOM_INSTRUCT
 
@@ -203,9 +308,15 @@ int main() {
 	x = 1;
 	while (1) {
 		uint32_t timeNow = Hal_ReadTime32();
-		if ((timeNow - timeLast) > (CLK_FREQ / 32)) {
+		uint32_t cycleNow = Hal_ReadMCycle32();
+		uint32_t rdtime = rdtime();
+		uint32_t rdcycle = rdcycle();
+
+		uint32_t timediff = (timeNow - timeLast);
+		if (timediff > (CLK_FREQ / 32)) {
 			timeLast = timeNow;
-			write_to_port(add(x, 1));
+			x += 1;
+			write_to_port(x);
 		}
 	}
 #endif

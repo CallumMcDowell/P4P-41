@@ -217,6 +217,8 @@ To do.
 
 - Power off both target board and cable before plugging.
 - **de1-SoC I/O Interface:** 3.3V TTL
+- `debug.sh` is provided to run the debugging process (after it is setup).
+  - **Tip:** Reload the gdbgui when loading new binaries to avoid any potnetial unexpected error.
 
 ## Setup
 
@@ -310,7 +312,7 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 **Notes:**
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
 - The GUI is greate of looking, not so great for issuing commands (such as breaking the program).
-- Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
+- Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more. 
 - You can `load` an `.elf` into OCRAM. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
 - `monitor reset halt` will halt the CPU.
 - `target extended-remote localhost:3333`
@@ -327,7 +329,7 @@ There are three major regions of work:
 2. **SW Accomedation for Included Instruction:** in assembly macro. Adds machine code for instruction in sw.
    - Combination of riscv assembly and c program passings.
 
-And Read [RISC-V Assembly Programmer's Manual](https://github.com/riscv-non-isa/riscv-asm-manual/blob/master/riscv-asm.md). And [Riscv Machines Depenednt Asembly Features](https://www.rowleydownload.co.uk/arm/documentation/gnu/as/RISC_002dV_002dDependent.html#RISC_002dV_002dDependent).
+And Read [RISC-V Assembly Programmer's Manual](https://github.com/riscv-non-isa/riscv-asm-manual/blob/master/riscv-asm.md). And [Riscv Machines Depenednt Asembly Features](https://www.rowleydownload.co.uk/arm/documentation/gnu/as/RISC_002dV_002dDependent.html#RISC_002dV_002dDependent). If more detailed infomation is needed, review [rvalp](https://github.com/johnwinans/rvalp).
 
 ### Rational
 
@@ -438,6 +440,27 @@ The `Vector Plugin` will add the following new instructions:
 - **I-Type**
   - **VSRLI:** Element-wise vector-immediate logical shift right.
     - ret: (32-bit) vector of 4*-*8-bit segments.
+
+# Performance Evaluation
+
+- **Metrics:**
+  - Fmax
+  - Cycle counts
+
+- **Measurement options:**
+  - control status registers (csr)
+    - `mcycle` (`ucycle`)
+      - ArieEmbedded's `rdcycle`, `rdinstret`
+    - `mtime` (`utime`)
+  - HW 32-bit counter on clock -> feeding into Vexriscv's gpio to be read on demand.
+
+![CSR Timers and Counters](./images/CSR%20Timers%20and%20Counters.png)
+
+## `mcycle` counter
+
+- Notes when using with gdbgui debugging:
+  - On startup, garbage value may be stored in browser cache, run whatever test at least three times to clear the value (either in program or when debugging)
+  - Running in dubugger and free-running produces different cycle counts (as clock is not halted when CPU is). The most accurate measuements are taken when the core is left-free running and then commanding `interrupt` in the terminal to resume the debugger to inspect the logged infomation.
 
 # Quartus QNA:
 
