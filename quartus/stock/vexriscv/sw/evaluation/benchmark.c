@@ -34,12 +34,12 @@ int8_t soft_vmine(int8_t a[ELEMENTS]) {
     return min;
 }
 
-void soft_vmaxx(int8_t arr[ELEMENTS], int8_t a[ELEMENTS], int8_t s) {
-    for (int8_t i = 1; i < ELEMENTS; ++i) {
-        if (a[i] > s) {
+void soft_vmax_x(int8_t arr[ELEMENTS], int8_t a[ELEMENTS], int8_t b[]) {
+    for (int8_t i = 0; i < ELEMENTS; ++i) {
+        if (a[i] > b[i]) {
             arr[i] = a[i];
         } else {
-            arr[i] = s;
+            arr[i] = b[i];
         }
     }
 }
