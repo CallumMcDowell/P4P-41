@@ -160,7 +160,7 @@ r_type_insn(0b0000000, regnum_ ## _rs2, regnum_ ## _rs1, 0b111, regnum_ ## _rd, 
 //  Immediate||RS1|   |RD |CUSTOM1_RS1
 //
 
-#define VSLRI(_rd, _rs1, _imm) \
+#define VSRLI(_rd, _rs1, _imm) \
 i_type_insn(_imm, regnum_ ## _rs1, 0b110, regnum_ ## _rd, 0b0001011)
 
 //-------------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ _vmax_x:
     VMAX_X(a0, a1, a2)
     ret
 
-.global _vslri // void _vslri(uint32_t rd, uint32_t r1);
-_vslri:
-    VSLRI(a0, a1, 0x1)
+.global _vsrli // void _vsrli(uint32_t rd, uint32_t r1);
+_vsrli:
+    VSRLI(a0, a1, 0x1)
     ret

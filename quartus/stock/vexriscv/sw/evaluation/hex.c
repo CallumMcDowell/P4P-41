@@ -66,3 +66,41 @@ void hex_write_uint(uint32_t x, EightBitPio* hexPair) {
     uint32_t writeVal = (char_to_seg_binary(charTens) << 7) | char_to_seg_binary(charOnes);
     hexPair->port = writeVal;
 }
+
+void init_hex_disp() {
+    hex_pio01->port = 0b10000001000000;
+    hex_pio23->port = 0b10000001000000;
+    hex_pio45->port = 0b10000001000000;
+}
+
+void test_hex_disp() {
+    hex_pio01->port = 0b11111111;
+    hex_pio01->port = 0b11110000;
+    hex_pio01->port = 0b00001111;
+    hex_pio01->port = 0b00000000;
+
+    hex_write_uint(0, hex_pio01);
+    hex_write_uint(12, hex_pio01);
+    hex_write_uint(40, hex_pio01);
+    hex_write_uint(99, hex_pio01);
+
+    hex_pio23->port = 0b11111111;
+    hex_pio23->port = 0b11110000;
+    hex_pio23->port = 0b00001111;
+    hex_pio23->port = 0b00000000;
+
+    hex_write_uint(0, hex_pio23);
+    hex_write_uint(12, hex_pio23);
+    hex_write_uint(40, hex_pio23);
+    hex_write_uint(99, hex_pio23);
+
+    hex_pio45->port = 0b11111111;
+    hex_pio45->port = 0b11110000;
+    hex_pio45->port = 0b00001111;
+    hex_pio45->port = 0b00000000;
+
+    hex_write_uint(0, hex_pio45);
+    hex_write_uint(12, hex_pio45);
+    hex_write_uint(40, hex_pio45);
+    hex_write_uint(99, hex_pio45);
+}
