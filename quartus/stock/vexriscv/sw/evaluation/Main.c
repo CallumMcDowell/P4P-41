@@ -24,6 +24,7 @@ DEALINGS IN THE SOFTWARE. */
 #include "Hal.h"
 
 #include "benchmark.h"
+#include "hex.h"
 
 /* Part of above either or */
 #define CUSTOM_INSTRUCT
@@ -101,11 +102,10 @@ int main() {
 
 	volatile int32_t z = 0;
 	volatile int32_t x;
-	volatile int8_t a_array[ELEMENTS] = {0};
-	volatile int8_t b_array[ELEMENTS] = {0};
+	int8_t a_array[ELEMENTS] = {0};
+	int8_t b_array[ELEMENTS] = {0};
 
 	while(1) {
-		
 		
 		// VACC
 		// VMAXE
@@ -113,6 +113,36 @@ int main() {
 		// VMAX.X
 		// VMUL
 		// VSRLI
+
+		hex_pio01->port = 0b11111111;
+		hex_pio01->port = 0b11110000;
+		hex_pio01->port = 0b00001111;
+		hex_pio01->port = 0b00000000;
+
+		hex_write_uint(0, hex_pio01);
+		hex_write_uint(12, hex_pio01);
+		hex_write_uint(40, hex_pio01);
+		hex_write_uint(99, hex_pio01);
+
+		hex_pio23->port = 0b11111111;
+		hex_pio23->port = 0b11110000;
+		hex_pio23->port = 0b00001111;
+		hex_pio23->port = 0b00000000;
+
+		hex_write_uint(0, hex_pio23);
+		hex_write_uint(12, hex_pio23);
+		hex_write_uint(40, hex_pio23);
+		hex_write_uint(99, hex_pio23);
+
+		hex_pio45->port = 0b11111111;
+		hex_pio45->port = 0b11110000;
+		hex_pio45->port = 0b00001111;
+		hex_pio45->port = 0b00000000;
+
+		hex_write_uint(0, hex_pio45);
+		hex_write_uint(12, hex_pio45);
+		hex_write_uint(40, hex_pio45);
+		hex_write_uint(99, hex_pio45);
 
 		#ifdef CUSTOM_INSTRUCT_VACC
 

@@ -10,6 +10,9 @@
 #define MEMADDR_OCRAM     ((uintptr_t)(0x00000000))
 #define MEMADDR_IRQCONTROLLER ((uintptr_t)(0x00010000))
 #define MEMADDR_PIO       ((uintptr_t)(0x00010100))
+#define MEMADDR_HEXPIO_01  ((uintptr_t)(0x00010020))
+#define MEMADDR_HEXPIO_23  ((uintptr_t)(0x00010000))
+#define MEMADDR_HEXPIO_45  ((uintptr_t)(0x00010040))
 #define MEMADDR_UART      ((uintptr_t)(0x00010200))
 
 #define IRQ_UART 0
@@ -30,6 +33,15 @@ typedef volatile struct {
 	uint32_t outset;
 	uint32_t outclear;
 } Pio;
+
+typedef volatile struct {
+	uint32_t port;
+	uint32_t direction;
+	uint32_t _reserved1;
+	uint32_t _reserved2;
+	uint32_t outset;
+	uint32_t outclear;
+} EightBitPio;
 
 /* InterruptController
 
@@ -68,5 +80,9 @@ typedef volatile struct {
 extern Pio* g_Pio;
 extern Uart* g_Uart;
 extern InterruptController* g_InterruptController;
+
+extern EightBitPio* hex_pio01;
+extern EightBitPio* hex_pio23;
+extern EightBitPio* hex_pio45;
 
 #endif // FPGACONFIG_H

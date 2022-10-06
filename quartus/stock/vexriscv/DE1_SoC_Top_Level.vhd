@@ -66,12 +66,12 @@ entity DE1_SoC_top_level is
 --        FPGA_I2C_SDAT : inout std_logic;
 
         -- SEG7
---        HEX0_N : out std_logic_vector(6 downto 0);
---        HEX1_N : out std_logic_vector(6 downto 0);
---        HEX2_N : out std_logic_vector(6 downto 0);
---        HEX3_N : out std_logic_vector(6 downto 0);
---        HEX4_N : out std_logic_vector(6 downto 0);
---        HEX5_N : out std_logic_vector(6 downto 0);
+        HEX0_N : out std_logic_vector(6 downto 0);
+        HEX1_N : out std_logic_vector(6 downto 0);
+        HEX2_N : out std_logic_vector(6 downto 0);
+        HEX3_N : out std_logic_vector(6 downto 0);
+        HEX4_N : out std_logic_vector(6 downto 0);
+        HEX5_N : out std_logic_vector(6 downto 0);
 
         -- IR
 --        IRDA_RXD : in  std_logic;
@@ -181,6 +181,9 @@ architecture rtl of DE1_SoC_top_level is
 	signal led_mod : std_logic := '0';
 
 	signal gpio : std_logic_vector(31 downto 0);
+	signal hex01 : std_logic_vector(31 downto 0);
+	signal hex23 : std_logic_vector(31 downto 0);
+	signal hex45 : std_logic_vector(31 downto 0);
 
 	-- pragma synthesis_off
 	-- ArieEmbedded VexRiscv 
@@ -202,6 +205,12 @@ begin
 	-- General Wiring
 	KEY <= not KEY_N;
 	LEDR(7 downto 0) <= gpio(7 downto 0);
+	HEX0_N(6 downto 0) <= hex01(6 downto 0);
+	HEX1_N(6 downto 0) <= hex01(13 downto 7);
+	HEX2_N(6 downto 0) <= hex23(6 downto 0);
+	HEX3_N(6 downto 0) <= hex23(13 downto 7);
+	HEX4_N(6 downto 0) <= hex45(6 downto 0);
+	HEX5_N(6 downto 0) <= hex45(13 downto 7);
 		
 	-- pragma synthesis_off
 	-- ArieEmbedded VexRiscv:
@@ -222,6 +231,9 @@ begin
 		clk_clk => CLOCK_50,
 		reset_reset_n => not KEY(0), -- or reset_debug,      -- Hardwired reset F                        
 		gpio_export => gpio,
+		hex01_export => hex01,
+		hex23_export => hex23,
+		hex45_export => hex45,
 		vexriscvavalonmaxperf_0_jtag_tck => GPIO_0(1), 
 		vexriscvavalonmaxperf_0_jtag_tdi => GPIO_0(3),
 		vexriscvavalonmaxperf_0_jtag_tdo => GPIO_0(5), 		

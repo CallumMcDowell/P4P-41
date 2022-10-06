@@ -1,19 +1,23 @@
 # # File gsaved with Nlview version 6.3.8  2013-12-19 bk=1.2992 VDI=34 GEI=35
 # 
+preplace inst vexriscv_system.VexRiscvAvalonMaxPerf_0 -pg 1 -lvl 2 -y 310
 preplace inst vexriscv_system.clk_0 -pg 1 -lvl 1 -y 50
-preplace inst vexriscv_system.VexRiscvAvalon_0 -pg 1 -lvl 5 -y 90
 preplace inst vexriscv_system.gpio -pg 1 -lvl 6 -y 230
 preplace inst vexriscv_system.pll_0 -pg 1 -lvl 2 -y 50
 preplace inst vexriscv_system.onchip_memory2_0 -pg 1 -lvl 6 -y 30
 preplace inst vexriscv_system -pg 1 -lvl 1 -y 40 -regy -20
-preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.clk,(SLAVE)clk_0.clk_in) 1 0 1 NJ
-preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(SLAVE)pll_0.refclk,(MASTER)clk_0.clk) 1 1 1 N
-preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.vexriscvavalon_0_jtag,(SLAVE)VexRiscvAvalon_0.jtag) 1 0 5 NJ 140 NJ 140 NJ 140 NJ 140 NJ
-preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)onchip_memory2_0.s2,(SLAVE)VexRiscvAvalon_0.irq_controller,(MASTER)VexRiscvAvalon_0.data_bus,(SLAVE)gpio.s1) 1 4 2 1140 80 1610
-preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)gpio.external_connection,(SLAVE)vexriscv_system.gpio) 1 0 6 NJ 260 NJ 260 NJ 260 NJ 260 NJ 260 NJ
-preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)clk_0.clk_in_reset,(SLAVE)vexriscv_system.reset) 1 0 1 NJ
-preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)VexRiscvAvalon_0.reset,(SLAVE)onchip_memory2_0.reset1,(MASTER)clk_0.clk_reset,(SLAVE)gpio.reset,(SLAVE)pll_0.reset,(SLAVE)onchip_memory2_0.reset2) 1 1 5 350 120 NJ 120 NJ 120 1120 60 1630
-preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)VexRiscvAvalon_0.clock,(SLAVE)onchip_memory2_0.clk1,(SLAVE)onchip_memory2_0.clk2,(MASTER)pll_0.outclk0,(SLAVE)gpio.clk) 1 2 4 NJ 60 NJ 60 1100 40 1650
-preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(SLAVE)onchip_memory2_0.s1,(MASTER)VexRiscvAvalon_0.instruction_bus) 1 5 1 N
-levelinfo -pg 1 0 140 1860
-levelinfo -hier vexriscv_system 150 180 400 700 1080 1390 1700 1850
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(MASTER)vexriscv_system.vexriscvavalonmaxperf_0_externalinterrupt,(MASTER)VexRiscvAvalonMaxPerf_0.externalInterrupt) 1 2 5 NJ 360 NJ 360 NJ 360 NJ 360 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)VexRiscvAvalonMaxPerf_0.jtag,(SLAVE)vexriscv_system.vexriscvavalonmaxperf_0_jtag) 1 0 2 NJ 360 NJ
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(MASTER)clk_0.clk_reset,(SLAVE)onchip_memory2_0.reset1,(SLAVE)VexRiscvAvalonMaxPerf_0.debugReset,(SLAVE)gpio.reset,(SLAVE)onchip_memory2_0.reset2,(SLAVE)pll_0.reset,(SLAVE)VexRiscvAvalonMaxPerf_0.reset) 1 1 5 410 140 NJ 140 NJ 140 NJ 140 1490
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)pll_0.refclk,(SLAVE)VexRiscvAvalonMaxPerf_0.clk,(MASTER)clk_0.clk) 1 1 1 430
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)clk_0.clk_in,(SLAVE)vexriscv_system.clk) 1 0 1 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(MASTER)VexRiscvAvalonMaxPerf_0.timerInterrupt,(MASTER)vexriscv_system.vexriscvavalonmaxperf_0_timerinterrupt) 1 2 5 NJ 400 NJ 400 NJ 400 NJ 400 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.vexriscvavalonmaxperf_0_softwareinterrupt,(SLAVE)VexRiscvAvalonMaxPerf_0.softwareInterrupt) 1 0 2 NJ 400 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.reset,(SLAVE)clk_0.clk_in_reset) 1 0 1 NJ
+preplace netloc POINT_TO_POINT<net_container>vexriscv_system</net_container>(MASTER)VexRiscvAvalonMaxPerf_0.iBusAvalon,(SLAVE)onchip_memory2_0.s1) 1 2 4 690 120 NJ 120 NJ 120 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(MASTER)vexriscv_system.vexriscvavalonmaxperf_0_debug_resetout,(MASTER)VexRiscvAvalonMaxPerf_0.debug_resetOut) 1 2 5 NJ 340 NJ 340 NJ 340 NJ 340 NJ
+preplace netloc EXPORT<net_container>vexriscv_system</net_container>(SLAVE)vexriscv_system.gpio,(SLAVE)gpio.external_connection) 1 0 6 NJ 260 NJ 260 NJ 260 NJ 260 NJ 260 NJ
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)gpio.clk,(MASTER)pll_0.outclk0,(SLAVE)onchip_memory2_0.clk1,(SLAVE)onchip_memory2_0.clk2) 1 2 4 N 60 NJ 60 NJ 60 1470
+preplace netloc FAN_OUT<net_container>vexriscv_system</net_container>(SLAVE)gpio.s1,(MASTER)VexRiscvAvalonMaxPerf_0.dBusAvalon,(SLAVE)onchip_memory2_0.s2) 1 2 4 710 300 NJ 300 NJ 300 1510
+levelinfo -pg 1 0 200 2130
+levelinfo -hier vexriscv_system 210 240 460 760 1140 1450 1760 1910
