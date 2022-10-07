@@ -28,6 +28,12 @@ DEALINGS IN THE SOFTWARE. */
 
 #include "customInstruct.h"
 
+void p4p_disp() {
+	hex_pio45->port = (0b00011000011001);
+	hex_pio23->port = (0b00011001111111);
+	hex_write_uint(41, hex_pio01);
+}
+
 int main() {
 
 	// Set GPIO to output.
@@ -41,8 +47,10 @@ int main() {
 	// int8_t b_array[ELEMENTS] = {0};
 	// int8_t soft_array_result[ELEMENTS];
 	init_hex_disp();
+	p4p_disp();
 
-	while(1) {		
+	while(1) {
+
 		// test_hex_disp();
 	// VACC
 		// measure_hard_vacc();
@@ -61,7 +69,7 @@ int main() {
 		// measure_soft_vmax_x();
 	// VSRLI
 		// measure_hard_vsrli();
-		measure_soft_vsrli();
+		// measure_soft_vsrli();
 
 		// #ifdef CUSTOM_INSTRUCT_VACC
 
