@@ -35,7 +35,7 @@ object GenAvalonFullNoMmuMaxPerf {
 //            resetVector = 0x80000000l, // TODO: SET 0x0..0!?
 //            relaxedPcCalculation = false
 //          ),
-          new SimdAddPlugin,
+//          new SimdAddPlugin,
           new VectorPlugin,
           new IBusCachedPlugin(
             resetVector = 0x00000010l, // Set to same reset vector expected in sw
