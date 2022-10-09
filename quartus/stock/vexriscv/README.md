@@ -46,6 +46,7 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
 ## Project Folder Structure
 
 ```
+├compilation_reports     // logged, relevent Quartus compilation reports
 ├doc                     // documentation resources (for this README)
 ├vexriscv-master         // local clone of Vexriscv repo
 │
