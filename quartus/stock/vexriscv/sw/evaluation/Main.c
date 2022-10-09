@@ -46,6 +46,7 @@ int main() {
 	// int8_t a_array[ELEMENTS] = {0};
 	// int8_t b_array[ELEMENTS] = {0};
 	// int8_t soft_array_result[ELEMENTS];
+	uint32_t a;
 	init_hex_disp();
 	p4p_disp();
 
@@ -70,6 +71,12 @@ int main() {
 	// VSRLI
 		// measure_hard_vsrli();
 		// measure_soft_vsrli();
+	// Synthetic Benchmarks
+		// Typical 2D Convolution Solution in C
+		a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0xfffcf7f0
+		a = _vmul(a, build_vec32(1, 2, 2, 2), build_vec32(1, 2, 2, 3));		// 0x01040406
+		synthetic_matrix_product_common();
+		synthetic_matrix_product_vector();
 
 		// #ifdef CUSTOM_INSTRUCT_VACC
 

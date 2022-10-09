@@ -41,7 +41,6 @@ void measure_soft_vmax_x();
 void measure_soft_vsrli();
 
 /* Helper Functions */
-
 uint32_t build_vec32(uint8_t a, uint8_t b, uint8_t c, uint8_t d);
 int8_t* fill_array(int8_t array[], int8_t a, int8_t b, int8_t c, int8_t d);
 
@@ -49,3 +48,21 @@ int8_t* fill_array(int8_t array[], int8_t a, int8_t b, int8_t c, int8_t d);
 uint32_t rdCycleOverhead();
 // Instruction Count Overhead Calc
 uint32_t rdinstretOverhead();
+
+/* Synthetic Benchmark */
+// Synthetic benchmark: 2D Convolution in C
+
+#define DIMS 4
+#define WIDTH1 DIMS+2
+#define WIDTH2 DIMS+2
+#define MASK_WIDTH1 3
+#define MASK_WIDTH2 3
+
+/* Helper Functions */
+void pad(int *s, int*d, int dim);
+void fill(uint32_t *s, uint32_t dim);
+
+void convolution_2D(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]);
+void convolution_2D_wt_instruct(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]);
+void synthetic_matrix_product();
+void synthetic_matrix_product_vector();

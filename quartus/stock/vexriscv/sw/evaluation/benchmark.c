@@ -1,6 +1,7 @@
 #include "benchmark.h"
 #include "customInstruct.h"
 
+// Software Instructions
 void soft_vmul(int8_t arr[ELEMENTS], int8_t a[ELEMENTS], int8_t b[ELEMENTS]) {
     for (int8_t i = 0; i < ELEMENTS; ++i) {
         arr[i] = a[i] * b[i];
@@ -50,7 +51,6 @@ void soft_vsrli(int8_t arr[ELEMENTS], int8_t a[ELEMENTS], int8_t s) {
         arr[i] = a[i] >> s;
     }
 }
-
 
 // Hardware instruction
 void measure_hard_vacc() {
@@ -352,7 +352,8 @@ void measure_soft_vsrli() {
     hex_write_uint(cycleElapsed, CYCLE_DISPLAY);
 }
 
-
+//------------------------------------------------------------------
+/* Helper Functions */
 // Cycle Count Overhead Calc
 uint32_t rdCycleOverhead() {
     uint32_t rdcycle0, rdcycle1;
@@ -388,4 +389,144 @@ int8_t* fill_array(int8_t array[], int8_t a, int8_t b, int8_t c, int8_t d) {
 	}
 
 	return array; // For easy inline with soft_ functions.
+}
+
+//------------------------------------------------------------------
+
+/* Helper Functions */
+// By Georage
+// Retrived from: https://stackoverflow.com/questions/32373868/how-can-i-pad-and-unpad-a-2d-matrix-with-zeros-in-c
+void pad(int *s,int*d,int dim)
+{
+    int i,j;
+    for(i=0;i<dim;i++)
+        for(j=0;j<dim;j++)
+            *(d+(i*(dim+2)+(dim+3+j)))=*(s+i*dim+j);
+}
+
+void fill(uint32_t *s, uint32_t dim)
+{
+    uint32_t i,j;
+    for(i=0;i<dim;i++)
+    {
+        for(j=0;j<dim;j++) *(s+dim*i+j)=j+1;
+    }   
+}
+
+// void prnt(uint32_t *s, uint32_t dim)
+// {
+    // uint32_t i,j;
+    // for(i=0;i<dim;i++)
+    // {
+        // for(j=0;j<dim;j++) printf("%d ",*(s+dim*i+j));
+        // printf("\n");
+    // }   
+// }
+
+// By Pleasant94 and samgak
+// Retrived from: https://stackoverflow.com/questions/41452226/c-2d-convolution
+void convolution_2D(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]) {
+
+    // find center position of kernel (half of kernel size)
+    uint32_t kCenterX = MASK_WIDTH2 / 2;
+    uint32_t kCenterY = MASK_WIDTH1 / 2;
+    
+    for (uint32_t i = 0; i < WIDTH1; ++i)              // rows
+    {
+        for (uint32_t j = 0; j < WIDTH2; ++j)          // columns
+        {
+            for (uint32_t m = 0; m < MASK_WIDTH1; ++m)     // kernel rows
+            {
+                for (uint32_t n = 0; n < MASK_WIDTH2; ++n) // kernel columns
+                {
+                    // index of input signal, used for checking boundary
+                    uint32_t ii = i + (m - kCenterY);
+                    uint32_t jj = j + (n - kCenterX);
+    
+                    // ignore input samples which are out of bound
+                    if (ii >= 0 && ii < WIDTH1 && jj >= 0 && jj < WIDTH2)
+                        P[i][j] += N[ii][jj] * M[m][n];
+                }
+            }
+        }
+    }
+}
+
+void convolution_2D_wt_instruct(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]) {
+
+    // find center position of kernel (half of kernel size)
+    uint32_t kCenterX = MASK_WIDTH2 / 2;
+    uint32_t kCenterY = MASK_WIDTH1 / 2;
+    // Load kernal sets:
+    uint32_t kernelSet[MASK_WIDTH2], imageSet[MASK_WIDTH2];
+    uint32_t resultSet;
+
+    uint32_t a,b,c;
+
+    for (uint32_t m = 0; m < MASK_WIDTH1; ++m)     // kernel rows
+    {
+        kernelSet[m] = build_vec32(0, M[m][0], M[m][1], M[m][2]);
+    }
+
+    // Multiply
+    for (uint32_t i = 0; i < WIDTH1; ++i)              // rows
+    {
+        for (uint32_t j = 0; j < WIDTH2; ++j)          // columns
+        {
+            a = N[i][j];
+            a = N[i][j+1];
+            a = N[i][j+2];
+            a = N[i+1][j];
+            a = N[i+1][j+1];
+            a = N[i+1][j+2];
+            a = N[i+2][j];
+            a = N[i+2][j+1];
+            a = N[i+2][j+2];
+
+            imageSet[0] = (N[i][j]);
+            imageSet[0] = (imageSet[0]<<8) | (N[i][j+1]);
+            imageSet[0] = (imageSet[0]<<8) | (N[i][j+2]);
+            imageSet[1] = (N[i+1][j]);
+            imageSet[1] = (imageSet[1]<<8) | (N[i+1][j+1]);
+            imageSet[1] = (imageSet[1]<<8) | (N[i+1][j+2]);
+            imageSet[2] = (N[i+2][j]);
+            imageSet[2] = (imageSet[2]<<8) | (N[i+2][j+1]);
+            imageSet[2] = (imageSet[2]<<8) | (N[i+2][j+2]);
+
+            a = (uint32_t) _vmul(resultSet, kernelSet[0], imageSet[0]); 
+            b = (uint32_t) _vmul(resultSet, kernelSet[1], imageSet[1]);
+            c = (uint32_t) _vmul(resultSet, kernelSet[2], imageSet[2]);
+
+            // Accumulate
+            P[i+1][j+1] =  _vacc(resultSet, a)+_vacc(resultSet, b)+_vacc(resultSet, c);
+        }
+    }
+}
+
+void synthetic_matrix_product_common() {
+    uint32_t input_features[DIMS][DIMS] = {0};
+    uint32_t padded_features[DIMS+2][DIMS+2] = {0};
+    uint32_t output_features[DIMS+2][DIMS+2] = {0};
+    uint32_t kernel[3][3]={{1,1,1},{1,1,1},{1,1,1}};
+    fill(input_features, DIMS);
+    pad(input_features, padded_features, DIMS);
+    // prnt(input_features, DIMS);
+    // prnt(padded_features, DIMS+2);
+    // prnt(output_features, DIMS+2);
+    convolution_2D(padded_features, kernel, output_features);
+    // prnt(output_features, DIMS+2);
+}
+
+void synthetic_matrix_product_vector() {
+    uint32_t input_features[DIMS][DIMS] = {0};
+    uint32_t padded_features[DIMS+2][DIMS+2] = {0};
+    uint32_t output_features[DIMS+2][DIMS+2] = {0};
+    uint32_t kernel[3][3]={{1,1,1},{1,1,1},{1,1,1}};
+    fill(input_features, DIMS);
+    pad(input_features, padded_features, DIMS);
+    // prnt(input_features, DIMS);
+    // prnt(padded_features, DIMS+2);
+    // prnt(output_features, DIMS+2);
+    convolution_2D_wt_instruct(padded_features, kernel, output_features);
+    // prnt(output_features, DIMS+2);
 }
