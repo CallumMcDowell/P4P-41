@@ -396,7 +396,7 @@ int8_t* fill_array(int8_t array[], int8_t a, int8_t b, int8_t c, int8_t d) {
 /* Helper Functions */
 // By Georage
 // Retrived from: https://stackoverflow.com/questions/32373868/how-can-i-pad-and-unpad-a-2d-matrix-with-zeros-in-c
-void pad(int *s,int*d,int dim)
+void pad(uint32_t *s, uint32_t *d, uint32_t dim)
 {
     int i,j;
     for(i=0;i<dim;i++)
@@ -409,7 +409,7 @@ void fill(uint32_t *s, uint32_t dim)
     uint32_t i,j;
     for(i=0;i<dim;i++)
     {
-        for(j=0;j<dim;j++) *(s+dim*i+j)=j+1;
+        for(j=0;j<dim;j++) *(s+dim*i+j)=getRand();
     }   
 }
 
@@ -425,15 +425,16 @@ void fill(uint32_t *s, uint32_t dim)
 
 // By Pleasant94 and samgak
 // Retrived from: https://stackoverflow.com/questions/41452226/c-2d-convolution
-void convolution_2D(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]) {
+// Modified to accomedate padding
+void convolution_2D_soft(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]) {
 
     // find center position of kernel (half of kernel size)
     uint32_t kCenterX = MASK_WIDTH2 / 2;
     uint32_t kCenterY = MASK_WIDTH1 / 2;
     
-    for (uint32_t i = 0; i < WIDTH1; ++i)              // rows
+    for (uint32_t i = 1; i < WIDTH1-1; ++i)              // rows
     {
-        for (uint32_t j = 0; j < WIDTH2; ++j)          // columns
+        for (uint32_t j = 1; j < WIDTH2-1; ++j)          // columns
         {
             for (uint32_t m = 0; m < MASK_WIDTH1; ++m)     // kernel rows
             {
@@ -452,15 +453,14 @@ void convolution_2D(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[
     }
 }
 
-void convolution_2D_wt_instruct(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]) {
+// Alternative convolution from convolution_2D_soft.
+// Has overhead for setting up data for HW instructions.
+void convolution_2D_vector_instruct(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]) {
 
-    // find center position of kernel (half of kernel size)
-    uint32_t kCenterX = MASK_WIDTH2 / 2;
-    uint32_t kCenterY = MASK_WIDTH1 / 2;
     // Load kernal sets:
     uint32_t kernelSet[MASK_WIDTH2], imageSet[MASK_WIDTH2];
     uint32_t resultSet;
-
+    // Temp var:
     uint32_t a,b,c;
 
     for (uint32_t m = 0; m < MASK_WIDTH1; ++m)     // kernel rows
@@ -468,65 +468,119 @@ void convolution_2D_wt_instruct(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2],
         kernelSet[m] = build_vec32(0, M[m][0], M[m][1], M[m][2]);
     }
 
-    // Multiply
-    for (uint32_t i = 0; i < WIDTH1; ++i)              // rows
+    
+    for (uint32_t i = 1; i < WIDTH1-1; ++i)              // rows
     {
-        for (uint32_t j = 0; j < WIDTH2; ++j)          // columns
+        for (uint32_t j = 1; j < WIDTH2-1; ++j)          // columns
         {
-            a = N[i][j];
-            a = N[i][j+1];
-            a = N[i][j+2];
-            a = N[i+1][j];
-            a = N[i+1][j+1];
-            a = N[i+1][j+2];
-            a = N[i+2][j];
-            a = N[i+2][j+1];
-            a = N[i+2][j+2];
+            // For Debugging
+            // a = N[i-1][j-1];
+            // a = N[i-1][j];
+            // a = N[i-1][j+1];
+            // a = N[i][j-1];
+            // a = N[i][j];
+            // a = N[i][j+1];
+            // a = N[i+1][j-1];
+            // a = N[i+1][j];
+            // a = N[i+1][j+1];
 
-            imageSet[0] = (N[i][j]);
-            imageSet[0] = (imageSet[0]<<8) | (N[i][j+1]);
-            imageSet[0] = (imageSet[0]<<8) | (N[i][j+2]);
-            imageSet[1] = (N[i+1][j]);
-            imageSet[1] = (imageSet[1]<<8) | (N[i+1][j+1]);
-            imageSet[1] = (imageSet[1]<<8) | (N[i+1][j+2]);
-            imageSet[2] = (N[i+2][j]);
-            imageSet[2] = (imageSet[2]<<8) | (N[i+2][j+1]);
-            imageSet[2] = (imageSet[2]<<8) | (N[i+2][j+2]);
+            // Setup Data
+            imageSet[0] = (N[i-1][j-1]);
+            imageSet[0] = (imageSet[0]<<8) | (N[i-1][j]);
+            imageSet[0] = (imageSet[0]<<8) | (N[i-1][j+1]);
+            imageSet[1] = (N[i][j-1]);
+            imageSet[1] = (imageSet[1]<<8) | (N[i][j]);
+            imageSet[1] = (imageSet[1]<<8) | (N[i][j+1]);
+            imageSet[2] = (N[i+1][j-1]);
+            imageSet[2] = (imageSet[2]<<8) | (N[i+1][j]);
+            imageSet[2] = (imageSet[2]<<8) | (N[i+1][j+1]);
 
+            // Multiply
             a = (uint32_t) _vmul(resultSet, kernelSet[0], imageSet[0]); 
             b = (uint32_t) _vmul(resultSet, kernelSet[1], imageSet[1]);
             c = (uint32_t) _vmul(resultSet, kernelSet[2], imageSet[2]);
 
             // Accumulate
-            P[i+1][j+1] =  _vacc(resultSet, a)+_vacc(resultSet, b)+_vacc(resultSet, c);
+            P[i][j] =  _vacc(resultSet, a)+_vacc(resultSet, b)+_vacc(resultSet, c);
         }
     }
 }
 
+uint32_t getRand() {
+    return rand() % 10;
+}
+
 void synthetic_matrix_product_common() {
+    init_hex_disp();
+    
+    uint32_t rdcycle0, rdcycle1;
+	uint32_t rdinstret0, rdinstret1;
+
     uint32_t input_features[DIMS][DIMS] = {0};
     uint32_t padded_features[DIMS+2][DIMS+2] = {0};
     uint32_t output_features[DIMS+2][DIMS+2] = {0};
-    uint32_t kernel[3][3]={{1,1,1},{1,1,1},{1,1,1}};
+    uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
+                            {getRand(),getRand(),getRand()},
+                            {getRand(),getRand(),getRand()}};
+
     fill(input_features, DIMS);
     pad(input_features, padded_features, DIMS);
     // prnt(input_features, DIMS);
     // prnt(padded_features, DIMS+2);
     // prnt(output_features, DIMS+2);
-    convolution_2D(padded_features, kernel, output_features);
+    rdinstret0 = rdinstret();
+    convolution_2D_soft(padded_features, kernel, output_features);
     // prnt(output_features, DIMS+2);
+    rdinstret1 = rdinstret();
+
+    // Clears cache (unnecessary, but included)
+    fill2(input_features, DIMS);
+    pad(input_features, padded_features, DIMS);
+
+    rdcycle0 = rdcycle();
+    convolution_2D_soft(padded_features, kernel, output_features);
+    rdcycle1 = rdcycle();
+
+    uint32_t instretElapsed = rdinstret1 - rdinstret0 - rdinstretOverhead();
+    uint32_t cycleElapsed = rdcycle1 - rdcycle0 - rdCycleOverhead();
+    hex_write_uint(instretElapsed, INSTR_DISPLAY);
+    hex_write_uint(cycleElapsed, CYCLE_DISPLAY);
 }
 
 void synthetic_matrix_product_vector() {
+    init_hex_disp();
+
+    uint32_t rdcycle0, rdcycle1;
+	uint32_t rdinstret0, rdinstret1;
+
+    rdinstret0 = 0;
+    rdinstret1 = 0;
+    rdcycle0 = 0;
+    rdcycle1 = 0; 
+
     uint32_t input_features[DIMS][DIMS] = {0};
     uint32_t padded_features[DIMS+2][DIMS+2] = {0};
     uint32_t output_features[DIMS+2][DIMS+2] = {0};
-    uint32_t kernel[3][3]={{1,1,1},{1,1,1},{1,1,1}};
+    uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
+                            {getRand(),getRand(),getRand()},
+                            {getRand(),getRand(),getRand()}};
     fill(input_features, DIMS);
     pad(input_features, padded_features, DIMS);
-    // prnt(input_features, DIMS);
-    // prnt(padded_features, DIMS+2);
-    // prnt(output_features, DIMS+2);
-    convolution_2D_wt_instruct(padded_features, kernel, output_features);
-    // prnt(output_features, DIMS+2);
+
+    rdcycle0 = rdcycle();
+    convolution_2D_vector_instruct(padded_features, kernel, output_features);
+    rdcycle1 = rdcycle();
+
+    // Clears cache (unnecessary, but included)
+    fill(input_features, DIMS);
+    pad(input_features, padded_features, DIMS);
+
+    rdinstret0 = rdinstret();
+    convolution_2D_vector_instruct(padded_features, kernel, output_features);
+    rdinstret1 = rdinstret();
+
+    uint32_t instretElapsed = rdinstret1 - rdinstret0 - rdinstretOverhead();
+    uint32_t cycleElapsed = rdcycle1 - rdcycle0 - rdCycleOverhead();
+    hex_write_uint(instretElapsed, INSTR_DISPLAY);
+    hex_write_uint(cycleElapsed, CYCLE_DISPLAY);
 }

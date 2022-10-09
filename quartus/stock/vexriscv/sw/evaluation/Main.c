@@ -50,8 +50,7 @@ int main() {
 	init_hex_disp();
 	p4p_disp();
 
-	while(1) {
-
+	// while(1) {
 		// test_hex_disp();
 	// VACC
 		// measure_hard_vacc();
@@ -73,9 +72,7 @@ int main() {
 		// measure_soft_vsrli();
 	// Synthetic Benchmarks
 		// Typical 2D Convolution Solution in C
-		a = _vmul(a, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0xfffcf7f0
-		a = _vmul(a, build_vec32(1, 2, 2, 2), build_vec32(1, 2, 2, 3));		// 0x01040406
-		synthetic_matrix_product_common();
+		// synthetic_matrix_product_common();
 		synthetic_matrix_product_vector();
 
 		// #ifdef CUSTOM_INSTRUCT_VACC
@@ -236,5 +233,5 @@ int main() {
 	// 	uint32_t instretElapsedSW = rdinstret1 - rdinstret0 - instretOverhead;
 
 	// 	z = 0;	
-	}
+	// }
 }

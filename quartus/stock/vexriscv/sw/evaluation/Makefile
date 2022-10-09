@@ -30,7 +30,7 @@ CFLAGS += -DDBUILD_VERSION=\"$(BUILD_VERSION)\"
 CFLAGS += -DDBUILD_DATE=\"$(BUILD_DATE)\"
 
 # In order: generate debug info, include debug symbols, no optimisation, optimising for size
-CFLAGS += -ggdb3 -O0 # -Os -g3 
+CFLAGS += -Os #-ggdb3 -O0 # -Os -g3 
 # Logs configuration (flag) settings
 CFLAGS += -frecord-gcc-switches
 # Other Warnings options not covered by -Wall or -Wextra

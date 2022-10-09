@@ -59,10 +59,11 @@ uint32_t rdinstretOverhead();
 #define MASK_WIDTH2 3
 
 /* Helper Functions */
-void pad(int *s, int*d, int dim);
+void pad(uint32_t *s, uint32_t *d, uint32_t dim);
 void fill(uint32_t *s, uint32_t dim);
+uint32_t getRand();
 
-void convolution_2D(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]);
-void convolution_2D_wt_instruct(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]);
+void convolution_2D_soft(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]);
+void convolution_2D_vector_instruct(uint32_t N[][WIDTH2], uint32_t M[][MASK_WIDTH2], uint32_t P[][WIDTH2]);
 void synthetic_matrix_product();
 void synthetic_matrix_product_vector();
