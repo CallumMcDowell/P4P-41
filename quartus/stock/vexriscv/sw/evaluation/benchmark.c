@@ -511,35 +511,37 @@ uint32_t getRand() {
 }
 
 void synthetic_matrix_product_common() {
-    init_hex_disp();
-    
     uint32_t rdcycle0, rdcycle1;
 	uint32_t rdinstret0, rdinstret1;
 
-    uint32_t input_features[DIMS][DIMS] = {0};
-    uint32_t padded_features[DIMS+2][DIMS+2] = {0};
-    uint32_t output_features[DIMS+2][DIMS+2] = {0};
-    uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
+    volatile uint32_t input_features[DIMS][DIMS] = {0};
+    volatile uint32_t padded_features[DIMS+2][DIMS+2] = {0};
+    volatile uint32_t output_features[DIMS+2][DIMS+2] = {0};
+    volatile uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
                             {getRand(),getRand(),getRand()},
                             {getRand(),getRand(),getRand()}};
 
-    fill(input_features, DIMS);
-    pad(input_features, padded_features, DIMS);
-    // prnt(input_features, DIMS);
-    // prnt(padded_features, DIMS+2);
-    // prnt(output_features, DIMS+2);
-    rdinstret0 = rdinstret();
-    convolution_2D_soft(padded_features, kernel, output_features);
-    // prnt(output_features, DIMS+2);
-    rdinstret1 = rdinstret();
+    // uint32_t input_features[DIMS][DIMS] = {0};
+    // uint32_t padded_features[DIMS+2][DIMS+2] = {0};
+    // uint32_t output_features[DIMS+2][DIMS+2] = {0};
+    // uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
+    //                         {getRand(),getRand(),getRand()},
+    //                         {getRand(),getRand(),getRand()}};
 
-    // Clears cache (unnecessary, but included)
-    fill2(input_features, DIMS);
+    fill(input_features, DIMS);
     pad(input_features, padded_features, DIMS);
 
     rdcycle0 = rdcycle();
     convolution_2D_soft(padded_features, kernel, output_features);
-    rdcycle1 = rdcycle();
+    rdcycle1 = rdcycle();    
+
+    // Clears cache (unnecessary, but included)
+    fill(input_features, DIMS);
+    pad(input_features, padded_features, DIMS);
+
+    rdinstret0 = rdinstret();
+    convolution_2D_soft(padded_features, kernel, output_features);
+    rdinstret1 = rdinstret();
 
     uint32_t instretElapsed = rdinstret1 - rdinstret0 - rdinstretOverhead();
     uint32_t cycleElapsed = rdcycle1 - rdcycle0 - rdCycleOverhead();
@@ -548,8 +550,6 @@ void synthetic_matrix_product_common() {
 }
 
 void synthetic_matrix_product_vector() {
-    init_hex_disp();
-
     uint32_t rdcycle0, rdcycle1;
 	uint32_t rdinstret0, rdinstret1;
 
@@ -558,12 +558,20 @@ void synthetic_matrix_product_vector() {
     rdcycle0 = 0;
     rdcycle1 = 0; 
 
-    uint32_t input_features[DIMS][DIMS] = {0};
-    uint32_t padded_features[DIMS+2][DIMS+2] = {0};
-    uint32_t output_features[DIMS+2][DIMS+2] = {0};
-    uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
+    volatile uint32_t input_features[DIMS][DIMS] = {0};
+    volatile uint32_t padded_features[DIMS+2][DIMS+2] = {0};
+    volatile uint32_t output_features[DIMS+2][DIMS+2] = {0};
+    volatile uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
                             {getRand(),getRand(),getRand()},
                             {getRand(),getRand(),getRand()}};
+
+    // uint32_t input_features[DIMS][DIMS] = {0};
+    // uint32_t padded_features[DIMS+2][DIMS+2] = {0};
+    // uint32_t output_features[DIMS+2][DIMS+2] = {0};
+    // uint32_t kernel[3][3]={ {getRand(),getRand(),getRand()},
+    //                         {getRand(),getRand(),getRand()},
+    //                         {getRand(),getRand(),getRand()}};
+
     fill(input_features, DIMS);
     pad(input_features, padded_features, DIMS);
 
