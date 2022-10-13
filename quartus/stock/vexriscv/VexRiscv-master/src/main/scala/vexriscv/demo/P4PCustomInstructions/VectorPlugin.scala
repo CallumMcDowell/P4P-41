@@ -9,9 +9,11 @@ import scala.collection.mutable.ListBuffer
 
 /* Vector Plugin
 
-32-bit or 4*8-bit segments vector elements.
+Each instruction works with 32-bit unsigned values as a fixed
+vector size or 4*8-bit segments representing int8 values as
+the vector elements.
 
-This plugin will add the following new instructions:
+The `Vector Plugin` will add the following new instructions:
 
 -  R-Type
   - VMUL: Element-wise vector-vector multiplication
@@ -41,15 +43,16 @@ class VectorPlugin extends Plugin[VexRiscv]{
   // |  custom-0   |   (01010)   |
   // |  custom-1   |   (01001)   |
   // The inst[14:12] A.K.A. func3 still act as operation distinguishing field
-  def CUSTOM0_RS1        = M"000000000000-----010-----0001011" //
+  // All used opcode will have a trailing comment
+  def CUSTOM0_RS1        = M"000000000000-----010-----0001011" // used
   def CUSTOM0_RS1_RS2    = M"-----------------011-----0001011"
   def CUSTOM0_RD         = M"-----------------100-----0001011"
   def CUSTOM0_RD_RS1     = M"-----------------110-----0001011"
-  def CUSTOM0_RD_RS1_RS2 = M"-----------------111-----0001011"
+  def CUSTOM0_RD_RS1_RS2 = M"-----------------111-----0001011" // used
   def CUSTOM1            = M"-----------------000-----0101011"
-  def CUSTOM1_RS1_VMAXE  = M"0000000----------010-----0101011" //
-  def CUSTOM1_RS1_VMINE  = M"0000001----------010-----0101011" //
-  def CUSTOM1_RS1_RS2    = M"-----------------011-----0101011" //
+  def CUSTOM1_RS1_VMAXE  = M"0000000----------010-----0101011" // used
+  def CUSTOM1_RS1_VMINE  = M"0000001----------010-----0101011" // used
+  def CUSTOM1_RS1_RS2    = M"-----------------011-----0101011" // used
   def CUSTOM1_RD         = M"-----------------100-----0101011"
   def CUSTOM1_RD_RS1     = M"-----------------110-----0101011"
   def CUSTOM1_RD_RS1_RS2 = M"-----------------111-----0101011"
@@ -82,7 +85,8 @@ class VectorPlugin extends Plugin[VexRiscv]{
   def CUSTOM3_RD_RS1_RS2 = M"-----------------111-----1111011"
 */
 
-  //Define the concept of IS_VACC signals, which specify if the current instruction is destined for ths plugin
+  // Define the signals used to identify the instructions,
+  // which specify if the current instruction is destined for ths plugin
   object IS_VMUL extends Stageable(Bool)
   object IS_VACC extends Stageable(Bool)
   object IS_VMAXE extends Stageable(Bool)
@@ -90,7 +94,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
   object IS_VMAX_X extends Stageable(Bool)
   object IS_VSLRI extends  Stageable(Bool)
 
-  //Callback to setup the plugin and ask for different services
+  // Callback to setup the plugin and ask for different services
   override def setup(pipeline: VexRiscv): Unit = {
     import pipeline.config._
 
@@ -110,7 +114,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       Instruction encoding :
       -----------------111-----0001011
-        func7|RS2||RS1|   |RD |CUSTOM1_RS1
+        func7|RS2||RS1|   |RD |CUSTOM0_RD_RS1_RS2
     --------------------------------------------------------------
     */
 
@@ -174,7 +178,7 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       Instruction encoding :
       0000000----------010-----0101011
-        func7|RS2||RS1|   |RD |CUSTOM1_RS1
+        func7|RS2||RS1|   |RD |CUSTOM1_RS1_VMAXE
     --------------------------------------------------------------
     */
 
@@ -354,15 +358,11 @@ class VectorPlugin extends Plugin[VexRiscv]{
 
       var sum = S(0, 32 bits)
 
-      // Element-wise shift
+      // Accumulate subdivided segments
       rs1_vec.foreach {
         case (rs1) =>
           sum = sum + rs1.asSInt.resized
       }
-//      temp0 := rs1(7 downto 0).asSInt.resized
-//      temp1 := rs1(15 downto 8).asSInt.resized
-//      temp2 := rs1(23 downto 16).asSInt.resized
-//      temp3 := rs1(31 downto 24).asSInt.resized
       rd := sum
 
       //When the instruction is a SIMD_ADD one, then write the result into the register file data path.
