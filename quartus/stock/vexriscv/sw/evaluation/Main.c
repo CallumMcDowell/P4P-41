@@ -72,7 +72,7 @@ int main() {
 		// measure_soft_vsrli();
 	// Synthetic Benchmarks
 		// Typical 2D Convolution Solution in C
-		synthetic_matrix_product_common();
+		// synthetic_matrix_product_common();
 		// synthetic_matrix_product_vector();
 
 		// #ifdef CUSTOM_INSTRUCT_VACC
