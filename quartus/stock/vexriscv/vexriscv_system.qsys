@@ -62,6 +62,69 @@
          type = "String";
       }
    }
+   element hex01
+   {
+      datum _sortIndex
+      {
+         value = "7";
+         type = "int";
+      }
+   }
+   element hex01.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "65568";
+         type = "String";
+      }
+   }
+   element hex23
+   {
+      datum _sortIndex
+      {
+         value = "8";
+         type = "int";
+      }
+   }
+   element hex23.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "65536";
+         type = "String";
+      }
+   }
+   element hex45
+   {
+      datum _sortIndex
+      {
+         value = "9";
+         type = "int";
+      }
+   }
+   element hex45.s1
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "65600";
+         type = "String";
+      }
+   }
    element jtag_uart_0
    {
       datum _sortIndex
@@ -134,6 +197,21 @@
    internal="gpio.external_connection"
    type="conduit"
    dir="end" />
+ <interface
+   name="hex01"
+   internal="hex01.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="hex23"
+   internal="hex23.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="hex45"
+   internal="hex45.external_connection"
+   type="conduit"
+   dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
  <interface name="vexriscvavalon_0_jtag" internal="VexRiscvAvalon_0.jtag" />
  <interface
@@ -198,6 +276,48 @@
   <parameter name="irqType" value="LEVEL" />
   <parameter name="resetValue" value="0" />
   <parameter name="simDoTestBenchWiring" value="true" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
+ </module>
+ <module name="hex01" kind="altera_avalon_pio" version="21.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="true" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
+ </module>
+ <module name="hex23" kind="altera_avalon_pio" version="21.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="true" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="32" />
+ </module>
+ <module name="hex45" kind="altera_avalon_pio" version="21.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="true" />
+  <parameter name="captureEdge" value="false" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Output" />
+  <parameter name="edgeType" value="RISING" />
+  <parameter name="generateIRQ" value="false" />
+  <parameter name="irqType" value="LEVEL" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="32" />
  </module>
@@ -477,6 +597,33 @@
    kind="avalon"
    version="21.1"
    start="VexRiscvAvalonMaxPerf_0.dBusAvalon"
+   end="hex01.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00010020" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="21.1"
+   start="VexRiscvAvalonMaxPerf_0.dBusAvalon"
+   end="hex23.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00010000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="21.1"
+   start="VexRiscvAvalonMaxPerf_0.dBusAvalon"
+   end="hex45.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00010040" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="21.1"
+   start="VexRiscvAvalonMaxPerf_0.dBusAvalon"
    end="onchip_memory2_0.s2">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
@@ -544,6 +691,9 @@
    end="VexRiscvAvalonMaxPerf_0.clk" />
  <connection kind="clock" version="21.1" start="clk_0.clk" end="pll_0.refclk" />
  <connection kind="clock" version="21.1" start="pll_0.outclk0" end="gpio.clk" />
+ <connection kind="clock" version="21.1" start="pll_0.outclk0" end="hex01.clk" />
+ <connection kind="clock" version="21.1" start="pll_0.outclk0" end="hex23.clk" />
+ <connection kind="clock" version="21.1" start="pll_0.outclk0" end="hex45.clk" />
  <connection
    kind="clock"
    version="21.1"
@@ -588,6 +738,9 @@
    version="21.1"
    start="clk_0.clk_reset"
    end="VexRiscvAvalonMaxPerf_0.reset" />
+ <connection kind="reset" version="21.1" start="clk_0.clk_reset" end="hex01.reset" />
+ <connection kind="reset" version="21.1" start="clk_0.clk_reset" end="hex23.reset" />
+ <connection kind="reset" version="21.1" start="clk_0.clk_reset" end="hex45.reset" />
  <connection
    kind="reset"
    version="21.1"

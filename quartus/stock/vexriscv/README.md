@@ -46,6 +46,7 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
 ## Project Folder Structure
 
 ```
+├compilation_reports     // logged, relevent Quartus compilation reports
 ├doc                     // documentation resources (for this README)
 ├vexriscv-master         // local clone of Vexriscv repo
 │
@@ -420,11 +421,13 @@ section .text
 
 # Custom Instruction Design (WIP, Complete when instructions are all implemented)
 
-32-bit or 4*8-bit segments vector elements.
+ All instructions implemented under one plugin: `VectorPlugin` under `vexriscv/demo/P4PCustomInstructions/VectorPlugin.scala`. The following can also be found under the plugin's header comment:
+ 
+Each instruction works with 32-bit unsigned values as a fixed vector size or 4*8-bit segments representing int8 values as the vector elements.
 
 The `Vector Plugin` will add the following new instructions:
 
-- **R-Type**
+-  **R-Type**
   - **VMUL:** Element-wise vector-vector multiplication
     - Overflow undefined.
     - ret: (32-bit) vector of 4*8-bit segments
@@ -437,9 +440,9 @@ The `Vector Plugin` will add the following new instructions:
   - **VMAX.X:** Element-wise vector-scalar comparision to find larger of the two for that position
     - ret: (32-bit) vector of 4*8-bit segments
 
-- **I-Type**
+- I-Type
   - **VSRLI:** Element-wise vector-immediate logical shift right.
-    - ret: (32-bit) vector of 4*-*8-bit segments.
+    - ret: (32-bit) vector of 4*8-bit segments.
 
 # Performance Evaluation
 
