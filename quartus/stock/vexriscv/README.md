@@ -423,26 +423,26 @@ section .text
 
  All instructions implemented under one plugin: `VectorPlugin` under `vexriscv/demo/P4PCustomInstructions/VectorPlugin.scala`. The following can also be found under the plugin's header comment:
  
-> Each instruction works with 32-bit unsigned values as a fixed vector size or 4*8-bit segments representing int8 values as the vector elements.
-> 
-> The `Vector Plugin` will add the following new instructions:
-> 
-> -  R-Type
->   - VMUL: Element-wise vector-vector multiplication
->     - Overflow undefined.
->     - ret: (32-bit) vector of 4*8-bit segments
->   - VACC: Accumulate (8-bit) vector contents
->     - ret: (32-bit) scalar
->   - VMAXE: Find largest element in vector
->     - ret: (32-bit) scalar
->   - VMINE: Find smallest element in vector
->     - ret: (32-bit) scalar
->   - VMAX.X: Element-wise vector-scalar comparision to find larger of the two for that position
->     - ret: (32-bit) vector of 4*8-bit segments
-> 
-> - I-Type
->   - VSRLI: Element-wise vector-immediate logical shift right.
->     - ret: (32-bit) vector of 4*8-bit segments.
+Each instruction works with 32-bit unsigned values as a fixed vector size or 4*8-bit segments representing int8 values as the vector elements.
+
+The `Vector Plugin` will add the following new instructions:
+
+-  **R-Type**
+  - **VMUL:** Element-wise vector-vector multiplication
+    - Overflow undefined.
+    - ret: (32-bit) vector of 4*8-bit segments
+  - **VACC:** Accumulate (8-bit) vector contents
+    - ret: (32-bit) scalar
+  - **VMAXE:** Find largest element in vector
+    - ret: (32-bit) scalar
+  - **VMINE:** Find smallest element in vector
+    - ret: (32-bit) scalar
+  - **VMAX.X:** Element-wise vector-scalar comparision to find larger of the two for that position
+    - ret: (32-bit) vector of 4*8-bit segments
+
+- I-Type
+  - **VSRLI:** Element-wise vector-immediate logical shift right.
+    - ret: (32-bit) vector of 4*8-bit segments.
 
 # Performance Evaluation
 
