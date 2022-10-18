@@ -9,7 +9,7 @@
 
 - Morteza Biglari-Abhari 
 
-This is the project implementing a simple Vexriscv system through qsys with the generated `.v` file and `tcl` component from `Qsysfy()`. We designed and implemented a brownfield extnesion on the RISC V ISA.
+This is the project implementing a simple Vexriscv system through qsys with the generated `.v` file and `tcl` component from `Qsysfy()`. We designed and implemented a brownfield vector extnesion on the RISC V ISA.
 
 This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/ARIES-Embedded/riscv-on-max10) of the Vexriscv core to as an example to compare to test, develope software on when our custom core is not avaliable.
 
@@ -23,7 +23,7 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
 - **SW (macro, for other programs, see the installation log):**
   - Ubuntu 22.04 LTS
   - Quartus (Quartus Prime 21.1) Lite Edition
-  - **Others:** A typed up log of all installations ever done on Hao Lin's Ubuntu 22.04 LTS system during the lifespan of this project is provided in `../Workstation Setup`.
+  - **Others:** A type-up log of all installations ever done on Hao Lin's Ubuntu 22.04 LTS system during the lifespan of this project is provided in `../Workstation Setup`.
 
 ---
 
@@ -42,25 +42,37 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
   1. Build the generation definitions as a `CustomInstruction` plugin extension.
   2. Accomedate the custom instruction opcode in assembly.
   3. Validate and test the instruction in SW.
+- [Design Evaluation](-)
+
+
+## QuickStart
+
+-
 
 ## Project Folder Structure
 
 ```
+├compilation_reports     // logged, relevent Quartus compilation reports
+├cores                   // generated core sources of the CPU
+│...
 ├doc                     // documentation resources (for this README)
-├vexriscv-master         // local clone of Vexriscv repo
-│
-...
+├firmware                // cmake firmware built from scratch (might be outdated? @Callum?). 
+├images                  // figures for this README
+│...
 ├openOCD                 // cfg files for openOCD
 │├interface
 ││├...                          // cfg for the JTAG probe used
 │└cfg                
 ││├vexriscv_init.cfg            // sets up parameters that are specific to the VexRiscv configuration of design
 ││└vexriscv_init.yaml           // Vexriscv design info (generated in Spinal)
-├cores                   // generated core sources of the CPU
-├firmware                // cmake firmware built from scratch (might be outdated? @Callum?). 
+├prebuilt                       // collection of precompiled images for FPGA.
+│...
 ├sw                      // makefile firmware taken from AriesEmbedded project.
-│├...
-│└out                    // binary output (we are using .mif)
+│├evaluation             // project for design evaluation and performance measurements
+│├test                   // project for verification and validation instruction design
+││├... 
+││└out                    // binary output (we are using .mif)
+├vexriscv-master         // local clone of Vexriscv repo
 ...
 # The following are either project files or generated files by Quartus/Qsys
 ├db
@@ -70,7 +82,7 @@ This project includes an [ArieEmbedded Wrapper Adoptation](https://github.com/AR
 ```
 
 **Note:**
-`sw` and `openOCD` is expected to be run from their respective folders (in terminal).
+`sw` and `openOCD` is expected to be run from their respective folders (in terminal). For example, making the `test` software project will require the `make` command to be run under the `test` folder. 
 
 ---
 
@@ -82,12 +94,12 @@ There are three major regions of work:
 2. **Qsys Setup:** in qsys, in `./vexriscv_system.qsys`. generates the qsys system for HW synthesis.
 3. **Quartus Setup+Toplevel:** in Quartus Prime Project and `toplevel.vhd`. Generates `.sof` bitstream to configure the FPGA.
 
-## Method
+## Developement Method
 
 If something Goes wrong, check out the [QNA](#quartus-qna) at the bottem of this document.
 
 0. Convince yourself you know:
-   - How to use the de1-SoC's cyclone V FPGA part (hint: there is a lot of stuff on the evaluation board, pheriherals etc). We will *not be using the HPS system*.
+   - How to program the de1-SoC's cyclone V FPGA part (hint: there is a lot of stuff on the evaluation board, pheriherals etc). We will *not be using the HPS system*.
    - How to deal with Quartus prime.
 1. Generate the core in the scala project under `VexRiscv-master` and copy to `cores`.
 2. Find and include the core in qsys. Convince yourself of the wirings of the conduits. See the [vexriscv_system.qsys](#qsys-vexriscvsystem).
@@ -98,15 +110,15 @@ If something Goes wrong, check out the [QNA](#quartus-qna) at the bottem of this
 
 ## VexRiscv Core (Scala project)
 
-Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonFullNoMmuMaxPerf`. The generated files (HDL and `yaml`) is placed under `cores/VexRiscvAvalonMaxPerf` to be included by qsys (to include in Quartus, open `qsys->tools->options` and add the path to `cores/`). The `.yaml` is used for [debugging in openOCD](#debugging-with-openocdgdb)
+Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonFullNoMmuMaxPerf`. The generated files (RTL and `yaml`) is placed under `cores/VexRiscvAvalonMaxPerf` to be included by qsys (to include in Quartus, open `qsys->tools->options` and add the path to `cores/`). The `.yaml` is used for [debugging in openOCD](#debugging-with-openocdgdb)
 
 **Notes:**
 
 - Vexriscv is **active low**.
 
-### Before Using the generated HDL core in Qsys
+### Before Using the generated RTL core in Qsys
 
-- Define ``define SYNTHESIS` in file.
+- Define `SYNTHESIS` in the generated `.v` file.
 - Ensure `iorange` and `resetvector` is correcly configured with the software HAL specifications found in `./sw/FpgaConfig.h` (for gpio for example). For **BOTH** the scala and the generated `.v`, check for:
   - **SimplePlugin**
     - C_RESET_VECTOR
@@ -128,7 +140,7 @@ Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonF
 ### Vectors
 
 0. Vexriscv CPU is **active low**, wire all neglected input ports to ‘0’ (i.e. `Softwareinterrupt`)
-    **Note:** interrupt_receive port through the `VexInterruptController.vhd` is threaded through many intermediate signals, but generally: `top-level input -> interrupt_controller -[back out as exception]-> CPU`
+   - **Note:** interrupt_receive port through the `VexInterruptController.vhd` is threaded through many intermediate signals, but generally: `top-level input -> interrupt_controller -[back out as exception]-> CPU`
 
 1. Assign instruction vector. There are three vectors to be aware of: `ibus_reset`, `ibus_exception`, and `static_io` regions. The SW need to be aware of ibus reset vector, OCRM origin vector for the dual port onchip-RAM (found in `./sw/link.ld`), and the memroy mapped `gpio` vector (instantiated in quartus).
 
@@ -137,8 +149,8 @@ Core used is a modified version of `GenFullNoMmuMaxPerf` modified as `GenAvalonF
 Borrowed & modified from the Aries Embedded project. Some considerations to keep in mind:
 
 - **Clock:** Included a pll for future `clk` changes.
-- JTAG interface need to be exported to be connected for [debugging](#debugging-with-openocdgdb).
-- The Interrupts (`timerInterrupt`, `externalInterrupt`, `softwareInterrupt`) are currently left open. need to port the software controller if we are going to use the functions that depends on the interrupt.
+- **JTAG Interface:** need to be exported to be connected for [debugging](#debugging-with-openocdgdb).
+- **The Interrupts:** (`timerInterrupt`, `externalInterrupt`, `softwareInterrupt`) are left open. need to port the software controller if we are going to use the functions that depends on the interrupt.
 - **OCRAM:** A single dual port access on-chip memory serves as both the data and the instructions memory. The settings are consistent with the `./sw/link.ld` settings (32K). This memory will be loaded with an `.mif` executable binary in the project root at synthesis.
 
 Unlike an automatically generated `.sopinfo` for Intel's native Nios II processors, the barebone software needs to know some info from the system to function:
@@ -151,7 +163,7 @@ Unlike an automatically generated `.sopinfo` for Intel's native Nios II processo
 
 ## TopLevel VHDL
 
-Most documentation in the commenbs. More verbose notes documented here.
+Most documentation in the comments. More verbose notes documented here.
 
 ### To switch between the aries_embedded core and our own cores:
 
@@ -159,12 +171,12 @@ Most documentation in the commenbs. More verbose notes documented here.
 1. Switch wiring between the cores in Qsys (just enable and disable the cores if the wiring had been done).
    - Might need to reconnect some conduits to get rid of the warnings.
 2. If:
-   - **Using our own core:**
+   - **Using our own `GenFullMmuMaxperf` core:**
       1. Switch the included files to the `.qip` for the inclusion of the qsys system.
       2. Include the system as an entity.
    - **Using the `GEN_ARIES_EMBEDDED`**.
       1. Switch the included files to the `.qsys` for the inclusion of the qsys system.
-      2. Include the system as an entity.
+      2. Include the system as an component.
 
 ---
 
@@ -173,10 +185,10 @@ Most documentation in the commenbs. More verbose notes documented here.
 There are four major regions of work:
 
 1. **Toolchain process:** from c code to executable. Sets up the compilation tools.
-2. **Software project Setup:** we are doing "barebone" programming. We'd have to cealry setup the memory mapped pheripherials (OCRAM, gpio etc.) as `.S`, `.h`, `.ld` and `makefile`. So that we actually uses the tools from (1.) to build the executable binaries.
+2. **Software project Setup:** we are doing "barebone" programming. We'd have to clearly setup the memory mapped pheripherials (OCRAM, gpio etc.) as `.S`, `.h`, `.ld` and `makefile`. So that we actually uses the tools from (1.) to build the executable binaries.
 3. **Firmware program Developement:** in c. using the setup of (2.).
-4. **Debugging:** in openOCD+GDB directly tapping into the JTAG brideg on the debugger implemented internally by Vexriscv. Also performs validation on our memory usage.
-5. ... Any more?
+4. **Debugging:** in `openOCD+GDB` directly tapping into the JTAG brideg on the debugger implemented internally by Vexriscv. Verifies instructions implemented and validates results. Also performs validation on our memory usage.
+5. **Evaluation:** perform perfomance analysis with a synthetic benchmarks. Collects data on instruction and clock cycle count elapsed.  
 
 ## RISC-V Toolchain
 
@@ -217,6 +229,8 @@ To do.
 
 - Power off both target board and cable before plugging.
 - **de1-SoC I/O Interface:** 3.3V TTL
+- `debug.sh` is provided to run the debugging process (after it is setup).
+  - **Tip:** Reload the gdbgui when loading new binaries to avoid any potnetial unexpected error.
 
 ## Setup
 
@@ -296,6 +310,8 @@ gdbgui -g '/opt/riscv/bin/riscv64-unknown-elf-gdb -q bootrom.elf -ex "target ext
 - [openOCD, Vexrescv and Traps](https://github.com/tomverbeure/vexriscv_ocd_blog)
 - [OpenOCD Project Setup](https://openocd.org/doc/html/OpenOCD-Project-Setup.html)
 
+---
+
 ## GDB (RISC-V, shipped with the GNU toolchain)
 
 ### GDB Resources:
@@ -310,7 +326,7 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 **Notes:**
 - [Register UI Broken (29/08/22)](https://github.com/cs01/gdbgui/issues/406).
 - The GUI is greate of looking, not so great for issuing commands (such as breaking the program).
-- Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more.
+- Currently a bit confused over the `interrupt` and `ctrl+c` halts. Need to inestigate GDB more. 
 - You can `load` an `.elf` into OCRAM. Launch the gdbgui, load via the GUI first, then input the `load` command via terminal.
 - `monitor reset halt` will halt the CPU.
 - `target extended-remote localhost:3333`
@@ -319,15 +335,17 @@ Install [gdbgui](https://www.gdbgui.com/) via `pip3`.
 
 - [gdb QuickStart](https://web.eecs.umich.edu/~sugih/pointers/gdbQS.html)
 
+---
+
 ## SW Accomedation for custom instruction extension
 
 There are three major regions of work:
 
-1. **CustomInstructionPlugin:** from scala design to verilog design. Implements the instructions.
+1. **CustomInstructionPlugin:** from scala design to verilog design. Implements the instructions in `VectorPlugin.scala`.
 2. **SW Accomedation for Included Instruction:** in assembly macro. Adds machine code for instruction in sw.
    - Combination of riscv assembly and c program passings.
 
-And Read [RISC-V Assembly Programmer's Manual](https://github.com/riscv-non-isa/riscv-asm-manual/blob/master/riscv-asm.md). And [Riscv Machines Depenednt Asembly Features](https://www.rowleydownload.co.uk/arm/documentation/gnu/as/RISC_002dV_002dDependent.html#RISC_002dV_002dDependent).
+And Read [RISC-V Assembly Programmer's Manual](https://github.com/riscv-non-isa/riscv-asm-manual/blob/master/riscv-asm.md). And [Riscv Machines Depenednt Asembly Features](https://www.rowleydownload.co.uk/arm/documentation/gnu/as/RISC_002dV_002dDependent.html#RISC_002dV_002dDependent). If more detailed infomation is needed, review [rvalp](https://github.com/johnwinans/rvalp).
 
 ### Rational
 
@@ -387,7 +405,7 @@ rohan:2186$
      2. Under `.text` region, define the name label for the function representing the instruction. 
   2. Use the function in sw.
 
-From [Pass an argument from C to assembly?](https://stackoverflow.com/questions/4330604/pass-an-argument-from-c-to-assembly)
+### [Pass an argument from C to assembly?](https://stackoverflow.com/questions/4330604/pass-an-argument-from-c-to-assembly)
 ```c
 // main.c
 extern void myFunc(char * somedata);
@@ -418,11 +436,13 @@ section .text
 
 # Custom Instruction Design (WIP, Complete when instructions are all implemented)
 
-32-bit or 4*8-bit segments vector elements.
+ All instructions implemented under one plugin: `VectorPlugin` under `vexriscv/demo/P4PCustomInstructions/VectorPlugin.scala`. The following can also be found under the plugin's header comment:
+ 
+Each instruction works with 32-bit unsigned values as a fixed vector size or 4*8-bit segments representing int8 values as the vector elements.
 
 The `Vector Plugin` will add the following new instructions:
 
-- **R-Type**
+-  **R-Type**
   - **VMUL:** Element-wise vector-vector multiplication
     - Overflow undefined.
     - ret: (32-bit) vector of 4*8-bit segments
@@ -435,9 +455,77 @@ The `Vector Plugin` will add the following new instructions:
   - **VMAX.X:** Element-wise vector-scalar comparision to find larger of the two for that position
     - ret: (32-bit) vector of 4*8-bit segments
 
-- **I-Type**
+- I-Type
   - **VSRLI:** Element-wise vector-immediate logical shift right.
-    - ret: (32-bit) vector of 4*-*8-bit segments.
+    - ret: (32-bit) vector of 4*8-bit segments.
+
+![](./images/opcodespace.png)
+
+---
+
+# Performance Evaluation
+
+- **Metrics:**
+  - Instruction Counts
+  - Cycle counts
+
+- **Measurement options:**
+  - control status registers (csr)
+    - `mcycle` (`ucycle`)
+      - ArieEmbedded's `rdcycle`, `rdinstret`
+    - `mtime` (`utime`)
+  - HW 32-bit counter on clock -> feeding into Vexriscv's gpio to be read on demand.
+
+![CSR Timers and Counters](./images/CSR%20Timers%20and%20Counters.png)
+
+## `mcycle` counter
+
+- Notes when using with gdbgui debugging:
+  - On startup, garbage value may be stored in browser cache, run whatever test at least three times to clear the value (either in program or when debugging)
+  - Running in dubugger and free-running produces different cycle counts (as clock is not halted when CPU is). The most accurate measuements are taken when the core is left-free running and then commanding `interrupt` in the terminal to resume the debugger to inspect the logged infomation.
+
+## Method:
+
+See Word Doc: `Instruction Performance Measurements: Methodology`.
+
+### Instructions:
+
+1. Comment out all unrelated programs. Only one of the following function should run:
+```c
+	// VACC
+		// measure_hard_vacc();
+		// measure_soft_vacc();
+	// VMUL
+		// measure_hard_vmul();
+		// measure_soft_vmul();
+	// VMAXE
+		// measure_hard_vmaxe();
+		// measure_soft_vmaxe();
+	// VMINE
+		// measure_hard_vmine();
+		// measure_soft_vmine();
+	// VMAX.X
+		// measure_hard_vmax_x();
+		// measure_soft_vmax_x();
+	// VSRLI
+		// measure_hard_vsrli();
+		// measure_soft_vsrli();
+	// Synthetic Benchmarks
+		// Typical 2D Convolution Solution in C
+		// synthetic_matrix_product_common();
+		// synthetic_matrix_product_vector();
+```
+2. Go through the same process as [debugging](#debugging-with-openocdgdb) before using the gdbgui interface.
+3. Use GDB command `load`, then `continue` to execute program and inspect HEX display. 
+4. Completely reprogram the FPGA and repeat steps 2 to 3 twice as per he General Experimental Wokrflow as found in `Instruction Performance Measurements: Methodology`.
+  - If a measurement is questionable, repeat process an additional time.
+5. Repeat for each instruction.
+
+# Technical Summary
+
+![](./images/Technical%20Summery.png)
+
+---
 
 # Quartus QNA:
 

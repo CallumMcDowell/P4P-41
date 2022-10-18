@@ -20,35 +20,15 @@ DEALINGS IN THE SOFTWARE. */
 
 #include <stdint.h>
 
-#include "FpgaConfig.h"
-#include "Hal.h"
+#include "hal/FpgaConfig.h"
+#include "hal/Hal.h"
 
-/* Define either or*/
 // #define ARIES_EMBEDDED_CORE
 // #define TEST_GPIO_LED
-
-/* Part of above either or */
 #define CUSTOM_INSTRUCT
-// Optional test benches
-#define CUSTOM_INSTRUCT_VACC
-#define CUSTOM_INSTRUCT_VMAXE_VMINE
 
 #ifdef CUSTOM_INSTRUCT
 uint32_t _simd_add(uint32_t r2, uint32_t r1, uint32_t rd);
-
-// P4P Custom Instructions
-// ---------------------------------------
-// Must Have
-// ---------------------------------------
-#ifdef CUSTOM_INSTRUCT_VACC
-uint32_t _vacc(uint32_t rd, uint32_t r1);
-#endif
-#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
-uint32_t _vmaxe(uint32_t rd, uint32_t r1);
-uint32_t _vmine(uint32_t rd, uint32_t r1);
-uint32_t _vmax_x(uint32_t rd, uint32_t r1, uint32_t r2);
-#endif
-
 #endif
 
 #ifdef ARIES_EMBEDDED_CORE
@@ -80,14 +60,6 @@ void write_to_port(uint32_t x) {
 	g_Pio->port = x;
 }
 
-uint32_t build_vec32(uint8_t a, uint8_t b, uint8_t c, uint8_t d) {
-	uint32_t ret = a;
-	ret = (ret << 8) | b;
-	ret = (ret << 8) | c;
-	ret = (ret << 8) | d;
-	return ret;
-}
-
 int main() {
 
 #ifdef ARIES_EMBEDDED_CORE
@@ -116,48 +88,29 @@ int main() {
 
 #ifdef CUSTOM_INSTRUCT
 
-	int32_t x, y, z;
-	x = 0x01010000;
-	y = 0x00000101;
-	z = 0x10000000;
+	uint32_t x, y, z;
+	// x = 0x01010000;
+	// y = 0x00000101;
+	// z = 0x00000000;
+	x = 2;
+	y = 255;
+	z = 4;
 
 	while(1) {
-#ifdef CUSTOM_INSTRUCT_VACC
-		z = _vacc(z, build_vec32(-1,-1,-1,-1));				// -4(signed) 1020 (unsigned)
-		z = _vacc(z, build_vec32(15,15,15,15));				// 60 (signed) 60 (unsigned)
-		z = _vacc(z, build_vec32(-128,-128,-128,-128));		// -512 (signed) 512 (unsigned)
-#endif // CUSTOM_INSTRUCT_VACC
+		write_to_port(add(x, 1));
+		write_to_port(x);
+		write_to_port(y);
+		write_to_port(z);
+		
+		// a = b + c;
+		// add(a, b, c)
+		
+		_simd_add(x, y, z);
+		write_to_port(z);
+		// TODO: fix reg ordering so that rd -> a0
 
-#ifdef CUSTOM_INSTRUCT_VMAXE_VMINE
-
-		z = _vmaxe(z, build_vec32(-1, -2, -3, -4)); // -1
-		z = _vmaxe(z, build_vec32(1, 2, 3, 4));		// 4
-		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
-		z = _vmaxe(z, build_vec32(0, 0, 0, 0));		// 0
-		z = _vmaxe(z, build_vec32(-8, 8, 9, -8));	// 9
-		z = _vmaxe(z, build_vec32(9, -8, -8, 8));	// 9
-		z = _vmaxe(z, build_vec32(-8, -8, -8, -8));	// -8
-
-		z = _vmine(z, build_vec32(-1, -2, -3, -4)); // -4
-		z = _vmine(z, build_vec32(1, 2, 3, 4));		// 1
-		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
-		z = _vmine(z, build_vec32(0, 0, 0, 0));		// 0
-		z = _vmine(z, build_vec32(-8, 8, 9, -8));	// -8
-		z = _vmine(z, build_vec32(9, -8, -8, 8));	// -8
-		z = _vmine(z, build_vec32(-8, -8, -8, -8));	// -8
-
-		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(0, 0, 0, 0));		// 0x01020304
-		z = _vmax_x(z, build_vec32(0, 0, 0, 0), build_vec32(-1, -2, -3, -4));	// 0x00000000
-		z = _vmax_x(z, build_vec32(-1, -2, -3, -4), build_vec32(1, 2, 3, 4));	// 0x01020304
-		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(-1, -2, -3, -4));	// 0x01020304
-		z = _vmax_x(z, build_vec32(1, 2, 3, 4), build_vec32(4, -2, -3, 4));		// 0x04020304
-		z = _vmax_x(z, build_vec32(-1, -9, -8, 4), build_vec32(4, -2, -3, 4));	// 0x04fefd04
-
-
-#endif // CUSTOM_INSTRUCT_VMINE
-
-		// Included to test compatibility with other custom instructions.
-		z = _simd_add(z, x, y);
+		z = _simd_add(x, y, z);
+		write_to_port(z);
 	}
 #endif
 

@@ -35,7 +35,7 @@ object GenAvalonFullNoMmuMaxPerf {
 //            resetVector = 0x80000000l, // TODO: SET 0x0..0!?
 //            relaxedPcCalculation = false
 //          ),
-          new SimdAddPlugin,
+//          new SimdAddPlugin,
           new VectorPlugin,
           new IBusCachedPlugin(
             resetVector = 0x00000010l, // Set to same reset vector expected in sw
@@ -95,7 +95,7 @@ object GenAvalonFullNoMmuMaxPerf {
           ),
           new MulPlugin,
           new DivPlugin,
-          new CsrPlugin(CsrPluginConfig.small),
+          new CsrPlugin(CsrPluginConfig.all),
           new DebugPlugin(ClockDomain.current.clone(reset = Bool().setName("debugReset"))),
           new BranchPlugin(
             earlyBranch = false,

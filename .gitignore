@@ -3,6 +3,14 @@
 # ignore local GNU toolchain installations
 **/VexRiscv-master/opt/riscv
 
+# Ignore C compilation files
+/obj
+*.bin
+*.elf
+*.mif
+*.o
+*.dump
+
 # -------------------------------------------------------------------------
 # A gitignore for cmake
 # From https://github.com/github/gitignore/blob/main/CMake.gitignore
@@ -75,6 +83,9 @@ timing
 *sopc_*
 PLLJ_PLLSPE_INFO.txt # The generated PLL specification file
 
+# Output files
+*.sld
+*.cdf
 # --- RE-ENABLE THE BELOW WHEN REQUIRED ---
 
 ## Created by https://www.toptal.com/developers/gitignore/api/alteraquartusii

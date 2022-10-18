@@ -30,7 +30,7 @@ CFLAGS += -DDBUILD_VERSION=\"$(BUILD_VERSION)\"
 CFLAGS += -DDBUILD_DATE=\"$(BUILD_DATE)\"
 
 # In order: generate debug info, include debug symbols, no optimisation, optimising for size
-CFLAGS += -ggdb3 -O0 # -Os -g3 
+CFLAGS += -Os #-ggdb3 -O0 # -Os -g3 
 # Logs configuration (flag) settings
 CFLAGS += -frecord-gcc-switches
 # Other Warnings options not covered by -Wall or -Wextra
@@ -63,6 +63,8 @@ make_dirs:
 $(ELF): $(C_OUT) $(A_OUT) $(LD_SCRIPT)
 	$(CC) -T $(LD_SCRIPT) $(A_OUT) $(C_OUT) -o $@ $(LDFLAGS)
 	$(OBJDUMP) -D $@ > $(DUMP)
+
+# If needed to inspect raw instructions: -Mnumeric,no-aliases
 
 $(SREC): $(ELF)
 	$(OBJCOPY) -I elf32-littleriscv -O srec --srec-forceS3 $< $@
