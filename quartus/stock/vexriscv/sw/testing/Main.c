@@ -23,6 +23,8 @@ DEALINGS IN THE SOFTWARE. */
 #include "FpgaConfig.h"
 #include "Hal.h"
 
+#include "hex.h"
+
 /* Define either or*/
 // #define ARIES_EMBEDDED_CORE
 // #define TEST_GPIO_LED
@@ -35,6 +37,13 @@ DEALINGS IN THE SOFTWARE. */
 // #define CUSTOM_INSTRUCT_VACC
 // #define CUSTOM_INSTRUCT_VMAXE_VMINE_VMAX_X
 // #define CUSTOM_INSTRUCT_VSLRI
+
+void p4p_disp() {
+	hex_pio45->port = (0b00011000011001);
+	hex_pio23->port = (0b00011001111111);
+	hex_write_uint(41, hex_pio01);
+}
+
 
 #define TEST_CYCLE_COUNT
 #ifdef TEST_CYCLE_COUNT
@@ -145,6 +154,9 @@ int main() {
 	volatile uint64_t Mcycle2, Mcycle4;
 
 	uint32_t x, y, z;
+
+
+	p4p_disp();
 
 	while(1) {
 		// 64-bit Cycle read tests
